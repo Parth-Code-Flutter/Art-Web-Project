@@ -1,13 +1,61 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 /**
- * Login Page
+ * Login Page (Functional)
  * 
- * Authentication entry point.
- * Ideally integrated with Clerk or Supabase later.
+ * Authentication entry point using Supabase.
  */
 export default function LoginPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
+    const handleLogin = async () => {
+        setLoading(true);
+        setError(null);
+        const supabase = createClient();
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            setError(error.message);
+            setLoading(false);
+        } else {
+            router.push("/"); // Redirect to home on success
+            router.refresh(); // Refresh to update Navbar state
+        }
+    };
+
+    const handleSignUp = async () => {
+        setLoading(true);
+        setError(null);
+        const supabase = createClient();
+
+        // For demo, we auto-confirm if possible or just sign up
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+        });
+
+        if (error) {
+            setError(error.message);
+        } else {
+            setError("Check your email for the confirmation link!");
+        }
+        setLoading(false);
+    };
+
     return (
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-rose-500 flex flex-col items-center justify-center p-6 relative">
 
@@ -24,21 +72,48 @@ export default function LoginPage() {
                 </div>
 
                 <div className="bg-zinc-900/50 border border-white/10 p-8 rounded-2xl backdrop-blur-sm space-y-6">
+                    {error && (
+                        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Email</label>
-                        <input type="email" className="w-full bg-black/50 border border-white/10 rounded-lg h-10 px-3 focus:outline-none focus:border-rose-500 transition-colors" placeholder="you@example.com" />
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-black/50 border border-white/10 rounded-lg h-10 px-3 focus:outline-none focus:border-rose-500 transition-colors"
+                            placeholder="you@example.com"
+                        />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Password</label>
-                        <input type="password" className="w-full bg-black/50 border border-white/10 rounded-lg h-10 px-3 focus:outline-none focus:border-rose-500 transition-colors" placeholder="••••••••" />
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full bg-black/50 border border-white/10 rounded-lg h-10 px-3 focus:outline-none focus:border-rose-500 transition-colors"
+                            placeholder="••••••••"
+                        />
                     </div>
 
-                    <button className="w-full h-12 bg-white text-black font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all">
-                        Sign In
-                    </button>
-
-                    <div className="text-center text-sm text-zinc-500">
-                        Don&apos;t have an account? <span className="text-white font-medium cursor-pointer underline decoration-zinc-700 underline-offset-4">Join as a Creator</span>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleLogin}
+                            disabled={loading}
+                            className="flex-1 h-12 bg-white text-black font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}
+                        </button>
+                        <button
+                            onClick={handleSignUp}
+                            disabled={loading}
+                            className="flex-1 h-12 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all disabled:opacity-50"
+                        >
+                            Sign Up
+                        </button>
                     </div>
                 </div>
             </div>
