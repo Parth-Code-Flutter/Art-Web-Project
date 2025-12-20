@@ -57,6 +57,17 @@ export default function SellPage() {
         setPriceData(result);
     };
 
+    // ...
+    // 3. Handle Form Submission
+    const handleSubmit = async (formData: FormData) => {
+        // Append JSON tags manually if needed, or rely on hidden input (which is already there)
+        const result = await createArtwork(formData);
+        if (result?.error) {
+            console.error(result.error);
+            alert("Failed to create artwork: " + result.error);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-rose-500">
             <Navbar />
@@ -68,7 +79,8 @@ export default function SellPage() {
                 </p>
 
                 {/* Main Form requesting Server Action */}
-                <form action={createArtwork} className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <form action={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-12">
+    // ...
 
                     {/* Left Column: Image & AI */}
                     <div className="space-y-6">

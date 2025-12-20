@@ -5,12 +5,25 @@ import { useCart } from "@/components/providers/CartProvider";
 import { Trash2, ArrowRight, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { createCheckoutSession } from "@/app/actions/createCheckoutSession";
+import { useState } from "react";
 
 export default function CartPage() {
     const { items, removeItem, cartTotal, clearCart } = useCart();
 
-    const handleCheckout = () => {
-        alert("Stripe Checkout Integration coming next!");
+
+    // ...
+    const [loading, setLoading] = useState(false);
+
+    const handleCheckout = async () => {
+        setLoading(true);
+        try {
+            await createCheckoutSession(items);
+        } catch (error) {
+            console.error(error);
+            alert("Checkout failed. Please try again.");
+            setLoading(false);
+        }
     };
 
     return (
