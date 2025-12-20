@@ -19,7 +19,29 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "ArtVerse | Premium Art Marketplace",
-  description: "Discover and collect unique digital and physical artworks.",
+  description: "Discover and collect unique digital and physical masterpieces from visionary artists. Experience art with Augmented Reality (AR) before you buy.",
+  openGraph: {
+    title: "ArtVerse | Experience Art in AR",
+    description: "The next generation of art marketplaces. Shop curated pieces and preview them in your own space using our AR technology.",
+    url: 'https://artverse-marketplace.vercel.app', // Placeholder
+    siteName: 'ArtVerse',
+    images: [
+      {
+        url: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=1200',
+        width: 1200,
+        height: 630,
+        alt: 'ArtVerse Premium Marketplace',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ArtVerse | Discover Rare Art',
+    description: 'Collect masterpieces from verified artists with AR preview capabilities.',
+    images: ['https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=1200'],
+  },
 };
 
 import { CartProvider } from "@/components/providers/CartProvider";

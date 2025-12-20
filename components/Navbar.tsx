@@ -1,12 +1,13 @@
 "use client";
 
-import { Search, Menu, ShoppingBag, User, LogOut } from "lucide-react";
+import { Search, Menu, ShoppingBag, User, LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/providers/CartProvider";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * Navbar Component
@@ -17,6 +18,7 @@ export function Navbar() {
     const { cartCount } = useCart();
     const [user, setUser] = useState<SupabaseUser | null>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
@@ -140,11 +142,48 @@ export function Navbar() {
                     )}
 
                     {/* Mobile Menu Trigger */}
-                    <button className="md:hidden p-2 text-white" aria-label="Menu">
-                        <Menu className="w-6 h-6" />
+                    <button
+                        className="md:hidden p-2 text-white"
+                        aria-label="Menu"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
                 </div>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden bg-zinc-950 border-b border-white/10 overflow-hidden"
+                    >
+                        <nav className="flex flex-col p-6 gap-4">
+                            <Link href="/explore" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium py-2 border-b border-white/5">Explore</Link>
+                            <Link href="/artists" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium py-2 border-b border-white/5">Artists</Link>
+                            {user ? (
+                                <>
+                                    <Link href={userProfile?.role === 'seller' ? '/sell/dashboard' : '/dashboard'} onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium py-2 border-b border-white/5 text-rose-500">Dashboard</Link>
+                                    <button onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }} className="text-lg font-medium py-2 border-b border-white/5 text-left text-zinc-500 flex items-center gap-2">
+                                        <LogOut className="w-5 h-5" /> Sign Out
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium py-2 border-b border-white/5">Sign In</Link>
+                                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium py-2 border-b border-white/5">Join</Link>
+                                </>
+                            )}
+                            <Link href="/signup?role=seller" onClick={() => setIsMobileMenuOpen(false)} className="mt-4 w-full h-12 flex items-center justify-center rounded-full bg-white text-black font-bold">
+                                Start Selling
+                            </Link>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 }

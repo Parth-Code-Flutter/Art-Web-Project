@@ -37,31 +37,43 @@ export default async function Home() {
               <span>The New Standard for Digital Art</span>
             </div>
 
-            <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-2xl">
+            <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-2xl">
               Discover Rare <br /> & Exquisite Art.
             </h1>
 
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed px-4">
               A curated marketplace for the world's most visionary artists and collectors.
               Experience art with Augmented Reality before you buy.
             </p>
 
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-4">
-              <Link href="/explore" className="h-14 px-8 rounded-full bg-white text-black font-bold text-lg hover:bg-rose-500 hover:text-white transition-all shadow-lg hover:shadow-rose-500/25 flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 w-full max-w-md mx-auto px-4">
+              <Link href="/explore" className="w-full sm:w-auto h-14 px-8 rounded-full bg-white text-black font-bold text-lg hover:bg-rose-500 hover:text-white transition-all shadow-lg hover:shadow-rose-500/25 flex items-center justify-center gap-2">
                 Start Exploring <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/signup?role=seller" className="flex items-center justify-center h-14 px-8 rounded-full border border-white/20 bg-black/30 backdrop-blur-sm text-white font-medium text-lg hover:bg-white/10 transition-all">
+              <Link href="/signup?role=seller" className="w-full sm:w-auto flex items-center justify-center h-14 px-8 rounded-full border border-white/20 bg-black/30 backdrop-blur-sm text-white font-medium text-lg hover:bg-white/10 transition-all">
                 Sell Artwork
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Categories / Ticker */}
-        {/* Categories / Ticker */}
+        {/* Categories / Ticker (Marquee style) */}
         <div className="w-full border-y border-white/10 bg-black/50 backdrop-blur-sm py-6 overflow-hidden">
-          <div className="flex gap-12 items-center justify-center text-zinc-500 font-serif text-2xl uppercase tracking-widest whitespace-nowrap animate-pulse">
-            <span>Oil Painting</span> • <span>Digital Art</span> • <span>Sculpture</span> • <span>Photography</span> • <span>NFTs</span> • <span>Generative Art</span>
+          <div className="flex gap-12 items-center whitespace-nowrap animate-marquee">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex gap-12 items-center">
+                <span className="text-zinc-500 font-serif text-xl md:text-2xl uppercase tracking-widest">Oil Painting</span>
+                <span className="text-zinc-700 font-serif text-xl md:text-2xl">•</span>
+                <span className="text-zinc-500 font-serif text-xl md:text-2xl uppercase tracking-widest">Digital Art</span>
+                <span className="text-zinc-700 font-serif text-xl md:text-2xl">•</span>
+                <span className="text-zinc-500 font-serif text-xl md:text-2xl uppercase tracking-widest">Sculpture</span>
+                <span className="text-zinc-700 font-serif text-xl md:text-2xl">•</span>
+                <span className="text-zinc-500 font-serif text-xl md:text-2xl uppercase tracking-widest">Photography</span>
+                <span className="text-zinc-700 font-serif text-xl md:text-2xl">•</span>
+                <span className="text-zinc-500 font-serif text-xl md:text-2xl uppercase tracking-widest">Abstract</span>
+                <span className="text-zinc-700 font-serif text-xl md:text-2xl">•</span>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -50,8 +50,8 @@ export default async function SellerDashboard() {
                         </h2>
 
                         {artworks.length > 0 ? (
-                            <div className="bg-zinc-900 border border-white/5 rounded-xl overflow-hidden">
-                                <table className="w-full text-left">
+                            <div className="bg-zinc-900 border border-white/5 rounded-xl overflow-x-auto">
+                                <table className="w-full text-left min-w-[600px] lg:min-w-full">
                                     <thead className="bg-black/50 text-zinc-500 text-xs uppercase tracking-wider">
                                         <tr>
                                             <th className="px-6 py-4 font-medium">Artwork</th>

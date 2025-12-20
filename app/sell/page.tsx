@@ -12,35 +12,37 @@ import { createArtwork } from "@/app/actions/createArtwork";
  * Connected to Supabase via Server Action.
  * Features AI Tagging and Smart Pricing.
  */
+import { suggestArtworkTags } from "@/app/actions/ai";
+
 export default function SellPage() {
-    // Image State
+    // ... rest of state ...
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [tags, setTags] = useState<string[]>([]);
-
-    // Pricing State
     const [dimensions, setDimensions] = useState({ width: 50, height: 50 });
     const [priceData, setPriceData] = useState<{ min: number; max: number; suggested: number } | null>(null);
     const [category, setCategory] = useState("Oil");
 
-    // 1. Handle Image Upload & Auto-Tagging
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Create local preview
             const url = URL.createObjectURL(file);
             setImagePreview(url);
-            setTags([]); // Reset tags
-
-            // Simulate AI Analysis
+            setTags([]);
             setIsAnalyzing(true);
+
             try {
-                // Pass the file URL (or name as mock) to our utility
-                const newTags = await generateImageTags(file.name);
-                setTags(newTags);
+                // Convert file to Base64 for OpenAI Vision
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64String = reader.result as string;
+                    const aiTags = await suggestArtworkTags(base64String);
+                    setTags(aiTags);
+                    setIsAnalyzing(false);
+                };
+                reader.readAsDataURL(file);
             } catch (error) {
                 console.error("AI Tagging Failed", error);
-            } finally {
                 setIsAnalyzing(false);
             }
         }

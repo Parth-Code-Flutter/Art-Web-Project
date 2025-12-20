@@ -5,6 +5,7 @@ import { ArrowLeft, Share2, Heart, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ARShowcase } from "@/components/ARShowcase";
 
 export const dynamic = 'force-dynamic';
 
@@ -120,6 +121,12 @@ export default async function ArtworkPage({ params }: ArtworkPageProps) {
                                         artist: artwork.profiles?.username || 'Unknown Artist'
                                     }}
                                 />
+
+                                <ARShowcase
+                                    artworkUrl={artwork.image_url}
+                                    title={artwork.title}
+                                />
+
                                 <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">
                                     <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                                     Verified Authentic • Secure Transaction

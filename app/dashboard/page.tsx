@@ -24,20 +24,20 @@ export default async function BuyerDashboard() {
                 {orders.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4">
                         {orders.map((order) => (
-                            <div key={order.id} className="p-6 bg-zinc-900 border border-white/5 rounded-xl flex items-center justify-between">
+                            <div key={order.id} className="p-6 bg-zinc-900 border border-white/5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-white/5 rounded-full">
+                                    <div className="p-3 bg-white/5 rounded-full shrink-0">
                                         <Package className="w-6 h-6 text-zinc-400" />
                                     </div>
                                     <div>
                                         <p className="font-bold">Order #{order.id.slice(0, 8)}</p>
                                         <p className="text-sm text-zinc-500">
-                                            {new Date(order.created_at).toLocaleDateString()} • {order.status}
+                                            {new Date(order.created_at).toLocaleDateString()} • <span className="text-rose-500">{order.status}</span>
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <p className="font-bold">${order.total_amount}</p>
+                                <div className="sm:text-right w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                                    <p className="font-bold text-lg">${order.total_amount}</p>
                                 </div>
                             </div>
                         ))}

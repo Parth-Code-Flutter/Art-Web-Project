@@ -21,6 +21,7 @@ function SignupContent() {
 
 
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
@@ -45,6 +46,7 @@ function SignupContent() {
                     username: username.trim(),
                     role: role,
                 },
+                emailRedirectTo: `${window.location.origin}/auth/confirm`,
             },
         });
 
@@ -63,10 +65,35 @@ function SignupContent() {
                 window.location.href = destination;
             } else {
                 setLoading(false);
-                setError("Account created! User confirmation is required before logging in.");
+                setIsSuccess(true); // New state to show success message
             }
         }
     };
+
+    if (isSuccess) {
+        return (
+            <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center p-6">
+                <div className="w-full max-w-md bg-zinc-900 border border-white/10 p-8 rounded-2xl text-center space-y-6">
+                    <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+                        <Check className="w-10 h-10 text-green-500" />
+                    </div>
+                    <h2 className="text-2xl font-serif font-bold">Check your inbox</h2>
+                    <p className="text-zinc-400">
+                        We've sent a confirmation link to <span className="text-white font-medium">{email}</span>.
+                        Please click the link to verify your account.
+                    </p>
+                    <div className="pt-4 space-y-4">
+                        <Link href="/login" className="block w-full py-3 bg-white text-black font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all">
+                            Back to Login
+                        </Link>
+                        <p className="text-xs text-zinc-500">
+                            Don't see it? Check your spam folder or wait a few minutes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-rose-500 flex flex-col items-center justify-center p-6 relative">
