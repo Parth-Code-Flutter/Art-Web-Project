@@ -22,34 +22,51 @@ export default function LoginPage() {
     const handleLogin = async () => {
         setLoading(true);
         setError(null);
+        console.log("Attempting login for:", email);
         const supabase = createClient();
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email: email.trim(),
-            password: password.trim(),
-        });
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password: password.trim(),
+            });
 
-        if (error) {
-            setError(error.message);
-            setLoading(false);
-        } else {
-            // Check User Role for Redirect
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase
+            if (error) {
+                console.error("Login Error:", error.message);
+                setError(error.message);
+                setLoading(false);
+                return;
+            }
+
+            if (data.user) {
+                console.log("Login successful. Fetching profile for user:", data.user.id);
+
+                const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role')
-                    .eq('id', user.id)
+                    .eq('id', data.user.id)
                     .single();
 
+                if (profileError) {
+                    console.error("Profile Fetch Error:", profileError);
+                }
+
                 const role = profile?.role;
+                console.log("User role identified:", role);
 
-                if (role === 'admin') router.push('/admin');
-                else if (role === 'seller') router.push('/sell/dashboard');
-                else router.push('/dashboard'); // Buyers go here
+                let destination = '/dashboard';
+                if (role === 'admin') destination = '/admin';
+                else if (role === 'seller') destination = '/sell/dashboard';
 
-                router.refresh();
+                console.log("Redirecting to:", destination);
+
+                // Use window.location.href for a full sync of session/cookies across App Router
+                window.location.href = destination;
             }
+        } catch (err: any) {
+            console.error("Unexpected login failure:", err);
+            setError("An unexpected error occurred during sign in.");
+            setLoading(false);
         }
     };
 

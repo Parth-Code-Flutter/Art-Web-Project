@@ -51,20 +51,21 @@ function SignupContent() {
         if (error) {
             console.error("Signup Error:", error);
             setError(error.message);
+            setLoading(false);
         } else {
             console.log("Signup Success Data:", data);
+
             // Check for session to see if auto-confirmed (dev mode)
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                // Determine redirect based on role
-                const target = role === 'seller' ? '/sell' : '/explore';
-                router.push(target);
-                router.refresh();
+                console.log("Session found! Redirecting based on role:", role);
+                const destination = role === 'seller' ? '/sell/dashboard' : '/explore';
+                window.location.href = destination;
             } else {
+                setLoading(false);
                 setError("Account created! User confirmation is required before logging in.");
             }
         }
-        setLoading(false);
     };
 
     return (
