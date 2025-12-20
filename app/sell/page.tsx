@@ -4,32 +4,32 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { calculateSmartPrice, generateImageTags } from "@/lib/ai-utils";
 import { Upload, Sparkles, AlertCircle, Loader2 } from "lucide-react";
-import Image from "next/image";
+import { createArtwork } from "@/app/actions/createArtwork";
 
 /**
  * Seller Upload Page
  * 
- * Demonstrates the AI Tools:
- * 1. Image Upload -> AI Tagging
- * 2. Dimension Input -> Smart Price Calculation
+ * Connected to Supabase via Server Action.
+ * Features AI Tagging and Smart Pricing.
  */
 export default function SellPage() {
     // Image State
-    const [image, setImage] = useState<string | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [tags, setTags] = useState<string[]>([]);
 
     // Pricing State
     const [dimensions, setDimensions] = useState({ width: 50, height: 50 });
     const [priceData, setPriceData] = useState<{ min: number; max: number; suggested: number } | null>(null);
+    const [category, setCategory] = useState("Oil");
 
     // 1. Handle Image Upload & Auto-Tagging
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             // Create local preview
             const url = URL.createObjectURL(file);
-            setImage(url);
+            setImagePreview(url);
             setTags([]); // Reset tags
 
             // Simulate AI Analysis
@@ -51,7 +51,7 @@ export default function SellPage() {
         const result = calculateSmartPrice({
             width: dimensions.width,
             height: dimensions.height,
-            medium: 'oil', // Hardcoded for demo, normally a dropdown
+            medium: category.toLowerCase() as any,
             experienceLevel: 'intermediate'
         });
         setPriceData(result);
@@ -67,17 +67,21 @@ export default function SellPage() {
                     Use our AI-powered tools to categorize and price your artwork correctly.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                {/* Main Form requesting Server Action */}
+                <form action={createArtwork} className="grid grid-cols-1 md:grid-cols-2 gap-12">
 
-                    {/* Section 1: Upload & AI Tagging */}
+                    {/* Left Column: Image & AI */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             1. Upload Artwork
                         </h2>
 
+                        {/* Hidden Input for Tags (passed as JSON string) */}
+                        <input type="hidden" name="tags" value={JSON.stringify(tags)} />
+
                         <div className="aspect-square bg-zinc-900 border-2 border-dashed border-white/10 rounded-xl relative flex flex-col items-center justify-center overflow-hidden group hover:border-rose-500/50 transition-colors">
-                            {image ? (
-                                <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                            {imagePreview ? (
+                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-center p-6">
                                     <Upload className="w-10 h-10 mx-auto mb-4 text-zinc-500" />
@@ -86,13 +90,15 @@ export default function SellPage() {
                             )}
                             <input
                                 type="file"
+                                name="image"
                                 accept="image/*"
+                                required
                                 className="absolute inset-0 opacity-0 cursor-pointer"
-                                onChange={handleImageUpload}
+                                onChange={handleImageChange}
                             />
                         </div>
 
-                        {/* Tags Output */}
+                        {/* AI Tags Display */}
                         <div className="bg-zinc-900/50 p-4 rounded-xl border border-white/5 min-h-[100px]">
                             <div className="flex items-center justify-between mb-3">
                                 <span className="text-sm font-medium text-zinc-300 flex items-center gap-2">
@@ -104,7 +110,7 @@ export default function SellPage() {
                             <div className="flex flex-wrap gap-2">
                                 {tags.length > 0 ? (
                                     tags.map(tag => (
-                                        <span key={tag} className="px-3 py-1 bg-white/10 rounded-full text-xs hover:bg-rose-500 transition-colors cursor-pointer">
+                                        <span key={tag} className="px-3 py-1 bg-white/10 rounded-full text-xs hover:bg-rose-500 transition-colors">
                                             #{tag}
                                         </span>
                                     ))
@@ -117,18 +123,51 @@ export default function SellPage() {
                         </div>
                     </div>
 
-                    {/* Section 2: Smart Pricing */}
+                    {/* Right Column: Details & Pricing */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold flex items-center gap-2">
-                            2. Smart Pricing
+                            2. Artwork Details
                         </h2>
 
                         <div className="bg-zinc-900 p-6 rounded-xl border border-white/5 space-y-6">
+
+                            {/* Title */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-wider text-zinc-500">Title</label>
+                                <input type="text" name="title" required placeholder="e.g. The Golden Hour" className="w-full bg-black border border-white/10 rounded-lg p-3 focus:border-rose-500 outline-none transition-colors" />
+                            </div>
+
+                            {/* Description */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-wider text-zinc-500">Description</label>
+                                <textarea name="description" rows={3} placeholder="Tell the story behind this piece..." className="w-full bg-black border border-white/10 rounded-lg p-3 focus:border-rose-500 outline-none transition-colors" />
+                            </div>
+
+                            {/* Category Dropdown */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-wider text-zinc-500">Medium / Category</label>
+                                <select
+                                    name="category"
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="w-full bg-black border border-white/10 rounded-lg p-3 focus:border-rose-500 outline-none transition-colors"
+                                >
+                                    <option value="Oil">Oil Painting</option>
+                                    <option value="Acrylic">Acrylic</option>
+                                    <option value="Digital">Digital Art</option>
+                                    <option value="Sculpture">Sculpture</option>
+                                    <option value="Photography">Photography</option>
+                                </select>
+                            </div>
+
+                            {/* Dimensions */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-xs uppercase tracking-wider text-zinc-500">Width (cm)</label>
                                     <input
                                         type="number"
+                                        name="width"
+                                        required
                                         value={dimensions.width}
                                         onChange={(e) => setDimensions({ ...dimensions, width: Number(e.target.value) })}
                                         className="w-full bg-black border border-white/10 rounded-lg p-3 focus:border-rose-500 outline-none transition-colors"
@@ -138,6 +177,8 @@ export default function SellPage() {
                                     <label className="text-xs uppercase tracking-wider text-zinc-500">Height (cm)</label>
                                     <input
                                         type="number"
+                                        name="height"
+                                        required
                                         value={dimensions.height}
                                         onChange={(e) => setDimensions({ ...dimensions, height: Number(e.target.value) })}
                                         className="w-full bg-black border border-white/10 rounded-lg p-3 focus:border-rose-500 outline-none transition-colors"
@@ -145,32 +186,46 @@ export default function SellPage() {
                                 </div>
                             </div>
 
+                            {/* Smart Price Button */}
                             <button
+                                type="button"
                                 onClick={handleCalculatePrice}
-                                className="w-full py-3 bg-white text-black font-bold rounded-lg hover:bg-rose-500 hover:text-white transition-all"
+                                className="w-full py-2 bg-white/5 border border-white/10 text-zinc-300 font-medium rounded-lg hover:bg-white/10 transition-all text-sm"
                             >
-                                Calculate Recommended Price
+                                ✨ Calculate AI Price Estimate
                             </button>
 
-                            {priceData && (
-                                <div className="animate-in fade-in slide-in-from-top-2 pt-4 border-t border-white/10">
-                                    <div className="flex items-center gap-3 mb-2 text-rose-400">
-                                        <AlertCircle className="w-5 h-5" />
-                                        <span className="font-bold">Estimated Market Value</span>
+                            {/* Price Result & Input */}
+                            <div className="space-y-2 pt-2">
+                                {priceData && (
+                                    <div className="text-xs text-rose-400 mb-2">
+                                        Suggested Range: ${priceData.min} - ${priceData.max}
                                     </div>
-                                    <div className="text-3xl font-serif font-bold text-white mb-1">
-                                        ${priceData.suggested}
-                                    </div>
-                                    <p className="text-sm text-zinc-500">
-                                        Range: ${priceData.min} - ${priceData.max} <br />
-                                        <span className="text-xs opacity-70">Based on intermediate Oil Painting rates</span>
-                                    </p>
+                                )}
+                                <label className="text-xs uppercase tracking-wider text-zinc-500">Price (USD)</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-zinc-500">$</span>
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        required
+                                        placeholder={priceData ? `${priceData.suggested}` : "00.00"}
+                                        step="0.01"
+                                        className="w-full bg-black border border-white/10 rounded-lg p-3 pl-8 focus:border-rose-500 outline-none transition-colors"
+                                    />
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
 
-                </div>
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            className="w-full py-4 bg-rose-600 text-white font-bold rounded-full hover:bg-rose-700 transition-all hover:scale-[1.02] shadow-lg shadow-rose-900/20"
+                        >
+                            Publish Artwork
+                        </button>
+                    </div>
+                </form>
             </main>
         </div>
     );
