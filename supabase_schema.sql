@@ -56,8 +56,13 @@ create policy "Sellers can update their own artworks." on artworks
 create or replace function public.handle_new_user() 
 returns trigger as $$
 begin
-  insert into public.profiles (id, email, username)
-  values (new.id, new.email, new.email); -- Default username to email initially
+  insert into public.profiles (id, email, username, role)
+  values (
+    new.id, 
+    new.email, 
+    coalesce(new.raw_user_meta_data->>'username', new.email), 
+    coalesce(new.raw_user_meta_data->>'role', 'user')
+  );
   return new;
 end;
 $$ language plpgsql security definer;

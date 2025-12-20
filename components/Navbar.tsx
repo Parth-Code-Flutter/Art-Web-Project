@@ -90,13 +90,18 @@ export function Navbar() {
                             </button>
                         </div>
                     ) : (
-                        <Link href="/login" className="hidden md:block text-sm font-medium hover:text-rose-400 transition-colors px-2">
-                            Sign In
-                        </Link>
+                        <div className="hidden md:flex items-center gap-6">
+                            <Link href="/login" className="text-sm font-medium hover:text-rose-400 transition-colors">
+                                Sign In
+                            </Link>
+                            <Link href="/signup" className="text-sm font-medium hover:text-rose-400 transition-colors">
+                                Join
+                            </Link>
+                        </div>
                     )}
 
                     {/* Seller CTA Button */}
-                    <Link href="/sell" className="hidden md:flex h-10 px-6 items-center justify-center rounded-full bg-white text-black text-sm font-bold hover:bg-rose-500 hover:text-white transition-all">
+                    <Link href="/signup?role=seller" className="hidden md:flex h-10 px-6 items-center justify-center rounded-full bg-white text-black text-sm font-bold hover:bg-rose-500 hover:text-white transition-all">
                         Start Selling
                     </Link>
 

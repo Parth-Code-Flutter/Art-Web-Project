@@ -33,29 +33,27 @@ export default function LoginPage() {
             setError(error.message);
             setLoading(false);
         } else {
-            router.push("/"); // Redirect to home on success
-            router.refresh(); // Refresh to update Navbar state
+            // Check User Role for Redirect
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                const role = profile?.role;
+
+                if (role === 'admin') router.push('/admin');
+                else if (role === 'seller') router.push('/sell/dashboard');
+                else router.push('/dashboard'); // Buyers go here
+
+                router.refresh();
+            }
         }
     };
 
-    const handleSignUp = async () => {
-        setLoading(true);
-        setError(null);
-        const supabase = createClient();
 
-        // For demo, we auto-confirm if possible or just sign up
-        const { error } = await supabase.auth.signUp({
-            email: email.trim(),
-            password: password.trim(),
-        });
-
-        if (error) {
-            setError(error.message);
-        } else {
-            setError("Check your email for the confirmation link!");
-        }
-        setLoading(false);
-    };
 
     return (
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-rose-500 flex flex-col items-center justify-center p-6 relative">
@@ -117,13 +115,12 @@ export default function LoginPage() {
                         >
                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}
                         </button>
-                        <button
-                            onClick={handleSignUp}
-                            disabled={loading}
-                            className="flex-1 h-12 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all disabled:opacity-50"
+                        <Link
+                            href="/signup"
+                            className="flex-1 h-12 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center"
                         >
                             Sign Up
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

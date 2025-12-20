@@ -28,6 +28,8 @@ Build a premium, high-performance Art Marketplace where artists can sell work an
 #### 1. Core Platform (Foundation)
 *   [ ] **Authentication System**:
     *   Use **Supabase Auth** (Email/Password + Google OAuth).
+    *   **[UPDATE]** Custom Signup Form: Collect Username + Role (Buyer/Seller).
+    *   **[UPDATE]** Role-Based Onboarding: Redirect Sellers to `/sell`, Buyers to `/explore`.
     *   Middleware to protect `/sell` and `/admin` routes.
 *   [ ] **Database Schema (Supabase/PostgreSQL)**:
     *   `profiles`: Users (Buyer/Seller role).
@@ -37,7 +39,8 @@ Build a premium, high-performance Art Marketplace where artists can sell work an
 *   [ ] **Backend Logic (Server Actions)**:
     *   `getArtworks()`: Fetch for Home/Explore (support filters).
     *   `createArtwork()`: Handle file upload to Supabase Storage + DB Insertion.
-    *   `addToCart()` / `checkout()`: Stripe session creation.
+    *   **[NEW]** `createCheckoutSession()`: Generate Stripe Payment Link for art.
+    *   **[NEW]** `api/webhooks/stripe`: Handle 'payment_intent.succeeded' to update Order status.
 
 #### 2. Seller Hub (Artist)
 *   [ ] **Onboarding**: "Become a Seller" flow.
