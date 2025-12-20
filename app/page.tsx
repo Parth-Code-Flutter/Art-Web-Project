@@ -1,40 +1,12 @@
-
-import { ArrowRight, Sparkles, Search, Menu } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { Navbar } from "@/components/Navbar";
+import { FeaturedArt } from "@/components/FeaturedArt";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-black text-white selection:bg-rose-500 selection:text-white">
-      {/* Navigation */}
-      <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
-        <div className="container flex h-20 items-center justify-between px-6 max-w-7xl mx-auto">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-serif text-2xl font-bold tracking-tighter">ArtVerse.</span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/explore" className="text-sm font-medium hover:text-rose-400 transition-colors">Explore</Link>
-            <Link href="/artists" className="text-sm font-medium hover:text-rose-400 transition-colors">Artists</Link>
-            <Link href="/collections" className="text-sm font-medium hover:text-rose-400 transition-colors">Collections</Link>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-            <Link href="/login" className="hidden md:block text-sm font-medium hover:text-rose-400 transition-colors">
-              Sign In
-            </Link>
-            <button className="hidden md:flex h-10 px-6 items-center justify-center rounded-full bg-white text-black text-sm font-bold hover:bg-rose-500 hover:text-white transition-all">
-              Start Selling
-            </button>
-            <button className="md:hidden p-2 text-white">
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="flex-1 pt-20">
         {/* Dynamic Hero Section */}
@@ -46,15 +18,15 @@ export default function Home() {
               src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2864&auto=format&fit=crop"
               alt="Abstract Art Background"
               fill
-              className="object-cover opacity-60"
+              className="object-cover opacity-60 animate-in fade-in duration-1000"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
           </div>
 
-          <div className="relative z-10 w-full max-w-5xl mx-auto text-center space-y-8 mt-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md animate-fade-in-up">
+          <div className="relative z-10 w-full max-w-5xl mx-auto text-center space-y-8 mt-16 animate-in slide-in-from-bottom-8 duration-700 fade-in fill-mode-backwards">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
               <Sparkles className="w-4 h-4 text-rose-400" />
               <span className="text-sm font-medium text-gray-200">The Future of Digital Collecting</span>
             </div>
@@ -101,6 +73,9 @@ export default function Home() {
             <span>Fine Art Prints</span>
           </div>
         </div>
+
+        {/* Featured Section */}
+        <FeaturedArt />
 
       </main>
     </div>
