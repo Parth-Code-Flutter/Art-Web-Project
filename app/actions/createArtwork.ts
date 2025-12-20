@@ -1,10 +1,38 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import { redirect } from "next/navigation";
 
 export async function createArtwork(formData: FormData) {
-    const supabase = createClient();
+    const cookieStore = await cookies();
+
+    // Create Server-Side Client for Auth & Storage
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                get(name: string) {
+                    return cookieStore.get(name)?.value
+                },
+                set(name: string, value: string, options: CookieOptions) {
+                    try {
+                        cookieStore.set({ name, value, ...options })
+                    } catch (error) {
+                        // Ignored
+                    }
+                },
+                remove(name: string, options: CookieOptions) {
+                    try {
+                        cookieStore.set({ name, value: '', ...options })
+                    } catch (error) {
+                        // Ignored
+                    }
+                },
+            },
+        }
+    )
 
     // 1. Authenticate User
     const { data: { user } } = await supabase.auth.getUser();
@@ -29,7 +57,7 @@ export async function createArtwork(formData: FormData) {
     // 3. Upload Image to Storage
     const fileExt = file.name.split('.').pop();
     const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const filePath = fileName;
 
     const { error: uploadError } = await supabase.storage
         .from('artworks')
@@ -65,7 +93,6 @@ export async function createArtwork(formData: FormData) {
 
     if (dbError) {
         console.error("Database Error:", dbError);
-        // Optional: Cleanup uploaded file if DB fails
         return { error: "Failed to save artwork details." };
     }
 

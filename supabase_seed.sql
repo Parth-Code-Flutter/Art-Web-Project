@@ -33,7 +33,7 @@ VALUES
     'A warm, texture-heavy piece depicting the break of dawn over a desert landscape.', 
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 
     850.50, 
-    'https://images.unsplash.com/photo-1515405295579-ba7b454989e5?w=800', 
+    'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800', 
     'Landscape', 
     120, 100, 
     ARRAY['gold', 'texture', 'warm', 'desert']

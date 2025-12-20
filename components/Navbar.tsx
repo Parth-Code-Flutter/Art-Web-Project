@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/components/providers/CartProvider";
 
 /**
  * Navbar Component
@@ -13,6 +14,7 @@ import { useRouter } from "next/navigation";
  * Now integrated with Supabase Auth to show User Profile/Logout.
  */
 export function Navbar() {
+    const { cartCount } = useCart();
     const [user, setUser] = useState<SupabaseUser | null>(null);
     const router = useRouter();
     const supabase = createClient();
@@ -61,11 +63,16 @@ export function Navbar() {
                         <Search className="w-5 h-5" />
                     </button>
 
+
                     {/* Shopping Cart */}
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-300 hover:text-white relative" aria-label="Cart">
+                    <Link href="/cart" className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-300 hover:text-white relative" aria-label="Cart">
                         <ShoppingBag className="w-5 h-5" />
-                        <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
-                    </button>
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 rounded-full text-[10px] flex items-center justify-center font-bold text-white">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
 
                     {/* Auth Logic */}
                     {user ? (

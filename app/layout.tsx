@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description: "Discover and collect unique digital and physical artworks.",
 };
 
+import { CartProvider } from "@/components/providers/CartProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +35,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased bg-zinc-950 text-zinc-50`}
         suppressHydrationWarning
       >
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
