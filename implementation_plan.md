@@ -26,9 +26,18 @@ Build a premium, high-performance Art Marketplace where artists can sell work an
 ### Core Features Breakdown
 
 #### 1. Core Platform (Foundation)
-*   [ ] **Authentication System**: Role-based (Admin, Seller, User).
-*   [ ] **Marketplace Home**: Premium "Hero" section, Trending algorithms, Curated rows.
-*   [ ] **Product Page**: High-quality zoom, Artist bio, "View in Room" trigger.
+*   [ ] **Authentication System**:
+    *   Use **Supabase Auth** (Email/Password + Google OAuth).
+    *   Middleware to protect `/sell` and `/admin` routes.
+*   [ ] **Database Schema (Supabase/PostgreSQL)**:
+    *   `profiles`: Users (Buyer/Seller role).
+    *   `artworks`: Title, Price, ImageURL, Dimensions, Tags, ArtistID.
+    *   `collections`: Grouping artworks.
+    *   `orders`: Transaction history.
+*   [ ] **Backend Logic (Server Actions)**:
+    *   `getArtworks()`: Fetch for Home/Explore (support filters).
+    *   `createArtwork()`: Handle file upload to Supabase Storage + DB Insertion.
+    *   `addToCart()` / `checkout()`: Stripe session creation.
 
 #### 2. Seller Hub (Artist)
 *   [ ] **Onboarding**: "Become a Seller" flow.
@@ -42,13 +51,8 @@ Build a premium, high-performance Art Marketplace where artists can sell work an
 *   [ ] **Curation**: Select specific items to appear on the Homepage.
 
 #### 4. The "Wow" Features
-*   [ ] **AR "View In Room"**:
-    *   Canvas-based overlay editor.
-    *   User uploads room photo.
-    *   Code calculates relative size based on user input (e.g., "This wall is 10ft wide").
-*   [ ] **AI Pricing Estimator**:
-    *   Input: `Width`, `Height`, `Medium` (Oil, Print, Digital).
-    *   Output: Price Range (based on static market logic initially).
+*   [x] **AR "View In Room"** (Frontend Completed)
+*   [ ] **AI Pricing Estimator** (Logic Completed, Needs DB connection)
 
 ## Verification Plan
 
