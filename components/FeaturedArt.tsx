@@ -1,45 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import { Artwork } from "@/app/actions/getArtworks";
 
-/**
- * Mock Data for Featured Artworks.
- * In production, this would be fetched from the API/Database.
- */
-const FEATURED_ART = [
-    {
-        id: 1,
-        title: "Chromesthesia No. 4",
-        artist: "Elena Voronina",
-        price: "2.4 ETH",
-        image: "https://images.unsplash.com/photo-1549490349-8643362247b5?q=80&w=1000&auto=format&fit=crop",
-        tag: "Digital"
-    },
-    {
-        id: 2,
-        title: "The Silent Void",
-        artist: "Marcus Chen",
-        price: "$4,200",
-        image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop",
-        tag: "Oil on Canvas"
-    },
-    {
-        id: 3,
-        title: "Neon Genesis",
-        artist: "CyberPunk_Lab",
-        price: "0.8 ETH",
-        image: "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?q=80&w=1000&auto=format&fit=crop",
-        tag: "3D Render"
-    },
-    {
-        id: 4,
-        title: "Abstract Flow",
-        artist: "Sarah Jenkins",
-        price: "$1,800",
-        image: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000&auto=format&fit=crop",
-        tag: "Mixed Media"
-    }
-];
+interface FeaturedArtProps {
+    artworks: Artwork[];
+}
 
 /**
  * FeaturedArt Component
@@ -47,7 +13,19 @@ const FEATURED_ART = [
  * Displays a grid of "Trending" or "Featured" artworks.
  * Uses a Masonry-like grid layout (responsive).
  */
-export function FeaturedArt() {
+export function FeaturedArt({ artworks }: FeaturedArtProps) {
+    // Fallback if no artworks (e.g. before seeding)
+    if (!artworks || artworks.length === 0) {
+        return (
+            <section className="py-24 px-6 bg-zinc-950">
+                <div className="container max-w-7xl mx-auto text-center">
+                    <h2 className="font-serif text-3xl text-zinc-500">No artworks found.</h2>
+                    <p className="text-zinc-600 mt-2">Run the seed script in Supabase to see content here.</p>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="py-24 px-6 bg-zinc-950">
             <div className="container max-w-7xl mx-auto">
@@ -69,11 +47,11 @@ export function FeaturedArt() {
 
                 {/* Artwork Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {FEATURED_ART.map((art) => (
+                    {artworks.map((art) => (
                         <div key={art.id} className="group relative aspect-[3/4] overflow-hidden rounded-none bg-zinc-900 cursor-pointer">
                             {/* Artwork Image */}
                             <Image
-                                src={art.image}
+                                src={art.image_url}
                                 alt={art.title}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
@@ -84,7 +62,7 @@ export function FeaturedArt() {
                             {/* Tag (Top Left) */}
                             <div className="absolute top-4 left-4">
                                 <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-xs font-medium text-white border border-white/20">
-                                    {art.tag}
+                                    {art.category}
                                 </span>
                             </div>
 
@@ -92,8 +70,8 @@ export function FeaturedArt() {
                             <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                                 <h3 className="font-serif text-xl text-white mb-1">{art.title}</h3>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-zinc-300">{art.artist}</span>
-                                    <span className="font-mono font-medium text-rose-400">{art.price}</span>
+                                    <span className="text-zinc-300">{art.profiles?.username || 'Unknown Artist'}</span>
+                                    <span className="font-mono font-medium text-rose-400">${art.price}</span>
                                 </div>
                             </div>
                         </div>
