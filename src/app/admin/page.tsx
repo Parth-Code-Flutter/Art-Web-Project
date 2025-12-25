@@ -54,6 +54,7 @@ export default function AdminDashboard() {
     // Modal States
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
+    const [isViewOnly, setIsViewOnly] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -86,11 +87,19 @@ export default function AdminDashboard() {
     // --- Category Actions ---
     const handleAddCategory = () => {
         setCategoryToEdit(null);
+        setIsViewOnly(false);
         setIsCategoryModalOpen(true);
     };
 
     const handleEditCategory = (cat: Category) => {
         setCategoryToEdit(cat);
+        setIsViewOnly(false);
+        setIsCategoryModalOpen(true);
+    };
+
+    const handleViewCategory = (cat: Category) => {
+        setCategoryToEdit(cat);
+        setIsViewOnly(true);
         setIsCategoryModalOpen(true);
     };
 
@@ -301,7 +310,13 @@ export default function AdminDashboard() {
                                                         </td>
                                                         <td className={styles.td}>
                                                             <div className={styles.actionBtns}>
-                                                                <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.viewIcon}`}
+                                                                    title="View"
+                                                                    onClick={() => handleViewCategory(cat)}
+                                                                >
+                                                                    <Eye size={16} />
+                                                                </button>
                                                                 <button
                                                                     className={`${styles.actionIcon} ${styles.editIcon}`}
                                                                     title="Edit"
@@ -335,6 +350,7 @@ export default function AdminDashboard() {
                     onClose={() => setIsCategoryModalOpen(false)}
                     onSuccess={fetchData}
                     categoryToEdit={categoryToEdit}
+                    isViewOnly={isViewOnly}
                 />
             </main>
         </div>

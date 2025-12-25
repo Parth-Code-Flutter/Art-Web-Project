@@ -16,20 +16,21 @@ interface CategoryModalProps {
     onClose: () => void;
     onSuccess: () => void;
     categoryToEdit?: Category | null;
+    isViewOnly?: boolean;
 }
 
 /**
  * CategoryModal Component
  * 
- * Supports both creating and editing categories.
+ * Supports Creating, Editing, and Viewing categories.
  */
-export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEdit }: CategoryModalProps) {
+export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEdit, isViewOnly }: CategoryModalProps) {
     const [name, setName] = useState('');
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Load existing data if editing
+    // Load existing data if editing or viewing
     useEffect(() => {
         if (categoryToEdit) {
             setName(categoryToEdit.name);
@@ -44,6 +45,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
     if (!isOpen) return null;
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isViewOnly) return;
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -58,7 +60,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name) return;
+        if (isViewOnly || !name) return;
 
         setLoading(true);
         try {
@@ -107,9 +109,8 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
             alert(categoryToEdit ? 'Category updated!' : 'Category created!');
         } catch (err: any) {
             console.error('Operation failed:', err);
-            // Enhanced alert to help user debug RLS
             if (err.message.includes('row-level security')) {
-                alert('Security Error: You need to enable RLS policies in Supabase for this operation. Check my instructions.');
+                alert('Security Error: You need to enable RLS policies in Supabase for this operation.');
             } else {
                 alert(err.message || 'Error saving category');
             }
@@ -126,9 +127,15 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                 </button>
 
                 <header>
-                    <h2 className={styles.title}>{categoryToEdit ? 'Edit Category' : 'New Category'}</h2>
+                    <h2 className={styles.title}>
+                        {isViewOnly ? 'Category Details' : categoryToEdit ? 'Edit Category' : 'New Category'}
+                    </h2>
                     <p className={styles.subtitle}>
-                        {categoryToEdit ? 'Update your category details below.' : 'Organize your art pieces by creating a new group.'}
+                        {isViewOnly
+                            ? 'Viewing category information.'
+                            : categoryToEdit
+                                ? 'Update your category details below.'
+                                : 'Organize your art pieces by creating a new group.'}
                     </p>
                 </header>
 
@@ -141,6 +148,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                             placeholder="e.g. Modernism, Abstract"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            disabled={isViewOnly}
                             required
                         />
                     </div>
@@ -148,8 +156,8 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Category Cover Image</label>
                         <div
-                            className={styles.uploadArea}
-                            onClick={() => document.getElementById('catImageInput')?.click()}
+                            className={`${styles.uploadArea} ${isViewOnly ? styles.viewOnlyArea : ''}`}
+                            onClick={() => !isViewOnly && document.getElementById('catImageInput')?.click()}
                         >
                             <input
                                 id="catImageInput"
@@ -157,6 +165,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                 accept="image/*"
                                 onChange={handleImageChange}
                                 style={{ display: 'none' }}
+                                disabled={isViewOnly}
                             />
                             {preview ? (
                                 <div className={styles.preview}>
@@ -165,31 +174,41 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                             ) : (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                                     <Upload size={32} color="#3b82f6" opacity={0.6} />
-                                    <p style={{ fontSize: '0.9rem', color: '#666' }}>Upload Image (Max 5MB)</p>
+                                    <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                                        {isViewOnly ? 'No Image Provided' : 'Upload Image (Max 5MB)'}
+                                    </p>
                                 </div>
                             )}
                         </div>
-                        {preview && (
-                            <p style={{ fontSize: '0.8rem', color: '#666', textAlign: 'center', marginTop: '0.5rem' }}>
-                                Click area to change image
-                            </p>
-                        )}
                     </div>
 
-                    <button
-                        type="submit"
-                        className={styles.saveBtn}
-                        disabled={loading || !name}
-                    >
-                        {loading ? (
-                            categoryToEdit ? 'Updating...' : 'Creating...'
-                        ) : (
-                            <>
-                                <Check size={20} />
-                                {categoryToEdit ? 'Update Category' : 'Save Category'}
-                            </>
-                        )}
-                    </button>
+                    {!isViewOnly && (
+                        <button
+                            type="submit"
+                            className={styles.saveBtn}
+                            disabled={loading || !name}
+                        >
+                            {loading ? (
+                                categoryToEdit ? 'Updating...' : 'Creating...'
+                            ) : (
+                                <>
+                                    <Check size={20} />
+                                    {categoryToEdit ? 'Update Category' : 'Save Category'}
+                                </>
+                            )}
+                        </button>
+                    )}
+
+                    {isViewOnly && (
+                        <button
+                            type="button"
+                            className={styles.saveBtn}
+                            onClick={onClose}
+                            style={{ background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                        >
+                            Close Viewer
+                        </button>
+                    )}
                 </form>
             </div>
         </div>
