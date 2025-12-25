@@ -36,14 +36,13 @@ interface Category {
 }
 
 /**
- * Admin Dashboard - Premium Redesign
+ * Admin Dashboard - Premium Redesign & Full CRUD
  * 
  * Objectives:
  * - Proper Sidebar-based Layout
- * - Modern Content Organization
- * - Lucide Icon Integration
- * - Professional Empty States
- * - Table Listing for Products/Categories
+ * - Category CRUD (Create, Read, Update, Delete)
+ * - Product Management (Read, Delete)
+ * - Enhanced Action Buttons
  */
 export default function AdminDashboard() {
     const router = useRouter();
@@ -51,7 +50,10 @@ export default function AdminDashboard() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Modal States
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
 
     useEffect(() => {
         fetchData();
@@ -81,15 +83,46 @@ export default function AdminDashboard() {
         router.push('/login');
     };
 
+    // --- Category Actions ---
+    const handleAddCategory = () => {
+        setCategoryToEdit(null);
+        setIsCategoryModalOpen(true);
+    };
+
+    const handleEditCategory = (cat: Category) => {
+        setCategoryToEdit(cat);
+        setIsCategoryModalOpen(true);
+    };
+
     const handleDeleteCategory = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this category?')) return;
+        if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) return;
 
         try {
             const { error } = await supabase.from('categories').delete().eq('id', id);
             if (error) throw error;
             fetchData();
+            alert('Category deleted successfully.');
         } catch (err: any) {
-            alert(err.message || 'Error deleting category');
+            console.error('Delete Error:', err);
+            if (err.message.includes('row-level security')) {
+                alert('Security Error: You need to enable RLS Delete policy in Supabase. Check my instructions.');
+            } else {
+                alert(err.message || 'Error deleting category');
+            }
+        }
+    };
+
+    // --- Product Actions ---
+    const handleDeleteProduct = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this product?')) return;
+
+        try {
+            const { error } = await supabase.from('products').delete().eq('id', id);
+            if (error) throw error;
+            fetchData();
+            alert('Product deleted successfully.');
+        } catch (err: any) {
+            alert(err.message || 'Error deleting product');
         }
     };
 
@@ -150,7 +183,7 @@ export default function AdminDashboard() {
                                     Add Product
                                 </Link>
                             ) : (
-                                <button className={styles.addBtn} onClick={() => setIsCategoryModalOpen(true)}>
+                                <button className={styles.addBtn} onClick={handleAddCategory}>
                                     <Plus size={18} />
                                     Add Category
                                 </button>
@@ -200,18 +233,24 @@ export default function AdminDashboard() {
                                                     <tr key={product.id}>
                                                         <td className={styles.td}>
                                                             <div className={styles.categoryCell}>
-                                                                <img src={product.images[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
+                                                                <img src={product.images?.[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
                                                                 <span>{product.name}</span>
                                                             </div>
                                                         </td>
-                                                        <td className={styles.td}>{product.category}</td>
+                                                        <td className={styles.td}>{product.category || 'Uncategorized'}</td>
                                                         <td className={styles.td}>${product.price}</td>
                                                         <td className={styles.td}>{product.quantity}</td>
                                                         <td className={styles.td}>
                                                             <div className={styles.actionBtns}>
                                                                 <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
                                                                 <button className={`${styles.actionIcon} ${styles.editIcon}`} title="Edit"><Pencil size={16} /></button>
-                                                                <button className={`${styles.actionIcon} ${styles.deleteIcon}`} title="Delete"><Trash2 size={16} /></button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.deleteIcon}`}
+                                                                    title="Delete"
+                                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -232,7 +271,7 @@ export default function AdminDashboard() {
                                         Organize your artworks into meaningful groups by
                                         creating your first category.
                                     </p>
-                                    <button className={styles.addBtn} onClick={() => setIsCategoryModalOpen(true)}>
+                                    <button className={styles.addBtn} onClick={handleAddCategory}>
                                         <Plus size={18} />
                                         Create First Category
                                     </button>
@@ -263,7 +302,13 @@ export default function AdminDashboard() {
                                                         <td className={styles.td}>
                                                             <div className={styles.actionBtns}>
                                                                 <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
-                                                                <button className={`${styles.actionIcon} ${styles.editIcon}`} title="Edit"><Pencil size={16} /></button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.editIcon}`}
+                                                                    title="Edit"
+                                                                    onClick={() => handleEditCategory(cat)}
+                                                                >
+                                                                    <Pencil size={16} />
+                                                                </button>
                                                                 <button
                                                                     className={`${styles.actionIcon} ${styles.deleteIcon}`}
                                                                     title="Delete"
@@ -289,6 +334,7 @@ export default function AdminDashboard() {
                     isOpen={isCategoryModalOpen}
                     onClose={() => setIsCategoryModalOpen(false)}
                     onSuccess={fetchData}
+                    categoryToEdit={categoryToEdit}
                 />
             </main>
         </div>

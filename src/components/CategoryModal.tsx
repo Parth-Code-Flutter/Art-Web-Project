@@ -1,30 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import styles from './CategoryModal.module.css';
+
+interface Category {
+    id: string;
+    name: string;
+    image_url: string;
+}
 
 interface CategoryModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    categoryToEdit?: Category | null;
 }
 
 /**
  * CategoryModal Component
  * 
- * A modern dialog for creating new product categories.
- * Features:
- * - Image upload with preview
- * - 5MB size validation
- * - Supabase Storage & DB integration
+ * Supports both creating and editing categories.
  */
-export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryModalProps) {
+export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEdit }: CategoryModalProps) {
     const [name, setName] = useState('');
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+
+    // Load existing data if editing
+    useEffect(() => {
+        if (categoryToEdit) {
+            setName(categoryToEdit.name);
+            setPreview(categoryToEdit.image_url);
+        } else {
+            setName('');
+            setImage(null);
+            setPreview(null);
+        }
+    }, [categoryToEdit, isOpen]);
 
     if (!isOpen) return null;
 
@@ -47,21 +62,20 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
 
         setLoading(true);
         try {
-            let imageUrl = '';
+            let imageUrl = preview || '';
 
-            // 1. Upload Category Image if exists
+            // 1. Upload new image if chosen
             if (image) {
                 const fileExt = image.name.split('.').pop();
                 const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
                 const filePath = `category-images/${fileName}`;
 
-                // IMPORTANT: Ensure bucket 'products' exists and is PUBLIC in Supabase
                 const { error: uploadError, data } = await supabase.storage
                     .from('products')
                     .upload(filePath, image);
 
                 if (uploadError) {
-                    throw new Error(`Storage Error: ${uploadError.message}. Make sure 'products' bucket exists and has correct policies.`);
+                    throw new Error(`Storage Error: ${uploadError.message}. Ensure 'products' bucket exists and is PUBLIC.`);
                 }
 
                 if (data) {
@@ -72,24 +86,33 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
                 }
             }
 
-            // 2. Insert into categories table
-            const { error } = await supabase.from('categories').insert([
-                { name, image_url: imageUrl }
-            ]);
-
-            if (error) throw error;
-
-            // Reset state and notify success
-            setName('');
-            setImage(null);
-            setPreview(null);
+            // 2. Perform Insert or Update
+            if (categoryToEdit) {
+                // UPDATE
+                const { error } = await supabase
+                    .from('categories')
+                    .update({ name, image_url: imageUrl })
+                    .eq('id', categoryToEdit.id);
+                if (error) throw error;
+            } else {
+                // INSERT
+                const { error } = await supabase
+                    .from('categories')
+                    .insert([{ name, image_url: imageUrl }]);
+                if (error) throw error;
+            }
 
             onSuccess();
             onClose();
-            alert('Category created successfully!');
+            alert(categoryToEdit ? 'Category updated!' : 'Category created!');
         } catch (err: any) {
-            console.error('Category Creation Error:', err);
-            alert(err.message || 'Error creating category');
+            console.error('Operation failed:', err);
+            // Enhanced alert to help user debug RLS
+            if (err.message.includes('row-level security')) {
+                alert('Security Error: You need to enable RLS policies in Supabase for this operation. Check my instructions.');
+            } else {
+                alert(err.message || 'Error saving category');
+            }
         } finally {
             setLoading(false);
         }
@@ -103,8 +126,10 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
                 </button>
 
                 <header>
-                    <h2 className={styles.title}>New Category</h2>
-                    <p className={styles.subtitle}>Organize your art pieces by creating a new group.</p>
+                    <h2 className={styles.title}>{categoryToEdit ? 'Edit Category' : 'New Category'}</h2>
+                    <p className={styles.subtitle}>
+                        {categoryToEdit ? 'Update your category details below.' : 'Organize your art pieces by creating a new group.'}
+                    </p>
                 </header>
 
                 <form className={styles.form} onSubmit={handleSave}>
@@ -144,6 +169,11 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
                                 </div>
                             )}
                         </div>
+                        {preview && (
+                            <p style={{ fontSize: '0.8rem', color: '#666', textAlign: 'center', marginTop: '0.5rem' }}>
+                                Click area to change image
+                            </p>
+                        )}
                     </div>
 
                     <button
@@ -152,11 +182,11 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
                         disabled={loading || !name}
                     >
                         {loading ? (
-                            'Creating...'
+                            categoryToEdit ? 'Updating...' : 'Creating...'
                         ) : (
                             <>
                                 <Check size={20} />
-                                Save Category
+                                {categoryToEdit ? 'Update Category' : 'Save Category'}
                             </>
                         )}
                     </button>
