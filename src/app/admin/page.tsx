@@ -9,7 +9,10 @@ import {
     Settings,
     LogOut,
     Plus,
-    ChevronRight
+    ChevronRight,
+    Eye,
+    Pencil,
+    Trash2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/EmptyStateGraphic';
@@ -19,21 +22,28 @@ import styles from './admin.module.css';
 interface Product {
     id: string;
     name: string;
+    price: number;
+    quantity: number;
+    category: string;
+    images: string[];
 }
 
 interface Category {
     id: string;
     name: string;
+    image_url: string;
+    created_at: string;
 }
 
 /**
  * Admin Dashboard - Premium Redesign
- *
+ * 
  * Objectives:
  * - Proper Sidebar-based Layout
  * - Modern Content Organization
  * - Lucide Icon Integration
  * - Professional Empty States
+ * - Table Listing for Products/Categories
  */
 export default function AdminDashboard() {
     const router = useRouter();
@@ -52,11 +62,11 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             if (activeTab === 'products') {
-                const { data, error } = await supabase.from('products').select('*');
+                const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 setProducts(data || []);
             } else {
-                const { data, error } = await supabase.from('categories').select('*');
+                const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 setCategories(data || []);
             }
@@ -69,6 +79,18 @@ export default function AdminDashboard() {
 
     const handleLogout = () => {
         router.push('/login');
+    };
+
+    const handleDeleteCategory = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this category?')) return;
+
+        try {
+            const { error } = await supabase.from('categories').delete().eq('id', id);
+            if (error) throw error;
+            fetchData();
+        } catch (err: any) {
+            alert(err.message || 'Error deleting category');
+        }
     };
 
     return (
@@ -162,8 +184,41 @@ export default function AdminDashboard() {
                                 </div>
                             ) : (
                                 <div className={styles.listContainer}>
-                                    <p>Showing {products.length} products</p>
-                                    {/* Product Grid implementation goes here */}
+                                    <div className={styles.tableContainer}>
+                                        <table className={styles.table}>
+                                            <thead>
+                                                <tr>
+                                                    <th className={styles.th}>Product</th>
+                                                    <th className={styles.th}>Category</th>
+                                                    <th className={styles.th}>Price</th>
+                                                    <th className={styles.th}>Stock</th>
+                                                    <th className={styles.th}>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {products.map((product) => (
+                                                    <tr key={product.id}>
+                                                        <td className={styles.td}>
+                                                            <div className={styles.categoryCell}>
+                                                                <img src={product.images[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
+                                                                <span>{product.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className={styles.td}>{product.category}</td>
+                                                        <td className={styles.td}>${product.price}</td>
+                                                        <td className={styles.td}>{product.quantity}</td>
+                                                        <td className={styles.td}>
+                                                            <div className={styles.actionBtns}>
+                                                                <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
+                                                                <button className={`${styles.actionIcon} ${styles.editIcon}`} title="Edit"><Pencil size={16} /></button>
+                                                                <button className={`${styles.actionIcon} ${styles.deleteIcon}`} title="Delete"><Trash2 size={16} /></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             )
                         ) : (
@@ -184,7 +239,45 @@ export default function AdminDashboard() {
                                 </div>
                             ) : (
                                 <div className={styles.listContainer}>
-                                    <p>Showing {categories.length} categories</p>
+                                    <div className={styles.tableContainer}>
+                                        <table className={styles.table}>
+                                            <thead>
+                                                <tr>
+                                                    <th className={styles.th}>Category Name</th>
+                                                    <th className={styles.th}>Created At</th>
+                                                    <th className={styles.th}>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {categories.map((cat) => (
+                                                    <tr key={cat.id}>
+                                                        <td className={styles.td}>
+                                                            <div className={styles.categoryCell}>
+                                                                <img src={cat.image_url || '/placeholder-category.jpg'} className={styles.categoryImg} alt={cat.name} />
+                                                                <span style={{ fontWeight: 600 }}>{cat.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className={styles.td}>
+                                                            {new Date(cat.created_at).toLocaleDateString()}
+                                                        </td>
+                                                        <td className={styles.td}>
+                                                            <div className={styles.actionBtns}>
+                                                                <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
+                                                                <button className={`${styles.actionIcon} ${styles.editIcon}`} title="Edit"><Pencil size={16} /></button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.deleteIcon}`}
+                                                                    title="Delete"
+                                                                    onClick={() => handleDeleteCategory(cat.id)}
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             )
                         )}

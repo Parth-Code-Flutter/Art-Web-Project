@@ -52,14 +52,19 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
             // 1. Upload Category Image if exists
             if (image) {
                 const fileExt = image.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
                 const filePath = `category-images/${fileName}`;
 
-                const { error: uploadError } = await supabase.storage
-                    .from('products') // Using the same bucket for simplicity, or create 'categories'
+                // IMPORTANT: Ensure bucket 'products' exists and is PUBLIC in Supabase
+                const { error: uploadError, data } = await supabase.storage
+                    .from('products')
                     .upload(filePath, image);
 
-                if (!uploadError) {
+                if (uploadError) {
+                    throw new Error(`Storage Error: ${uploadError.message}. Make sure 'products' bucket exists and has correct policies.`);
+                }
+
+                if (data) {
                     const { data: { publicUrl } } = supabase.storage
                         .from('products')
                         .getPublicUrl(filePath);
@@ -74,13 +79,16 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
 
             if (error) throw error;
 
-            onSuccess();
-            onClose();
-            // Reset state
+            // Reset state and notify success
             setName('');
             setImage(null);
             setPreview(null);
+
+            onSuccess();
+            onClose();
+            alert('Category created successfully!');
         } catch (err: any) {
+            console.error('Category Creation Error:', err);
             alert(err.message || 'Error creating category');
         } finally {
             setLoading(false);
