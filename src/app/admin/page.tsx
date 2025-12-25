@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
     ShoppingBag,
@@ -17,12 +16,15 @@ import {
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/EmptyStateGraphic';
 import CategoryModal from '@/components/CategoryModal';
+import ProductModal from '@/components/ProductModal';
 import styles from './admin.module.css';
 
 interface Product {
     id: string;
     name: string;
+    description?: string;
     price: number;
+    discount_price?: number;
     quantity: number;
     category: string;
     images: string[];
@@ -41,8 +43,8 @@ interface Category {
  * Objectives:
  * - Proper Sidebar-based Layout
  * - Category CRUD (Create, Read, Update, Delete)
- * - Product Management (Read, Delete)
- * - Enhanced Action Buttons
+ * - Product Management (CRUD via Modal)
+ * - Currency: ₹ (Rupee)
  */
 export default function AdminDashboard() {
     const router = useRouter();
@@ -54,7 +56,11 @@ export default function AdminDashboard() {
     // Modal States
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
-    const [isViewOnly, setIsViewOnly] = useState(false);
+    const [isCategoryViewOnly, setIsCategoryViewOnly] = useState(false);
+
+    const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+    const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+    const [isProductViewOnly, setIsProductViewOnly] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -87,49 +93,58 @@ export default function AdminDashboard() {
     // --- Category Actions ---
     const handleAddCategory = () => {
         setCategoryToEdit(null);
-        setIsViewOnly(false);
+        setIsCategoryViewOnly(false);
         setIsCategoryModalOpen(true);
     };
 
     const handleEditCategory = (cat: Category) => {
         setCategoryToEdit(cat);
-        setIsViewOnly(false);
+        setIsCategoryViewOnly(false);
         setIsCategoryModalOpen(true);
     };
 
     const handleViewCategory = (cat: Category) => {
         setCategoryToEdit(cat);
-        setIsViewOnly(true);
+        setIsCategoryViewOnly(true);
         setIsCategoryModalOpen(true);
     };
 
     const handleDeleteCategory = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) return;
-
+        if (!confirm('Are you sure you want to delete this category?')) return;
         try {
             const { error } = await supabase.from('categories').delete().eq('id', id);
             if (error) throw error;
             fetchData();
-            alert('Category deleted successfully.');
         } catch (err: any) {
-            console.error('Delete Error:', err);
-            if (err.message.includes('row-level security')) {
-                alert('Security Error: You need to enable RLS Delete policy in Supabase. Check my instructions.');
-            } else {
-                alert(err.message || 'Error deleting category');
-            }
+            alert(err.message || 'Error deleting category');
         }
     };
 
     // --- Product Actions ---
+    const handleAddProduct = () => {
+        setProductToEdit(null);
+        setIsProductViewOnly(false);
+        setIsProductModalOpen(true);
+    };
+
+    const handleEditProduct = (prod: Product) => {
+        setProductToEdit(prod);
+        setIsProductViewOnly(false);
+        setIsProductModalOpen(true);
+    };
+
+    const handleViewProduct = (prod: Product) => {
+        setProductToEdit(prod);
+        setIsProductViewOnly(true);
+        setIsProductModalOpen(true);
+    };
+
     const handleDeleteProduct = async (id: string) => {
         if (!confirm('Are you sure you want to delete this product?')) return;
-
         try {
             const { error } = await supabase.from('products').delete().eq('id', id);
             if (error) throw error;
             fetchData();
-            alert('Product deleted successfully.');
         } catch (err: any) {
             alert(err.message || 'Error deleting product');
         }
@@ -186,17 +201,10 @@ export default function AdminDashboard() {
 
                     <div className={styles.topActions}>
                         {(activeTab === 'products' ? products.length > 0 : categories.length > 0) && (
-                            activeTab === 'products' ? (
-                                <Link href="/admin/add-product" className={styles.addBtn}>
-                                    <Plus size={18} />
-                                    Add Product
-                                </Link>
-                            ) : (
-                                <button className={styles.addBtn} onClick={handleAddCategory}>
-                                    <Plus size={18} />
-                                    Add Category
-                                </button>
-                            )
+                            <button className={styles.addBtn} onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}>
+                                <Plus size={18} />
+                                Add {activeTab === 'products' ? 'Product' : 'Category'}
+                            </button>
                         )}
                     </div>
                 </header>
@@ -219,10 +227,10 @@ export default function AdminDashboard() {
                                         It looks like you haven&apos;t uploaded any masterpieces yet.
                                         Start your collection by adding your first product.
                                     </p>
-                                    <Link href="/admin/add-product" className={styles.addBtn}>
+                                    <button className={styles.addBtn} onClick={handleAddProduct}>
                                         <Plus size={18} />
                                         Add Your First Product
-                                    </Link>
+                                    </button>
                                 </div>
                             ) : (
                                 <div className={styles.listContainer}>
@@ -247,12 +255,24 @@ export default function AdminDashboard() {
                                                             </div>
                                                         </td>
                                                         <td className={styles.td}>{product.category || 'Uncategorized'}</td>
-                                                        <td className={styles.td}>${product.price}</td>
+                                                        <td className={styles.td}>₹{product.price}</td>
                                                         <td className={styles.td}>{product.quantity}</td>
                                                         <td className={styles.td}>
                                                             <div className={styles.actionBtns}>
-                                                                <button className={`${styles.actionIcon} ${styles.viewIcon}`} title="View"><Eye size={16} /></button>
-                                                                <button className={`${styles.actionIcon} ${styles.editIcon}`} title="Edit"><Pencil size={16} /></button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.viewIcon}`}
+                                                                    title="View"
+                                                                    onClick={() => handleViewProduct(product)}
+                                                                >
+                                                                    <Eye size={16} />
+                                                                </button>
+                                                                <button
+                                                                    className={`${styles.actionIcon} ${styles.editIcon}`}
+                                                                    title="Edit"
+                                                                    onClick={() => handleEditProduct(product)}
+                                                                >
+                                                                    <Pencil size={16} />
+                                                                </button>
                                                                 <button
                                                                     className={`${styles.actionIcon} ${styles.deleteIcon}`}
                                                                     title="Delete"
@@ -344,13 +364,22 @@ export default function AdminDashboard() {
                     </section>
                 )}
 
-                {/* Modals */}
+                {/* Category Modals */}
                 <CategoryModal
                     isOpen={isCategoryModalOpen}
                     onClose={() => setIsCategoryModalOpen(false)}
                     onSuccess={fetchData}
                     categoryToEdit={categoryToEdit}
-                    isViewOnly={isViewOnly}
+                    isViewOnly={isCategoryViewOnly}
+                />
+
+                {/* Product Modals */}
+                <ProductModal
+                    isOpen={isProductModalOpen}
+                    onClose={() => setIsProductModalOpen(false)}
+                    onSuccess={fetchData}
+                    productToEdit={productToEdit}
+                    isViewOnly={isProductViewOnly}
                 />
             </main>
         </div>
