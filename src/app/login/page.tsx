@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
 
 /**
@@ -10,14 +11,24 @@ import styles from './login.module.css';
  * Built with modular CSS and React client-side rendering.
  */
 export default function LoginPage() {
+    const router = useRouter();
     const [view, setView] = React.useState<'roles' | 'admin'>('roles');
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
     const handleAdminLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Static credential check logic will go here
-        console.log('Logging in as admin:', email);
+
+        // Static credential check
+        // In a real app, this would verify against Supabase Auth
+        const staticEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@example.com';
+        const staticPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'password123';
+
+        if (email === staticEmail && password === staticPassword) {
+            router.push('/admin');
+        } else {
+            alert('Invalid credentials. Please try again.');
+        }
     };
 
     return (
