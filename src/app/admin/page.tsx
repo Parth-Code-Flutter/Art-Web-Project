@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/EmptyStateGraphic';
+import CategoryModal from '@/components/CategoryModal';
 import styles from './admin.module.css';
 
 interface Product {
@@ -27,7 +28,7 @@ interface Category {
 
 /**
  * Admin Dashboard - Premium Redesign
- * 
+ *
  * Objectives:
  * - Proper Sidebar-based Layout
  * - Modern Content Organization
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -120,13 +122,17 @@ export default function AdminDashboard() {
 
                     <div className={styles.topActions}>
                         {(activeTab === 'products' ? products.length > 0 : categories.length > 0) && (
-                            <Link
-                                href={activeTab === 'products' ? "/admin/add-product" : "#"}
-                                className={styles.addBtn}
-                            >
-                                <Plus size={18} />
-                                Add {activeTab === 'products' ? 'Product' : 'Category'}
-                            </Link>
+                            activeTab === 'products' ? (
+                                <Link href="/admin/add-product" className={styles.addBtn}>
+                                    <Plus size={18} />
+                                    Add Product
+                                </Link>
+                            ) : (
+                                <button className={styles.addBtn} onClick={() => setIsCategoryModalOpen(true)}>
+                                    <Plus size={18} />
+                                    Add Category
+                                </button>
+                            )
                         )}
                     </div>
                 </header>
@@ -171,7 +177,7 @@ export default function AdminDashboard() {
                                         Organize your artworks into meaningful groups by
                                         creating your first category.
                                     </p>
-                                    <button className={styles.addBtn} onClick={() => console.log('Add Category')}>
+                                    <button className={styles.addBtn} onClick={() => setIsCategoryModalOpen(true)}>
                                         <Plus size={18} />
                                         Create First Category
                                     </button>
@@ -184,6 +190,13 @@ export default function AdminDashboard() {
                         )}
                     </section>
                 )}
+
+                {/* Modals */}
+                <CategoryModal
+                    isOpen={isCategoryModalOpen}
+                    onClose={() => setIsCategoryModalOpen(false)}
+                    onSuccess={fetchData}
+                />
             </main>
         </div>
     );
