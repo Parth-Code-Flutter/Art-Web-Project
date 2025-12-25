@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/EmptyStateGraphic';
 import styles from './admin.module.css';
@@ -53,9 +53,9 @@ export default function AdminHomePage() {
             <header className={styles.header}>
                 <h1 className={styles.title}>Admin Portal</h1>
                 {products.length > 0 && (
-                    <button className={styles.addBtn}>
+                    <Link href="/admin/add-product" className={styles.addBtn}>
                         <span>+</span> Add Product
-                    </button>
+                    </Link>
                 )}
             </header>
 
@@ -68,9 +68,9 @@ export default function AdminHomePage() {
                     <p className={styles.emptySubtitle}>
                         Start sharing your collection with the world by adding your first artwork.
                     </p>
-                    <button className={styles.addBtn} onClick={() => console.log('Add product modal would open')}>
+                    <Link href="/admin/add-product" className={styles.addBtn}>
                         <span>+</span> Add Your First Product
-                    </button>
+                    </Link>
                 </section>
             ) : (
                 <section>
