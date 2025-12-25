@@ -1,27 +1,89 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
+import styles from './admin.module.css';
 
 /**
  * Admin Home Page
  * 
- * Simple home page for the admin portal as per initial user instructions.
+ * Fetches products from Supabase and displays an empty state if none are found.
  */
 export default function AdminHomePage() {
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    async function fetchProducts() {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('products')
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching products:', error);
+            } else {
+                setProducts(data || []);
+            }
+        } catch (err) {
+            console.error('Unexpected error:', err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    if (loading) {
+        return (
+            <main className={styles.container}>
+                <div className={styles.emptyState}>
+                    <p>Loading products...</p>
+                </div>
+            </main>
+        );
+    }
+
     return (
-        <main style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'radial-gradient(circle at top left, #1a1a1a, #0a0a0a)',
-            color: '#fff',
-            fontFamily: 'var(--font-heading)'
-        }}>
-            <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '3rem', fontWeight: 700 }}>Admin Portal</h1>
-                <p style={{ color: '#a1a1a1', marginTop: '1rem' }}>Welcome to the management dashboard.</p>
-            </div>
+        <main className={styles.container}>
+            <header className={styles.header}>
+                <h1 className={styles.title}>Admin Portal</h1>
+                {products.length > 0 && (
+                    <button className={styles.addBtn}>
+                        <span>+</span> Add Product
+                    </button>
+                )}
+            </header>
+
+            {products.length === 0 ? (
+                <section className={styles.emptyState}>
+                    <div className={styles.graphicContainer}>
+                        <Image
+                            src="/empty-state.png"
+                            alt="No products"
+                            width={300}
+                            height={300}
+                            className={styles.graphic}
+                            priority
+                        />
+                    </div>
+                    <h2 className={styles.emptyTitle}>Your Gallery is Empty</h2>
+                    <p className={styles.emptySubtitle}>
+                        Start sharing your collection with the world by adding your first artwork.
+                    </p>
+                    <button className={styles.addBtn} onClick={() => console.log('Add product modal would open')}>
+                        <span>+</span> Add Your First Product
+                    </button>
+                </section>
+            ) : (
+                <section>
+                    {/* Product list will go here in the next step */}
+                    <p>You have {products.length} products.</p>
+                </section>
+            )}
         </main>
     );
 }
