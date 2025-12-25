@@ -177,7 +177,7 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                                 {profilePreview ? (
                                     <img src={profilePreview} alt="Profile Preview" />
                                 ) : (
-                                    <User size={40} />
+                                    <User size={48} />
                                 )}
                             </div>
                             <input
@@ -197,50 +197,48 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                         </div>
                     )}
 
-                    <div className={styles.inputGroup}>
+                    <div className={styles.inputGroup} style={{ '--idx': 1 } as React.CSSProperties}>
                         <label className={styles.label}>
                             {mode === 'login' ? 'Email or Username' : 'Full Name'}
                         </label>
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                {mode === 'login' ? <Mail size={18} /> : <User size={18} />}
-                            </div>
+                        <div className={styles.inputWrapper}>
                             <input
                                 type="text"
                                 className={styles.input}
-                                style={{ paddingLeft: '2.8rem' }}
                                 placeholder={mode === 'login' ? 'john@example.com' : 'John Doe'}
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
                                 required
                             />
+                            <div className={styles.icon}>
+                                {mode === 'login' ? <Mail size={18} /> : <User size={18} />}
+                            </div>
                         </div>
                     </div>
 
                     {mode === 'register' && (
                         <>
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} style={{ '--idx': 2 } as React.CSSProperties}>
                                 <label className={styles.label}>Email Address</label>
-                                <div style={{ position: 'relative' }}>
-                                    <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                        <Mail size={18} />
-                                    </div>
+                                <div className={styles.inputWrapper}>
                                     <input
                                         type="email"
                                         className={styles.input}
-                                        style={{ paddingLeft: '2.8rem' }}
                                         placeholder="john@example.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
+                                    <div className={styles.icon}>
+                                        <Mail size={18} />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className={styles.inputGroup}>
+                            <div className={styles.inputGroup} style={{ '--idx': 3 } as React.CSSProperties}>
                                 <label className={styles.label}>Country & Mobile (Optional)</label>
                                 <div className={styles.phoneRow}>
-                                    <div style={{ position: 'relative' }}>
+                                    <div className={styles.inputWrapper}>
                                         <select
                                             className={styles.select}
                                             value={country}
@@ -253,71 +251,70 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                                             <option value="AU">AUS (+61)</option>
                                         </select>
                                     </div>
-                                    <div style={{ position: 'relative' }}>
-                                        <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                            <Phone size={18} />
-                                        </div>
+                                    <div className={styles.inputWrapper}>
                                         <input
                                             type="tel"
                                             className={styles.input}
-                                            style={{ paddingLeft: '2.8rem' }}
                                             placeholder="9876543210"
                                             value={mobile}
                                             onChange={(e) => setMobile(e.target.value)}
                                         />
+                                        <div className={styles.icon}>
+                                            <Phone size={18} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </>
                     )}
 
-                    <div className={styles.inputGroup}>
+                    <div className={styles.inputGroup} style={{ '--idx': 4 } as React.CSSProperties}>
                         <label className={styles.label}>Password</label>
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                <Lock size={18} />
-                            </div>
+                        <div className={styles.inputWrapper}>
                             <input
                                 type={showPassword ? "text" : "password"}
                                 className={styles.input}
-                                style={{ paddingLeft: '2.8rem', paddingRight: '3rem' }}
+                                style={{ paddingRight: '3.5rem' }}
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+                            <div className={styles.icon}>
+                                <Lock size={18} />
+                            </div>
                             <button
                                 type="button"
                                 className={styles.visibilityBtn}
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
                     </div>
 
                     {mode === 'register' && (
-                        <div className={styles.inputGroup}>
+                        <div className={styles.inputGroup} style={{ '--idx': 5 } as React.CSSProperties}>
                             <label className={styles.label}>Confirm Password</label>
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                    <Lock size={18} />
-                                </div>
+                            <div className={styles.inputWrapper}>
                                 <input
                                     type={showConfirmPassword ? "text" : "password"}
                                     className={styles.input}
-                                    style={{ paddingLeft: '2.8rem', paddingRight: '3rem' }}
+                                    style={{ paddingRight: '3.5rem' }}
                                     placeholder="••••••••"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
                                 />
+                                <div className={styles.icon}>
+                                    <Lock size={18} />
+                                </div>
                                 <button
                                     type="button"
                                     className={styles.visibilityBtn}
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                 >
-                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
                         </div>
@@ -325,7 +322,7 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
 
                     <button type="submit" className={styles.submitBtn} disabled={loading}>
                         {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
-                        {!loading && <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />}
+                        {!loading && <ArrowRight size={22} />}
                     </button>
                 </form>
 

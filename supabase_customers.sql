@@ -1,4 +1,4 @@
--- 1. CREATE CUSTOMERS TABLE
+-- 1. CREATE TABLE IF NOT EXISTS (Basic setup)
 CREATE TABLE IF NOT EXISTS customers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   full_name TEXT NOT NULL,
@@ -6,20 +6,29 @@ CREATE TABLE IF NOT EXISTS customers (
   password TEXT NOT NULL,
   mobile TEXT UNIQUE,
   country TEXT,
-  profile_image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 2. ENABLE ROW LEVEL SECURITY
+-- 2. ADD COLUMN IF IT DOESN'T EXIST (Safe for existing tables)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name='customers' AND column_name='profile_image_url') THEN
+        ALTER TABLE customers ADD COLUMN profile_image_url TEXT;
+    END IF;
+END $$;
+
+-- 3. ENABLE ROW LEVEL SECURITY
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 
--- 3. CREATE POLICIES
--- Allow public registration (Insert)
+-- 4. RECREATE POLICIES SAFELY
+-- Drop existing policies first to avoid "already exists" errors
+DROP POLICY IF EXISTS "Allow public registration" ON customers;
+DROP POLICY IF EXISTS "Allow public login search" ON customers;
+
+-- Create fresh policies
 CREATE POLICY "Allow public registration" ON customers 
   FOR INSERT WITH CHECK (true);
 
--- Allow public login check (Select)
--- In a real production app, we would use Supabase Auth, 
--- but this allows the manual table-based login requested.
 CREATE POLICY "Allow public login search" ON customers 
   FOR SELECT USING (true);
