@@ -14,9 +14,9 @@ import {
     Trash2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import EmptyStateGraphic from '@/components/EmptyStateGraphic';
-import CategoryModal from '@/components/CategoryModal';
-import ProductModal from '@/components/ProductModal';
+import EmptyStateGraphic from '@/components/admin/EmptyStateGraphic';
+import CategoryModal from '@/components/admin/CategoryModal';
+import ProductModal from '@/components/admin/ProductModal';
 import styles from './admin.module.css';
 
 interface Product {

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, LayoutDashboard, ArrowRight } from 'lucide-react';
+import { ArrowRight, LayoutDashboard, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import CustomerAuth from '@/components/CustomerAuth';
+import CustomerAuth from '@/components/customer/CustomerAuth';
 import styles from './login.module.css';
 
 /**
