@@ -246,7 +246,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
 
                     <div className={styles.row}>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Price (₹)</label>
+                            <label className={styles.label}>Price (₹) (Per Quantity)</label>
                             <input
                                 type="number"
                                 className={styles.input}
