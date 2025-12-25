@@ -26,6 +26,9 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [mobile, setMobile] = useState('');
     const [country, setCountry] = useState('IN');
+    const [profileImage, setProfileImage] = useState<File | null>(null);
+    const [profilePreview, setProfilePreview] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     // Visibility states
     const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +44,22 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         setPassword('');
         setConfirmPassword('');
         setMobile('');
+        setProfileImage(null);
+        setProfilePreview(null);
         setShowPassword(false);
         setShowConfirmPassword(false);
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size exceeds 2MB limit.');
+                return;
+            }
+            setProfileImage(file);
+            setProfilePreview(URL.createObjectURL(file));
+        }
     };
 
     const validateForm = () => {
@@ -63,17 +80,40 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         e.preventDefault();
         if (!validateForm()) return;
 
+        setLoading(true);
         try {
             if (mode === 'register') {
                 // REGISTRATION LOGIC
+                let profileImageUrl = null;
+
+                // 1. Upload Profile Image if selected
+                if (profileImage) {
+                    const fileExt = profileImage.name.split('.').pop();
+                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                    const filePath = `customer-profiles/${fileName}`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('products')
+                        .upload(filePath, profileImage);
+
+                    if (uploadError) throw uploadError;
+
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('products')
+                        .getPublicUrl(filePath);
+
+                    profileImageUrl = publicUrl;
+                }
+
                 const { error: regError } = await supabase
                     .from('customers')
                     .insert([{
                         full_name: fullName,
                         email,
-                        password, // NOTE: In a production app, we would hash this.
+                        password,
                         mobile: mobile || null,
-                        country
+                        country,
+                        profile_image_url: profileImageUrl
                     }]);
 
                 if (regError) {
@@ -92,7 +132,7 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                 const { data, error: loginError } = await supabase
                     .from('customers')
                     .select('*')
-                    .eq('email', fullName) // In login, fullName field is used for Email/Username
+                    .eq('email', fullName)
                     .eq('password', password)
                     .single();
 
@@ -107,6 +147,8 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         } catch (err: any) {
             console.error('Auth operation failed:', err);
             alert(err.message || 'An error occurred during authentication');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -129,6 +171,32 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
+                    {mode === 'register' && (
+                        <div className={styles.profileUpload}>
+                            <div className={styles.profilePreview}>
+                                {profilePreview ? (
+                                    <img src={profilePreview} alt="Profile Preview" />
+                                ) : (
+                                    <User size={40} />
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                id="profileImg"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleImageChange}
+                            />
+                            <button
+                                type="button"
+                                className={styles.uploadTrigger}
+                                onClick={() => document.getElementById('profileImg')?.click()}
+                            >
+                                {profilePreview ? 'Change Photo' : 'Upload Photo (Optional)'}
+                            </button>
+                        </div>
+                    )}
+
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>
                             {mode === 'login' ? 'Email or Username' : 'Full Name'}
@@ -255,9 +323,9 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                         </div>
                     )}
 
-                    <button type="submit" className={styles.submitBtn}>
-                        {mode === 'login' ? 'Sign In' : 'Create Account'}
-                        <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />
+                    <button type="submit" className={styles.submitBtn} disabled={loading}>
+                        {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
+                        {!loading && <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />}
                     </button>
                 </form>
 

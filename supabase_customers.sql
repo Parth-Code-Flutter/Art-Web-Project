@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS customers (
   password TEXT NOT NULL,
   mobile TEXT UNIQUE,
   country TEXT,
+  profile_image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

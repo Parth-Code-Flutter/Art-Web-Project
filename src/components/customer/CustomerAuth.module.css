@@ -127,6 +127,52 @@
     gap: 0.8rem;
 }
 
+.profileUpload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.profilePreview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f3f4f6;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    position: relative;
+    overflow: hidden;
+}
+
+.profilePreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.uploadTrigger {
+    background: #f3f4f6;
+    color: #4b5563;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.uploadTrigger:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
 .select {
     width: 100%;
     padding: 1rem 0.8rem;
