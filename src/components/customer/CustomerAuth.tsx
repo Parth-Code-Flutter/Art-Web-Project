@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { X, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, Globe } from 'lucide-react';
 import styles from './CustomerAuth.module.css';
 
 interface CustomerAuthProps {
@@ -18,8 +18,15 @@ interface CustomerAuthProps {
 export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
     const [mode, setMode] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [country, setCountry] = useState('IN');
+
+    // Visibility states
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     if (!isOpen) return null;
 
@@ -27,14 +34,34 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         setMode(mode === 'login' ? 'register' : 'login');
         // Reset fields when toggling
         setEmail('');
-        setUsername('');
+        setFullName('');
         setPassword('');
+        setConfirmPassword('');
+        setMobile('');
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+    };
+
+    const validateForm = () => {
+        if (mode === 'register') {
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+            if (mobile && !/^\d{10,15}$/.test(mobile)) {
+                alert('Please enter a valid mobile number (10-15 digits).');
+                return false;
+            }
+        }
+        return true;
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
         // Logic for authentication will go here later
-        console.log(`${mode} submitted:`, { email, username, password });
+        console.log(`${mode} submitted:`, { email, fullName, password, mobile, country });
         alert(`${mode.charAt(0).toUpperCase() + mode.slice(1)} functionality coming soon!`);
     };
 
@@ -70,31 +97,65 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                                 className={styles.input}
                                 style={{ paddingLeft: '2.8rem' }}
                                 placeholder={mode === 'login' ? 'john@example.com' : 'John Doe'}
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
                                 required
                             />
                         </div>
                     </div>
 
                     {mode === 'register' && (
-                        <div className={styles.inputGroup}>
-                            <label className={styles.label}>Email Address</label>
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                    <Mail size={18} />
+                        <>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label}>Email Address</label>
+                                <div style={{ position: 'relative' }}>
+                                    <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                                        <Mail size={18} />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        className={styles.input}
+                                        style={{ paddingLeft: '2.8rem' }}
+                                        placeholder="john@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
                                 </div>
-                                <input
-                                    type="email"
-                                    className={styles.input}
-                                    style={{ paddingLeft: '2.8rem' }}
-                                    placeholder="john@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
                             </div>
-                        </div>
+
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label}>Country & Mobile (Optional)</label>
+                                <div className={styles.phoneRow}>
+                                    <div style={{ position: 'relative' }}>
+                                        <select
+                                            className={styles.select}
+                                            value={country}
+                                            onChange={(e) => setCountry(e.target.value)}
+                                        >
+                                            <option value="IN">India (+91)</option>
+                                            <option value="US">USA (+1)</option>
+                                            <option value="GB">UK (+44)</option>
+                                            <option value="AE">UAE (+971)</option>
+                                            <option value="AU">AUS (+61)</option>
+                                        </select>
+                                    </div>
+                                    <div style={{ position: 'relative' }}>
+                                        <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                                            <Phone size={18} />
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            className={styles.input}
+                                            style={{ paddingLeft: '2.8rem' }}
+                                            placeholder="9876543210"
+                                            value={mobile}
+                                            onChange={(e) => setMobile(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
                     )}
 
                     <div className={styles.inputGroup}>
@@ -104,16 +165,50 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                                 <Lock size={18} />
                             </div>
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 className={styles.input}
-                                style={{ paddingLeft: '2.8rem' }}
+                                style={{ paddingLeft: '2.8rem', paddingRight: '3rem' }}
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+                            <button
+                                type="button"
+                                className={styles.visibilityBtn}
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
                     </div>
+
+                    {mode === 'register' && (
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Confirm Password</label>
+                            <div style={{ position: 'relative' }}>
+                                <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                                    <Lock size={18} />
+                                </div>
+                                <input
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    className={styles.input}
+                                    style={{ paddingLeft: '2.8rem', paddingRight: '3rem' }}
+                                    placeholder="••••••••"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.visibilityBtn}
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     <button type="submit" className={styles.submitBtn}>
                         {mode === 'login' ? 'Sign In' : 'Create Account'}
