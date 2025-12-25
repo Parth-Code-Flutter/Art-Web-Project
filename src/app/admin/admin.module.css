@@ -23,6 +23,54 @@
     font-weight: 700;
 }
 
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logoutBtn {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4d4d;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.logoutBtn:hover {
+    background: rgba(255, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    background: var(--glass);
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 3rem;
+}
+
+.tabBtn {
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--secondary);
+    transition: all 0.3s;
+}
+
+.tabBtn:hover {
+    color: var(--primary);
+}
+
+.activeTab {
+    background: var(--primary);
+    color: var(--background);
+}
+
 .emptyState {
     display: flex;
     flex-direction: column;
