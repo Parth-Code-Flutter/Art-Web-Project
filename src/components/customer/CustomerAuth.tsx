@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { X, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, Globe } from 'lucide-react';
 import styles from './CustomerAuth.module.css';
 
@@ -16,6 +18,7 @@ interface CustomerAuthProps {
  * Theme: White (Primary) & Light Blue (Secondary).
  */
 export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
+    const router = useRouter();
     const [mode, setMode] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState('');
     const [fullName, setFullName] = useState('');
@@ -56,13 +59,55 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         return true;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
 
-        // Logic for authentication will go here later
-        console.log(`${mode} submitted:`, { email, fullName, password, mobile, country });
-        alert(`${mode.charAt(0).toUpperCase() + mode.slice(1)} functionality coming soon!`);
+        try {
+            if (mode === 'register') {
+                // REGISTRATION LOGIC
+                const { error: regError } = await supabase
+                    .from('customers')
+                    .insert([{
+                        full_name: fullName,
+                        email,
+                        password, // NOTE: In a production app, we would hash this.
+                        mobile: mobile || null,
+                        country
+                    }]);
+
+                if (regError) {
+                    if (regError.message.includes('unique constraint')) {
+                        alert('Email or Mobile number already exists!');
+                    } else {
+                        throw regError;
+                    }
+                    return;
+                }
+
+                alert('Account created successfully! Please sign in.');
+                setMode('login');
+            } else {
+                // LOGIN LOGIC
+                const { data, error: loginError } = await supabase
+                    .from('customers')
+                    .select('*')
+                    .eq('email', fullName) // In login, fullName field is used for Email/Username
+                    .eq('password', password)
+                    .single();
+
+                if (loginError || !data) {
+                    alert('Invalid email or password.');
+                    return;
+                }
+
+                // Navigate to Customer Dashboard
+                router.push('/customer/dashboard');
+            }
+        } catch (err: any) {
+            console.error('Auth operation failed:', err);
+            alert(err.message || 'An error occurred during authentication');
+        }
     };
 
     return (
