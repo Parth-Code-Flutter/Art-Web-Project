@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import EmptyStateGraphic from '@/components/EmptyStateGraphic';
 import styles from './admin.module.css';
 
 /**
@@ -61,14 +62,7 @@ export default function AdminHomePage() {
             {products.length === 0 ? (
                 <section className={styles.emptyState}>
                     <div className={styles.graphicContainer}>
-                        <Image
-                            src="/empty-state.png"
-                            alt="No products"
-                            width={300}
-                            height={300}
-                            className={styles.graphic}
-                            priority
-                        />
+                        <EmptyStateGraphic />
                     </div>
                     <h2 className={styles.emptyTitle}>Your Gallery is Empty</h2>
                     <p className={styles.emptySubtitle}>
