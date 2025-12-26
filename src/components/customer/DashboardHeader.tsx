@@ -21,7 +21,13 @@ export default function DashboardHeader() {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [mounted, setMounted] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Handle scroll to show/hide header
     useEffect(() => {
@@ -77,13 +83,13 @@ export default function DashboardHeader() {
                 <div className={styles.navLinks}>
                     <Link
                         href="/customer/products"
-                        className={`${styles.navItem} ${pathname === '/customer/products' || pathname.startsWith('/customer/products/') ? styles.active : ''}`}
+                        className={`${styles.navItem} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
                     >
                         <ShoppingBag size={16} /> Products
                     </Link>
                     <Link
                         href="/customer/categories"
-                        className={`${styles.navItem} ${pathname === '/customer/categories' ? styles.active : ''}`}
+                        className={`${styles.navItem} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
                     >
                         <LayoutGrid size={16} /> Category
                     </Link>
