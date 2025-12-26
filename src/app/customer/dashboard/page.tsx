@@ -1,11 +1,12 @@
-'use client';
-
 import React from 'react';
+import DashboardHeader from '@/components/customer/DashboardHeader';
 import styles from './dashboard.module.css';
 
 export default function CustomerDashboard() {
     return (
         <main className={styles.container}>
+            <DashboardHeader />
+
             <div className={styles.glassCard}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Customer Dashboard</h1>
