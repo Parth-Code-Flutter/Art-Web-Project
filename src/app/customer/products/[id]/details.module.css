@@ -36,7 +36,10 @@
 
 .mainImageContainer {
     width: 100%;
-    aspect-ratio: 4/5;
+    aspect-ratio: 1 / 1;
+    /* More balanced square aspect ratio */
+    max-height: 600px;
+    /* Limit height to keep everything in view */
     background: #f8fafc;
     border-radius: 32px;
     overflow: hidden;
@@ -172,6 +175,30 @@
     color: #475569;
 }
 
+/* Trust Badges Grid */
+.trustGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 24px;
+    border: 1px solid #f1f5f9;
+}
+
+.trustItem {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.trustLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+    /* Darker grey for better visibility */
+}
+
 /* Actions */
 .actions {
     display: flex;
@@ -251,11 +278,47 @@
 }
 
 .zoomedImage {
-    max-width: 95vw;
-    max-height: 95vh;
+    max-width: 90vw;
+    max-height: 90vh;
     object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: center;
+}
+
+.zoomControls {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    background: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 100px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 2101;
+}
+
+.zoomBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #0f172a;
+}
+
+.zoomBtn:hover {
+    background: #f8fafc;
+    border-color: #3b82f6;
+    color: #3b82f6;
 }
 
 .closeZoom {

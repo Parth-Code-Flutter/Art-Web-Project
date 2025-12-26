@@ -34,10 +34,17 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
+    const [zoomScale, setZoomScale] = useState(1);
 
     useEffect(() => {
         fetchProduct();
     }, [id]);
+
+    useEffect(() => {
+        if (!isZoomOpen) {
+            setZoomScale(1);
+        }
+    }, [isZoomOpen]);
 
     const fetchProduct = async () => {
         try {
@@ -63,6 +70,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             currency: 'INR',
             maximumFractionDigits: 0,
         }).format(price);
+    };
+
+    const handleZoom = (type: 'in' | 'out') => {
+        setZoomScale(prev => {
+            const newScale = type === 'in' ? prev + 0.5 : prev - 0.5;
+            return Math.min(Math.max(newScale, 1), 4); // Range 1x to 4x
+        });
     };
 
     if (loading) {
@@ -149,22 +163,23 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                         </p>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    {/* Trust Badges - Improved Contrast & CSS */}
+                    <div className={styles.trustGrid}>
+                        <div className={styles.trustItem}>
                             <ShieldCheck size={20} color="#10b981" />
-                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Authenticity Guaranteed</span>
+                            <span className={styles.trustLabel}>Authenticity Guaranteed</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                        <div className={styles.trustItem}>
                             <Truck size={20} color="#3b82f6" />
-                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Global Shipping</span>
+                            <span className={styles.trustLabel}>Global Shipping</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                        <div className={styles.trustItem}>
                             <CreditCard size={20} color="#3b82f6" />
-                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Secure Payment</span>
+                            <span className={styles.trustLabel}>Secure Payment</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                        <div className={styles.trustItem}>
                             <Clock size={20} color="#f59e0b" />
-                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Returnable</span>
+                            <span className={styles.trustLabel}>Returnable</span>
                         </div>
                     </div>
 
@@ -179,16 +194,28 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 </section>
             </div>
 
-            {/* Zoom Modal */}
+            {/* Zoom Modal - Enhanced with Controls */}
             {isZoomOpen && (
                 <div className={styles.zoomOverlay} onClick={() => setIsZoomOpen(false)}>
                     <div className={styles.closeZoom}>
                         <X size={24} />
                     </div>
+
+                    <div className={styles.zoomControls} onClick={(e) => e.stopPropagation()}>
+                        <button className={styles.zoomBtn} onClick={() => handleZoom('out')} disabled={zoomScale <= 1}>
+                            -
+                        </button>
+                        <span style={{ fontWeight: 800, minWidth: '3rem', textAlign: 'center' }}>{zoomScale * 100}%</span>
+                        <button className={styles.zoomBtn} onClick={() => handleZoom('in')} disabled={zoomScale >= 4}>
+                            +
+                        </button>
+                    </div>
+
                     <img
                         src={product.images[activeImage]}
                         alt={product.name}
                         className={styles.zoomedImage}
+                        style={{ transform: `scale(${zoomScale})` }}
                         onClick={(e) => e.stopPropagation()}
                     />
                 </div>
