@@ -19,7 +19,32 @@ export default function DashboardHeader() {
     const router = useRouter();
     const pathname = usePathname();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Handle scroll to show/hide header
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Show header when at top
+            if (currentScrollY < 10) {
+                setIsHeaderVisible(true);
+            }
+            // Hide when scrolling down, show when scrolling up
+            else if (currentScrollY > lastScrollY) {
+                setIsHeaderVisible(false);
+            } else {
+                setIsHeaderVisible(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -38,7 +63,7 @@ export default function DashboardHeader() {
     };
 
     return (
-        <header className={styles.headerContainer}>
+        <header className={`${styles.headerContainer} ${!isHeaderVisible ? styles.hidden : ''}`}>
             <nav className={styles.floatingNav}>
                 {/* Logo */}
                 <div className={styles.logo} onClick={() => router.push('/customer/dashboard')}>
