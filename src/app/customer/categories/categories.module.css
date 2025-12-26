@@ -10,56 +10,6 @@
     align-items: center;
 }
 
-/* Header Section */
-.headerSection {
-    width: 100%;
-    max-width: 1400px;
-    margin-bottom: 3rem;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    animation: fadeInDown 0.8s ease-out;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.headerIcon {
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    color: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
-}
-
-.title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.02em;
-    margin: 0;
-}
-
-.subtitle {
-    color: #64748b;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0.25rem 0 0 0;
-}
-
 /* Category Grid */
 .categoryGrid {
     width: 100%;
@@ -152,6 +102,51 @@
 
 .categoryCard:hover .collageItem img {
     transform: scale(1.1);
+}
+
+/* Adaptive Grid Layouts */
+/* 1 image - full width */
+.grid1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0;
+}
+
+/* 2 images - side by side */
+.grid2 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    gap: 2px;
+}
+
+/* 3 images - 2 on top, 1 on bottom */
+.grid3 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+}
+
+.grid3 .collageItem:last-child {
+    grid-column: 1 / -1;
+}
+
+/* 4 images - 2x2 grid (default) */
+.grid4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+}
+
+/* Full single image */
+.fullImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categoryCard:hover .fullImage {
+    transform: scale(1.15);
 }
 
 .placeholderIcon {

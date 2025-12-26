@@ -76,17 +76,6 @@ export default function CustomerCategories() {
         <main className={styles.container}>
             <DashboardHeader />
 
-            {/* Header Section */}
-            <div className={styles.headerSection}>
-                <div className={styles.headerIcon}>
-                    <Layers size={24} />
-                </div>
-                <div>
-                    <h1 className={styles.title}>Browse by Category</h1>
-                    <p className={styles.subtitle}>Explore our curated collections</p>
-                </div>
-            </div>
-
             {loading ? (
                 <div className={styles.loadingState}>
                     <Loader2 className="animate-spin" size={40} />
@@ -103,7 +92,7 @@ export default function CustomerCategories() {
                             {/* Category Image/Icon */}
                             <div className={styles.cardImage}>
                                 {category.sample_images && category.sample_images.length > 0 ? (
-                                    <div className={styles.imageCollage}>
+                                    <div className={`${styles.imageCollage} ${styles[`grid${category.sample_images.length}`]}`}>
                                         {category.sample_images.map((img, idx) => (
                                             <div key={idx} className={styles.collageItem}>
                                                 <img src={img} alt={`${category.name} ${idx + 1}`} />
@@ -111,7 +100,7 @@ export default function CustomerCategories() {
                                         ))}
                                     </div>
                                 ) : category.image ? (
-                                    <img src={category.image} alt={category.name} />
+                                    <img src={category.image} alt={category.name} className={styles.fullImage} />
                                 ) : (
                                     <div className={styles.placeholderIcon}>
                                         <Package size={48} />
