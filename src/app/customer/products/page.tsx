@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import DashboardHeader from '@/components/customer/DashboardHeader';
@@ -73,7 +74,7 @@ export default function CustomerProducts() {
             ) : products.length > 0 ? (
                 <div className={styles.productGrid}>
                     {products.map((product) => (
-                        <div key={product.id} className={styles.productCard}>
+                        <Link href={`/customer/products/${product.id}`} key={product.id} className={styles.productCard}>
                             <div className={styles.imageWrapper}>
                                 {product.images && product.images.length > 0 ? (
                                     <img src={product.images[0]} alt={product.name} />
@@ -102,7 +103,7 @@ export default function CustomerProducts() {
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             ) : (
