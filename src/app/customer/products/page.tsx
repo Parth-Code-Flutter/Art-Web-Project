@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import DashboardHeader from '@/components/customer/DashboardHeader';
 import styles from './products.module.css';
@@ -15,15 +15,23 @@ interface Product {
     discount_price?: number;
     category: string;
     images: string[];
+    created_at?: string;
 }
+
+type SortOption = 'price-high' | 'price-low' | 'date-new' | 'date-old';
 
 export default function CustomerProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [sortBy, setSortBy] = useState<SortOption>('date-new');
 
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+        sortProducts();
+    }, [sortBy]);
 
     const fetchProducts = async () => {
         try {
@@ -41,6 +49,27 @@ export default function CustomerProducts() {
         }
     };
 
+    const sortProducts = () => {
+        const sorted = [...products].sort((a, b) => {
+            const priceA = a.discount_price || a.price;
+            const priceB = b.discount_price || b.price;
+
+            switch (sortBy) {
+                case 'price-high':
+                    return priceB - priceA;
+                case 'price-low':
+                    return priceA - priceB;
+                case 'date-new':
+                    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+                case 'date-old':
+                    return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+                default:
+                    return 0;
+            }
+        });
+        setProducts(sorted);
+    };
+
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -53,18 +82,39 @@ export default function CustomerProducts() {
         <main className={styles.container}>
             <DashboardHeader />
 
-            <header className={styles.header}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.5rem' }}>
-                    <div style={{ padding: '0.5rem', background: '#3b82f61a', borderRadius: '12px', color: '#3b82f6' }}>
-                        <ShoppingBag size={20} />
-                    </div>
-                    <span style={{ color: '#3b82f6', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        Gallery
-                    </span>
+            {/* Premium Filter Bar */}
+            <div className={styles.filterBar}>
+                <div className={styles.filterIcon}>
+                    <SlidersHorizontal size={20} />
                 </div>
-                <h1 className={styles.title}>Explore Masterpieces</h1>
-                <p className={styles.subtitle}>Discover unique artworks from world-class creators.</p>
-            </header>
+                <span className={styles.filterLabel}>Sort By</span>
+                <div className={styles.filterButtons}>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'price-high' ? styles.active : ''}`}
+                        onClick={() => setSortBy('price-high')}
+                    >
+                        <TrendingDown size={16} /> Price: High to Low
+                    </button>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'price-low' ? styles.active : ''}`}
+                        onClick={() => setSortBy('price-low')}
+                    >
+                        <TrendingUp size={16} /> Price: Low to High
+                    </button>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'date-new' ? styles.active : ''}`}
+                        onClick={() => setSortBy('date-new')}
+                    >
+                        <Calendar size={16} /> Newest First
+                    </button>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'date-old' ? styles.active : ''}`}
+                        onClick={() => setSortBy('date-old')}
+                    >
+                        <Calendar size={16} /> Oldest First
+                    </button>
+                </div>
+            </div>
 
             {loading ? (
                 <div className={styles.emptyState}>
