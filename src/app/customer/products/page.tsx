@@ -90,18 +90,6 @@ export default function CustomerProducts() {
                 <span className={styles.filterLabel}>Sort By</span>
                 <div className={styles.filterButtons}>
                     <button
-                        className={`${styles.filterBtn} ${sortBy === 'price-high' ? styles.active : ''}`}
-                        onClick={() => setSortBy('price-high')}
-                    >
-                        <TrendingDown size={16} /> Price: High to Low
-                    </button>
-                    <button
-                        className={`${styles.filterBtn} ${sortBy === 'price-low' ? styles.active : ''}`}
-                        onClick={() => setSortBy('price-low')}
-                    >
-                        <TrendingUp size={16} /> Price: Low to High
-                    </button>
-                    <button
                         className={`${styles.filterBtn} ${sortBy === 'date-new' ? styles.active : ''}`}
                         onClick={() => setSortBy('date-new')}
                     >
@@ -112,6 +100,18 @@ export default function CustomerProducts() {
                         onClick={() => setSortBy('date-old')}
                     >
                         <Calendar size={16} /> Oldest First
+                    </button>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'price-high' ? styles.active : ''}`}
+                        onClick={() => setSortBy('price-high')}
+                    >
+                        <TrendingDown size={16} /> Price: High to Low
+                    </button>
+                    <button
+                        className={`${styles.filterBtn} ${sortBy === 'price-low' ? styles.active : ''}`}
+                        onClick={() => setSortBy('price-low')}
+                    >
+                        <TrendingUp size={16} /> Price: Low to High
                     </button>
                 </div>
             </div>
