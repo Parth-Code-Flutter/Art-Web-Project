@@ -82,8 +82,8 @@ export default function DashboardHeader() {
                         <ShoppingBag size={16} /> Products
                     </Link>
                     <Link
-                        href="/customer/dashboard"
-                        className={`${styles.navItem} ${pathname === '/customer/dashboard' ? styles.active : ''}`}
+                        href="/customer/categories"
+                        className={`${styles.navItem} ${pathname === '/customer/categories' ? styles.active : ''}`}
                     >
                         <LayoutGrid size={16} /> Category
                     </Link>
