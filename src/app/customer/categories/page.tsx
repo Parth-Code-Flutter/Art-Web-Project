@@ -13,6 +13,7 @@ interface Category {
     description?: string;
     image?: string;
     product_count?: number;
+    sample_images?: string[];
 }
 
 export default function CustomerCategories() {
@@ -33,17 +34,32 @@ export default function CustomerCategories() {
 
             if (categoriesError) throw categoriesError;
 
-            // Fetch product counts for each category
+            // Fetch product counts and sample images for each category
             const categoriesWithCounts = await Promise.all(
                 (categoriesData || []).map(async (category) => {
+                    // Get count
                     const { count } = await supabase
                         .from('products')
                         .select('*', { count: 'exact', head: true })
                         .eq('category', category.name);
 
+                    // Get up to 4 sample product images
+                    const { data: products } = await supabase
+                        .from('products')
+                        .select('images')
+                        .eq('category', category.name)
+                        .limit(4);
+
+                    // Extract first image from each product
+                    const sampleImages = products
+                        ?.map(p => p.images?.[0])
+                        .filter(Boolean)
+                        .slice(0, 4) || [];
+
                     return {
                         ...category,
-                        product_count: count || 0
+                        product_count: count || 0,
+                        sample_images: sampleImages
                     };
                 })
             );
@@ -86,7 +102,15 @@ export default function CustomerCategories() {
                         >
                             {/* Category Image/Icon */}
                             <div className={styles.cardImage}>
-                                {category.image ? (
+                                {category.sample_images && category.sample_images.length > 0 ? (
+                                    <div className={styles.imageCollage}>
+                                        {category.sample_images.map((img, idx) => (
+                                            <div key={idx} className={styles.collageItem}>
+                                                <img src={img} alt={`${category.name} ${idx + 1}`} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : category.image ? (
                                     <img src={category.image} alt={category.name} />
                                 ) : (
                                     <div className={styles.placeholderIcon}>
