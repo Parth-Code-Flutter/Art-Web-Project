@@ -1,6 +1,7 @@
 .container {
     min-height: 100vh;
-    padding: 8rem 2rem 4rem;
+    padding: 10rem 2rem 4rem;
+    /* Increased top padding to clear the header */
     background-color: #f8fafc;
     background-image:
         radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
