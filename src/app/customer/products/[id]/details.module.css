@@ -10,9 +10,11 @@
     width: 100%;
     max-width: 1400px;
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 4rem;
+    grid-template-columns: 1fr 1fr;
+    /* Equal columns for better balance */
+    gap: 5rem;
     animation: fadeIn 0.8s ease-out;
+    align-items: start;
 }
 
 @keyframes fadeIn {
@@ -37,21 +39,26 @@
 .mainImageContainer {
     width: 100%;
     aspect-ratio: 1 / 1;
-    /* More balanced square aspect ratio */
-    max-height: 600px;
-    /* Limit height to keep everything in view */
+    max-height: 520px;
+    /* Made slightly smaller as requested */
     background: #f8fafc;
-    border-radius: 32px;
+    border-radius: 24px;
     overflow: hidden;
     position: relative;
     cursor: zoom-in;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    /* Add padding to give space around 'contain' images */
 }
 
 .mainImage {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    /* Ensure full image (like T-shirts) is visible */
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -73,6 +80,10 @@
     border: 2px solid transparent;
     transition: all 0.3s;
     background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
 }
 
 .activeThumbnail {
@@ -83,7 +94,7 @@
 .thumbnail img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 /* Info Section */

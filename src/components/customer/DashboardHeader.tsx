@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import {
     LayoutGrid,
     ShoppingBag,
@@ -16,6 +17,7 @@ import styles from './DashboardHeader.module.css';
 
 export default function DashboardHeader() {
     const router = useRouter();
+    const pathname = usePathname();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -48,21 +50,21 @@ export default function DashboardHeader() {
 
                 {/* Navigation Links */}
                 <div className={styles.navLinks}>
-                    <a href="/customer/products" className={styles.navItem}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <ShoppingBag size={16} /> Products
-                        </div>
-                    </a>
-                    <a href="/customer/categories" className={styles.navItem}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <LayoutGrid size={16} /> Category
-                        </div>
-                    </a>
-                    <a href="/about" className={styles.navItem}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Info size={16} /> About Us
-                        </div>
-                    </a>
+                    <Link
+                        href="/customer/products"
+                        className={`${styles.navItem} ${pathname === '/customer/products' || pathname.startsWith('/customer/products/') ? styles.active : ''}`}
+                    >
+                        <ShoppingBag size={16} /> Products
+                    </Link>
+                    <Link
+                        href="/customer/dashboard"
+                        className={`${styles.navItem} ${pathname === '/customer/dashboard' ? styles.active : ''}`}
+                    >
+                        <LayoutGrid size={16} /> Category
+                    </Link>
+                    <div className={styles.navItem}>
+                        <Info size={16} /> About Us
+                    </div>
                 </div>
 
                 {/* Profile Section */}
@@ -98,7 +100,7 @@ export default function DashboardHeader() {
                         </div>
                     )}
                 </div>
-            </nav>
-        </header>
+            </nav >
+        </header >
     );
 }
