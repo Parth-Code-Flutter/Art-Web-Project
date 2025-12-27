@@ -228,9 +228,137 @@
     }
 }
 
+/* Mobile Menu Styles */
+.mobileMenuTrigger {
+    display: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.mobileMenuTrigger:hover {
+    background: #f1f5f9;
+}
+
+.mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.mobileOverlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobileNav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    z-index: 2001;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 1.5rem;
+}
+
+.mobileNav.open {
+    right: 0;
+}
+
+.mobileNavHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.closeBtn {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.closeBtn:hover {
+    background: #f1f5f9;
+}
+
+.mobileLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mobileLink {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 16px;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.mobileLink:hover,
+.mobileLink.active {
+    background: #f8fafc;
+    color: #3b82f6;
+}
+
+.mobileFooter {
+    margin-top: auto;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.mobileLogout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    background: #fee2e2;
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.mobileLogout:hover {
+    background: #fecaca;
+}
+
 @media (max-width: 768px) {
     .navLinks {
         display: none;
+    }
+
+    .mobileMenuTrigger {
+        display: block;
     }
 
     .floatingNav {

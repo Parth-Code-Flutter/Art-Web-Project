@@ -11,7 +11,9 @@ import {
     Settings,
     LogOut,
     ChevronDown,
-    Palette
+    Palette,
+    Menu,
+    X
 } from 'lucide-react';
 import styles from './DashboardHeader.module.css';
 
@@ -20,9 +22,11 @@ export default function DashboardHeader() {
     const pathname = usePathname();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch
     useEffect(() => {
@@ -95,6 +99,64 @@ export default function DashboardHeader() {
                     </Link>
                     <div className={styles.navItem}>
                         <Info size={16} /> About Us
+                    </div>
+                </div>
+
+                {/* Mobile Menu Trigger */}
+                <div
+                    className={styles.mobileMenuTrigger}
+                    onClick={() => setIsMobileMenuOpen(true)}
+                >
+                    <Menu size={24} color="#0f172a" />
+                </div>
+
+                {/* Mobile Menu Overlay */}
+                <div
+                    className={`${styles.mobileOverlay} ${isMobileMenuOpen ? styles.open : ''}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+
+                {/* Mobile Navigation Drawer */}
+                <div className={`${styles.mobileNav} ${isMobileMenuOpen ? styles.open : ''}`}>
+                    <div className={styles.mobileNavHeader}>
+                        <div className={styles.logo}>
+                            <div className={styles.avatar} style={{ borderRadius: '12px' }}>
+                                <Palette size={20} />
+                            </div>
+                            <span className={styles.logoText}>ArtGallery</span>
+                        </div>
+                        <div
+                            className={styles.closeBtn}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <X size={24} color="#64748b" />
+                        </div>
+                    </div>
+
+                    <div className={styles.mobileLinks}>
+                        <Link
+                            href="/customer/products"
+                            className={`${styles.mobileLink} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <ShoppingBag size={20} /> Products
+                        </Link>
+                        <Link
+                            href="/customer/categories"
+                            className={`${styles.mobileLink} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <LayoutGrid size={20} /> Category
+                        </Link>
+                        <div className={styles.mobileLink}>
+                            <Info size={20} /> About Us
+                        </div>
+                    </div>
+
+                    <div className={styles.mobileFooter}>
+                        <button className={styles.mobileLogout} onClick={handleLogout}>
+                            <LogOut size={20} /> Logout
+                        </button>
                     </div>
                 </div>
 
