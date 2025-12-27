@@ -266,4 +266,37 @@
     .productGrid {
         grid-template-columns: 1fr;
     }
+
+    /* Mobile Filter Bar */
+    .filterBar {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem 0.8rem;
+        padding: 1rem;
+        align-items: center;
+    }
+
+    .filterIcon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .filterLabel {
+        font-size: 0.9rem;
+    }
+
+    .filterButtons {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .filterBtn {
+        justify-content: center;
+        padding: 0.6rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
 }
