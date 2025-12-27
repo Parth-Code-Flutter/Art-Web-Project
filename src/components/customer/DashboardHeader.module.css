@@ -222,6 +222,13 @@
     background: #fee2e2 !important;
 }
 
+@media (max-width: 1024px) {
+    .navLinks {
+        gap: 1.5rem;
+    }
+}
+
+/* Mobile Link Styles */
 @media (max-width: 768px) {
     .navLinks {
         display: none;
@@ -248,18 +255,24 @@
     }
 
     .profileTrigger {
-        padding: 0.5rem;
+        padding: 0;
         gap: 0;
         border-radius: 50%;
         width: 40px;
         height: 40px;
         justify-content: center;
+        background: #eff6ff;
+        /* Visible light blue background */
+        border: 1px solid #dbeafe;
+    }
+
+    .profileTrigger:hover {
+        background: #dbeafe;
     }
 
     .floatingNav {
         padding: 0.6rem 1rem;
-        justify-content: flex-start;
-        /* Align left, use margins to push right */
+        justify-content: space-between;
         gap: 0.5rem;
     }
 
@@ -269,6 +282,7 @@
     }
 }
 
+/* Mobile Menu Overlay Styles */
 .mobileMenuTrigger {
     display: none;
     padding: 0.5rem;
@@ -390,18 +404,4 @@
 
 .mobileLogout:hover {
     background: #fecaca;
-}
-
-@media (max-width: 768px) {
-    .navLinks {
-        display: none;
-    }
-
-    .mobileMenuTrigger {
-        display: block;
-    }
-
-    .floatingNav {
-        padding: 0.6rem 1.2rem;
-    }
 }
