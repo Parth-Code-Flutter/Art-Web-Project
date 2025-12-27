@@ -2,7 +2,6 @@
 .container {
     min-height: 100vh;
     padding: 140px 4vw 4rem;
-    /* Wider padding for editorial look */
     background-color: #f8fafc;
     background-image:
         radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
@@ -16,7 +15,7 @@
 .filterBar {
     width: 100%;
     max-width: 1600px;
-    margin-bottom: 6rem;
+    margin-bottom: 5rem;
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -98,22 +97,21 @@
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
 }
 
-/* Staggered Editorial Grid */
+/* 
+   Refined Grid System 
+   We removed the stagger for now to ensure perfect alignment as requested 
+   while keeping the "Masonry feel" through consistent aspect ratios.
+*/
 .productGrid {
     width: 100%;
     max-width: 1600px;
     display: grid;
-    /* Larger minimum width for grandeur */
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 4rem 2.5rem;
+    /* Fixed column width for consistent alignment */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 4rem 3rem;
     animation: fadeInUp 0.8s ease-out;
-}
-
-/* Stagger visual effect for desktop */
-@media (min-width: 1024px) {
-    .productGrid>a:nth-child(even) {
-        margin-top: 5rem;
-    }
+    align-items: start;
+    /* Ensures items don't stretch weirdly */
 }
 
 @keyframes fadeInUp {
@@ -133,29 +131,29 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1.5rem;
+    /* Consistent spacing between image and text */
     text-decoration: none;
     group: hover;
     cursor: pointer;
+    /* Ensure card itself doesn't cause layout shifts */
+    transform: translateZ(0);
 }
 
 .imageWrapper {
     width: 100%;
-    aspect-ratio: 3/4;
-    /* Classic art portrait ratio */
+    /* Enforced Aspect Ratio to ensure ALL images align perfectly */
+    aspect-ratio: 4/5;
     position: relative;
     overflow: hidden;
     border-radius: 12px;
-    /* Subtle radius */
     background: #e2e8f0;
-    /* Soft shadow that grows */
     box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.1);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .productCard:hover .imageWrapper {
     transform: scale(0.98);
-    /* Subtle breathe in */
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
 }
 
@@ -163,6 +161,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Crucial for alignment */
     transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -187,13 +186,11 @@
     z-index: 10;
 }
 
-/* Hidden elements we don't want in the new design */
 .priceBadge {
     display: none;
-    /* We show price in the info row now */
 }
 
-/* Custom Overlay Button */
+/* Card Footer - Centered Button */
 .cardFooter {
     position: absolute;
     top: 50%;
@@ -232,57 +229,59 @@
     transform: scale(1.05);
 }
 
-/* Info Row Layout */
+/* Info Row Layout - Perfect Alignment */
 .cardBody {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    /* Changed to center to align text and price perfectly */
     padding: 0 0.5rem;
+    min-height: 40px;
+    /* Force minimum height for alignment */
 }
 
 .productName {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: #0f172a;
     font-family: var(--font-outfit), sans-serif;
-    max-width: 70%;
     line-height: 1.3;
+    /* Limit to 1 line for alignment, or let it wrap if needed but keep alignment */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .description {
     display: none;
-    /* Hiding description for clean look */
 }
 
 /* Price styled as part of the info row */
 .cardBody::after {
-    /* Hack to reusing existing DOM structure if we can't edit TSX easily */
-    /* Ideally we edit TSX, but here we can style the priceBadge if we move it or just use pseudo-elements? 
-       Wait, price is inside imageWrapper in the DOM. 
-       We need to see if we can use the price from somewhere else or if we need to edit TSX.
-       Actually, let's keep it simple: we will edit TSX next to move price to cardBody.
-       For now, let's just make the price badge visible in bottom right corner of image.
+    /* We can't use ::after to inject the price content from data attributes easily without JS. 
+       We will rely on the priceBadge styling below or move it.
+       Actually, the prompt showed price in bottom right of image. Let's keep that but refine it.
     */
+    content: '';
     display: none;
 }
 
-/* Re-enabling price badge but styled differently */
+/* Price Badge - Bottom Right of Image */
 .priceBadge {
-    display: block;
+    display: flex;
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 60px;
-    height: 60px;
-    background: white;
-    border-top-left-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #ffffff;
+    padding: 0.8rem 1.2rem;
+    border-top-left-radius: 20px;
     font-weight: 700;
     color: #0f172a;
     font-size: 1rem;
     z-index: 10;
+    box-shadow: -5px -5px 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Empty State */
@@ -329,13 +328,7 @@
 
     .productGrid {
         grid-template-columns: 1fr;
-        /* Full width cards on mobile */
         gap: 3rem;
-    }
-
-    /* Remove stagger on mobile */
-    .productGrid>a:nth-child(even) {
-        margin-top: 0;
     }
 
     .imageWrapper {
@@ -344,7 +337,6 @@
 
     .cardFooter {
         opacity: 1;
-        /* Always visible on touch */
         top: auto;
         bottom: 1rem;
         left: 1rem;
@@ -357,14 +349,7 @@
     }
 
     .priceBadge {
-        width: auto;
-        height: auto;
         padding: 0.6rem 1.2rem;
-        border-radius: 100px;
-        bottom: 1rem;
-        right: 1rem;
-        background: rgba(255, 255, 255, 0.95);
-        border-top-left-radius: 100px;
-        /* Reset */
+        font-size: 0.9rem;
     }
 }
