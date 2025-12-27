@@ -24,6 +24,19 @@ export default function CustomerProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState<SortOption>('date-new');
+    const [isSortOpen, setIsSortOpen] = useState(false);
+
+    // Close sort dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (!target.closest(`.${styles.sortDropdown}`)) {
+                setIsSortOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         fetchProducts();
@@ -84,35 +97,53 @@ export default function CustomerProducts() {
 
             {/* Premium Filter Bar */}
             <div className={styles.filterBar}>
-                <div className={styles.filterIcon}>
-                    <SlidersHorizontal size={20} />
+                <div className={styles.filterLeft}>
+                    <div className={styles.filterIcon}>
+                        <SlidersHorizontal size={20} />
+                    </div>
+                    <span className={styles.filterLabel}>Sort By</span>
                 </div>
-                <span className={styles.filterLabel}>Sort By</span>
-                <div className={styles.filterButtons}>
+
+                <div className={styles.sortDropdown}>
                     <button
-                        className={`${styles.filterBtn} ${sortBy === 'date-new' ? styles.active : ''}`}
-                        onClick={() => setSortBy('date-new')}
+                        className={styles.sortTrigger}
+                        onClick={() => setIsSortOpen(!isSortOpen)}
                     >
-                        <Calendar size={16} /> Newest First
+                        {sortBy === 'date-new' && 'Newest First'}
+                        {sortBy === 'date-old' && 'Oldest First'}
+                        {sortBy === 'price-high' && 'Price: High to Low'}
+                        {sortBy === 'price-low' && 'Price: Low to High'}
+                        <TrendingDown size={16} className={styles.chevron} />
                     </button>
-                    <button
-                        className={`${styles.filterBtn} ${sortBy === 'date-old' ? styles.active : ''}`}
-                        onClick={() => setSortBy('date-old')}
-                    >
-                        <Calendar size={16} /> Oldest First
-                    </button>
-                    <button
-                        className={`${styles.filterBtn} ${sortBy === 'price-high' ? styles.active : ''}`}
-                        onClick={() => setSortBy('price-high')}
-                    >
-                        <TrendingDown size={16} /> Price: High to Low
-                    </button>
-                    <button
-                        className={`${styles.filterBtn} ${sortBy === 'price-low' ? styles.active : ''}`}
-                        onClick={() => setSortBy('price-low')}
-                    >
-                        <TrendingUp size={16} /> Price: Low to High
-                    </button>
+
+                    {isSortOpen && (
+                        <div className={styles.sortMenu}>
+                            <button
+                                className={`${styles.sortItem} ${sortBy === 'date-new' ? styles.active : ''}`}
+                                onClick={() => { setSortBy('date-new'); setIsSortOpen(false); }}
+                            >
+                                <Calendar size={16} /> Newest First
+                            </button>
+                            <button
+                                className={`${styles.sortItem} ${sortBy === 'date-old' ? styles.active : ''}`}
+                                onClick={() => { setSortBy('date-old'); setIsSortOpen(false); }}
+                            >
+                                <Calendar size={16} /> Oldest First
+                            </button>
+                            <button
+                                className={`${styles.sortItem} ${sortBy === 'price-high' ? styles.active : ''}`}
+                                onClick={() => { setSortBy('price-high'); setIsSortOpen(false); }}
+                            >
+                                <TrendingDown size={16} /> Price: High to Low
+                            </button>
+                            <button
+                                className={`${styles.sortItem} ${sortBy === 'price-low' ? styles.active : ''}`}
+                                onClick={() => { setSortBy('price-low'); setIsSortOpen(false); }}
+                            >
+                                <TrendingUp size={16} /> Price: Low to High
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
