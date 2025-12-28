@@ -13,6 +13,7 @@ import {
     Pencil,
     Trash2
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/admin/EmptyStateGraphic';
 import CategoryModal from '@/components/admin/CategoryModal';
@@ -210,159 +211,187 @@ export default function AdminDashboard() {
                 </header>
 
                 {/* Content Sections */}
-                {loading ? (
-                    <div className={styles.contentCard}>
-                        <p style={{ color: '#666' }}>Synchronizing your data...</p>
-                    </div>
-                ) : (
-                    <section>
-                        {activeTab === 'products' ? (
-                            products.length === 0 ? (
-                                <div className={styles.contentCard}>
-                                    <div className={styles.emptyStateGraphic}>
-                                        <EmptyStateGraphic />
+                <AnimatePresence mode="wait">
+                    {loading ? (
+                        <motion.div
+                            key="loading"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className={styles.contentCard}
+                        >
+                            <p style={{ color: '#666' }}>Synchronizing your data...</p>
+                        </motion.div>
+                    ) : (
+                        <motion.section
+                            key={activeTab}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {activeTab === 'products' ? (
+                                products.length === 0 ? (
+                                    <div className={styles.contentCard}>
+                                        <div className={styles.emptyStateGraphic}>
+                                            <EmptyStateGraphic />
+                                        </div>
+                                        <h2 className={styles.emptyTitle}>Your Gallery is Empty</h2>
+                                        <p className={styles.emptySubtitle}>
+                                            It looks like you haven&apos;t uploaded any masterpieces yet.
+                                            Start your collection by adding your first product.
+                                        </p>
+                                        <button className={styles.addBtn} onClick={handleAddProduct}>
+                                            <Plus size={18} />
+                                            Add Your First Product
+                                        </button>
                                     </div>
-                                    <h2 className={styles.emptyTitle}>Your Gallery is Empty</h2>
-                                    <p className={styles.emptySubtitle}>
-                                        It looks like you haven&apos;t uploaded any masterpieces yet.
-                                        Start your collection by adding your first product.
-                                    </p>
-                                    <button className={styles.addBtn} onClick={handleAddProduct}>
-                                        <Plus size={18} />
-                                        Add Your First Product
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className={styles.listContainer}>
-                                    <div className={styles.tableContainer}>
-                                        <table className={styles.table}>
-                                            <thead>
-                                                <tr>
-                                                    <th className={styles.th}>Product</th>
-                                                    <th className={styles.th}>Category</th>
-                                                    <th className={styles.th}>Price</th>
-                                                    <th className={styles.th}>Stock</th>
-                                                    <th className={styles.th}>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {products.map((product) => (
-                                                    <tr key={product.id}>
-                                                        <td className={styles.td}>
-                                                            <div className={styles.categoryCell}>
-                                                                <img src={product.images?.[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
-                                                                <span>{product.name}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className={styles.td}>{product.category || 'Uncategorized'}</td>
-                                                        <td className={styles.td}>₹{product.price}</td>
-                                                        <td className={styles.td}>{product.quantity}</td>
-                                                        <td className={styles.td}>
-                                                            <div className={styles.actionBtns}>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.viewIcon}`}
-                                                                    title="View"
-                                                                    onClick={() => handleViewProduct(product)}
-                                                                >
-                                                                    <Eye size={16} />
-                                                                </button>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.editIcon}`}
-                                                                    title="Edit"
-                                                                    onClick={() => handleEditProduct(product)}
-                                                                >
-                                                                    <Pencil size={16} />
-                                                                </button>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.deleteIcon}`}
-                                                                    title="Delete"
-                                                                    onClick={() => handleDeleteProduct(product.id)}
-                                                                >
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        </td>
+                                ) : (
+                                    <div className={styles.listContainer}>
+                                        <div className={styles.tableContainer}>
+                                            <table className={styles.table}>
+                                                <thead>
+                                                    <tr>
+                                                        <th className={styles.th}>Product</th>
+                                                        <th className={styles.th}>Category</th>
+                                                        <th className={styles.th}>Price</th>
+                                                        <th className={styles.th}>Stock</th>
+                                                        <th className={styles.th}>Actions</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <AnimatePresence>
+                                                        {products.map((product, index) => (
+                                                            <motion.tr
+                                                                key={product.id}
+                                                                initial={{ opacity: 0, y: 10 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                                transition={{ delay: index * 0.03 }}
+                                                            >
+                                                                <td className={styles.td}>
+                                                                    <div className={styles.categoryCell}>
+                                                                        <img src={product.images?.[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
+                                                                        <span>{product.name}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className={styles.td}>{product.category || 'Uncategorized'}</td>
+                                                                <td className={styles.td}>₹{product.price}</td>
+                                                                <td className={styles.td}>{product.quantity}</td>
+                                                                <td className={styles.td}>
+                                                                    <div className={styles.actionBtns}>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.viewIcon}`}
+                                                                            title="View"
+                                                                            onClick={() => handleViewProduct(product)}
+                                                                        >
+                                                                            <Eye size={16} />
+                                                                        </button>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.editIcon}`}
+                                                                            title="Edit"
+                                                                            onClick={() => handleEditProduct(product)}
+                                                                        >
+                                                                            <Pencil size={16} />
+                                                                        </button>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.deleteIcon}`}
+                                                                            title="Delete"
+                                                                            onClick={() => handleDeleteProduct(product.id)}
+                                                                        >
+                                                                            <Trash2 size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </motion.tr>
+                                                        ))}
+                                                    </AnimatePresence>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        ) : (
-                            categories.length === 0 ? (
-                                <div className={styles.contentCard}>
-                                    <div className={styles.emptyStateGraphic}>
-                                        <EmptyStateGraphic />
-                                    </div>
-                                    <h2 className={styles.emptyTitle}>No Categories Defined</h2>
-                                    <p className={styles.emptySubtitle}>
-                                        Organize your artworks into meaningful groups by
-                                        creating your first category.
-                                    </p>
-                                    <button className={styles.addBtn} onClick={handleAddCategory}>
-                                        <Plus size={18} />
-                                        Create First Category
-                                    </button>
-                                </div>
+                                )
                             ) : (
-                                <div className={styles.listContainer}>
-                                    <div className={styles.tableContainer}>
-                                        <table className={styles.table}>
-                                            <thead>
-                                                <tr>
-                                                    <th className={styles.th}>Category Name</th>
-                                                    <th className={styles.th}>Created At</th>
-                                                    <th className={styles.th}>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {categories.map((cat) => (
-                                                    <tr key={cat.id}>
-                                                        <td className={styles.td}>
-                                                            <div className={styles.categoryCell}>
-                                                                <img src={cat.image_url || '/placeholder-category.jpg'} className={styles.categoryImg} alt={cat.name} />
-                                                                <span style={{ fontWeight: 600 }}>{cat.name}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className={styles.td}>
-                                                            {new Date(cat.created_at).toLocaleDateString()}
-                                                        </td>
-                                                        <td className={styles.td}>
-                                                            <div className={styles.actionBtns}>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.viewIcon}`}
-                                                                    title="View"
-                                                                    onClick={() => handleViewCategory(cat)}
-                                                                >
-                                                                    <Eye size={16} />
-                                                                </button>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.editIcon}`}
-                                                                    title="Edit"
-                                                                    onClick={() => handleEditCategory(cat)}
-                                                                >
-                                                                    <Pencil size={16} />
-                                                                </button>
-                                                                <button
-                                                                    className={`${styles.actionIcon} ${styles.deleteIcon}`}
-                                                                    title="Delete"
-                                                                    onClick={() => handleDeleteCategory(cat.id)}
-                                                                >
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                categories.length === 0 ? (
+                                    <div className={styles.contentCard}>
+                                        <div className={styles.emptyStateGraphic}>
+                                            <EmptyStateGraphic />
+                                        </div>
+                                        <h2 className={styles.emptyTitle}>No Categories Defined</h2>
+                                        <p className={styles.emptySubtitle}>
+                                            Organize your artworks into meaningful groups by
+                                            creating your first category.
+                                        </p>
+                                        <button className={styles.addBtn} onClick={handleAddCategory}>
+                                            <Plus size={18} />
+                                            Create First Category
+                                        </button>
                                     </div>
-                                </div>
-                            )
-                        )}
-                    </section>
-                )}
+                                ) : (
+                                    <div className={styles.listContainer}>
+                                        <div className={styles.tableContainer}>
+                                            <table className={styles.table}>
+                                                <thead>
+                                                    <tr>
+                                                        <th className={styles.th}>Category Name</th>
+                                                        <th className={styles.th}>Created At</th>
+                                                        <th className={styles.th}>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <AnimatePresence>
+                                                        {categories.map((cat, index) => (
+                                                            <motion.tr
+                                                                key={cat.id}
+                                                                initial={{ opacity: 0, y: 10 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                                transition={{ delay: index * 0.03 }}
+                                                            >
+                                                                <td className={styles.td}>
+                                                                    <div className={styles.categoryCell}>
+                                                                        <img src={cat.image_url || '/placeholder-category.jpg'} className={styles.categoryImg} alt={cat.name} />
+                                                                        <span style={{ fontWeight: 600 }}>{cat.name}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className={styles.td}>
+                                                                    {new Date(cat.created_at).toLocaleDateString()}
+                                                                </td>
+                                                                <td className={styles.td}>
+                                                                    <div className={styles.actionBtns}>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.viewIcon}`}
+                                                                            title="View"
+                                                                            onClick={() => handleViewCategory(cat)}
+                                                                        >
+                                                                            <Eye size={16} />
+                                                                        </button>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.editIcon}`}
+                                                                            title="Edit"
+                                                                            onClick={() => handleEditCategory(cat)}
+                                                                        >
+                                                                            <Pencil size={16} />
+                                                                        </button>
+                                                                        <button
+                                                                            className={`${styles.actionIcon} ${styles.deleteIcon}`}
+                                                                            title="Delete"
+                                                                            onClick={() => handleDeleteCategory(cat.id)}
+                                                                        >
+                                                                            <Trash2 size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </motion.tr>
+                                                        ))}
+                                                    </AnimatePresence>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )
+                            )}
+                        </motion.section>
+                    )}
+                </AnimatePresence>
 
                 {/* Category Modals */}
                 <CategoryModal

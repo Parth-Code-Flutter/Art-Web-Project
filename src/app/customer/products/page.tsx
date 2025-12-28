@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import styles from './products.module.css';
@@ -24,6 +25,7 @@ export default function CustomerProducts() {
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState<SortOption>('date-new');
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
     // Close sort dropdown when clicking outside
     useEffect(() => {
@@ -101,9 +103,8 @@ export default function CustomerProducts() {
         window.dispatchEvent(new Event('cartUpdated'));
 
         // Success state feedback
-        const btn = e.currentTarget as HTMLButtonElement;
-        btn.classList.add(styles.success);
-        setTimeout(() => btn.classList.remove(styles.success), 2000);
+        setAddingToCart(product.id);
+        setTimeout(() => setAddingToCart(null), 2000);
     };
 
     return (
@@ -168,41 +169,55 @@ export default function CustomerProducts() {
                 </div>
             ) : products.length > 0 ? (
                 <div className={styles.productGrid}>
-                    {products.map((product) => (
-                        <Link href={`/customer/products/${product.id}`} key={product.id} className={styles.productCard}>
-                            <div className={styles.imageWrapper}>
-                                {product.images && product.images.length > 0 ? (
-                                    <img src={product.images[0]} alt={product.name} />
-                                ) : (
-                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', color: '#cbd5e1' }}>
-                                        <ImageIcon size={48} />
+                    <AnimatePresence mode="popLayout">
+                        {products.map((product, index) => (
+                            <motion.div
+                                key={product.id}
+                                layout
+                                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{
+                                    duration: 0.6,
+                                    delay: index * 0.05,
+                                    ease: [0.16, 1, 0.3, 1]
+                                }}
+                            >
+                                <Link href={`/customer/products/${product.id}`} className={styles.productCard}>
+                                    <div className={styles.imageWrapper}>
+                                        {product.images && product.images.length > 0 ? (
+                                            <img src={product.images[0]} alt={product.name} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', color: '#cbd5e1' }}>
+                                                <ImageIcon size={48} />
+                                            </div>
+                                        )}
+                                        <div className={styles.priceBadge}>
+                                            {formatPrice(product.discount_price || product.price)}
+                                        </div>
+                                        <div className={styles.categoryBadge}>
+                                            {product.category}
+                                        </div>
                                     </div>
-                                )}
-                                <div className={styles.priceBadge}>
-                                    {formatPrice(product.discount_price || product.price)}
-                                </div>
-                                <div className={styles.categoryBadge}>
-                                    {product.category}
-                                </div>
-                            </div>
 
-                            <div className={styles.cardBody}>
-                                <div className={styles.titleRow}>
-                                    <h3 className={styles.productName}>{product.name}</h3>
-                                    <button
-                                        className={styles.collectButton}
-                                        onClick={(e) => handleAddToCart(e, product)}
-                                    >
-                                        <ShoppingCart size={16} className={styles.cartIcon} />
-                                        <Check size={16} className={styles.tickIcon} />
-                                    </button>
-                                </div>
-                                <p className={styles.description}>
-                                    {product.description || 'No description available for this masterpiece.'}
-                                </p>
-                            </div>
-                        </Link>
-                    ))}
+                                    <div className={styles.cardBody}>
+                                        <div className={styles.titleRow}>
+                                            <h3 className={styles.productName}>{product.name}</h3>
+                                            <button
+                                                className={`${styles.collectButton} ${addingToCart === product.id ? styles.success : ''}`}
+                                                onClick={(e) => handleAddToCart(e, product)}
+                                            >
+                                                <ShoppingCart size={16} className={styles.cartIcon} />
+                                                <Check size={16} className={styles.tickIcon} />
+                                            </button>
+                                        </div>
+                                        <p className={styles.description}>
+                                            {product.description || 'No description available for this masterpiece.'}
+                                        </p>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             ) : (
                 <div className={styles.emptyState}>
