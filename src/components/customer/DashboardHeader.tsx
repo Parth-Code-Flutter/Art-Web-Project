@@ -13,7 +13,8 @@ import {
     ChevronDown,
     Palette,
     Menu,
-    X
+    X,
+    ArrowRight
 } from 'lucide-react';
 import styles from './DashboardHeader.module.css';
 
@@ -73,127 +74,118 @@ export default function DashboardHeader() {
     };
 
     return (
-        <header className={`${styles.headerContainer} ${!isHeaderVisible ? styles.hidden : ''}`}>
-            <nav className={styles.floatingNav}>
+        <header className={`${styles.header} ${!isHeaderVisible ? styles.hidden : ''} ${lastScrollY > 50 ? styles.scrolled : ''}`}>
+            <div className={styles.container}>
                 {/* Logo */}
                 <div className={styles.logo} onClick={() => router.push('/customer/dashboard')}>
-                    <div className={styles.avatar} style={{ borderRadius: '12px' }}>
-                        <Palette size={20} />
+                    <div className={styles.logoIcon}>
+                        <Palette size={24} />
                     </div>
                     <span className={styles.logoText}>ArtGallery</span>
                 </div>
 
-                {/* Navigation Links */}
-                <div className={styles.navLinks}>
-                    <Link
-                        href="/customer/products"
-                        className={`${styles.navItem} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
-                    >
-                        <ShoppingBag size={16} /> Products
-                    </Link>
-                    <Link
-                        href="/customer/categories"
-                        className={`${styles.navItem} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
-                    >
-                        <LayoutGrid size={16} /> Category
-                    </Link>
-                    <div className={styles.navItem}>
-                        <Info size={16} /> About Us
-                    </div>
-                </div>
-
-                {/* Mobile Menu Trigger */}
-                <div
-                    className={styles.mobileMenuTrigger}
-                    onClick={() => setIsMobileMenuOpen(true)}
-                >
-                    <Menu size={24} color="#0f172a" />
-                </div>
-
-                {/* Mobile Menu Overlay */}
-                <div
-                    className={`${styles.mobileOverlay} ${isMobileMenuOpen ? styles.open : ''}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                />
-
-                {/* Mobile Navigation Drawer */}
-                <div className={`${styles.mobileNav} ${isMobileMenuOpen ? styles.open : ''}`}>
-                    <div className={styles.mobileNavHeader}>
-                        <div className={styles.logo}>
-                            <div className={styles.avatar} style={{ borderRadius: '12px' }}>
-                                <Palette size={20} />
-                            </div>
-                            <span className={styles.logoText}>ArtGallery</span>
-                        </div>
-                        <div
-                            className={styles.closeBtn}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <X size={24} color="#64748b" />
-                        </div>
-                    </div>
-
-                    <div className={styles.mobileLinks}>
+                {/* Main Navigation */}
+                <nav className={styles.nav}>
+                    <div className={styles.navLinks}>
                         <Link
                             href="/customer/products"
-                            className={`${styles.mobileLink} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`${styles.navItem} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
                         >
-                            <ShoppingBag size={20} /> Products
+                            Products
                         </Link>
                         <Link
                             href="/customer/categories"
-                            className={`${styles.mobileLink} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`${styles.navItem} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
                         >
-                            <LayoutGrid size={20} /> Category
+                            Categories
                         </Link>
-                        <div className={styles.mobileLink}>
-                            <Info size={20} /> About Us
+                        <Link href="#" className={styles.navItem}>About Us</Link>
+                        <Link href="#" className={styles.navItem}>Artists</Link>
+                        <Link href="#" className={styles.navItem}>Exhibitions</Link>
+                    </div>
+                </nav>
+
+                {/* Right Section */}
+                <div className={styles.rightSection}>
+                    <div className={styles.divider} />
+
+                    {/* Profile Section */}
+                    <div className={styles.profileSection} ref={dropdownRef}>
+                        <div
+                            className={styles.profileTrigger}
+                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        >
+                            <User size={20} className={styles.userIcon} />
+                            <ChevronDown
+                                size={14}
+                                className={`${styles.chevron} ${isProfileOpen ? styles.rotate : ''}`}
+                            />
                         </div>
+
+                        {isProfileOpen && (
+                            <div className={styles.dropdown}>
+                                <div className={styles.dropdownHeader}>
+                                    <strong>My Account</strong>
+                                    <span>Manage your details</span>
+                                </div>
+                                <div className={styles.dropdownItem}>
+                                    <Settings size={16} />
+                                    <span>Settings</span>
+                                </div>
+                                <div className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>
+                                    <LogOut size={16} />
+                                    <span>Logout</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    <div className={styles.mobileFooter}>
-                        <button className={styles.mobileLogout} onClick={handleLogout}>
-                            <LogOut size={20} /> Logout
-                        </button>
-                    </div>
-                </div>
+                    <button className={styles.ctaButton} onClick={() => router.push('/customer/products')}>
+                        Get Started <ArrowRight size={16} />
+                    </button>
 
-                {/* Profile Section */}
-                <div className={styles.profileSection} ref={dropdownRef}>
-                    <div
-                        className={styles.profileTrigger}
-                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        className={styles.menuToggle}
+                        onClick={() => setIsMobileMenuOpen(true)}
                     >
-                        <div className={styles.avatar}>
-                            <User size={18} />
-                        </div>
-                        <span className={styles.userName}>My Profile</span>
-                        <ChevronDown
-                            size={16}
-                            style={{
-                                transition: 'transform 0.3s',
-                                transform: isProfileOpen ? 'rotate(180deg)' : 'none',
-                                color: '#94a3b8'
-                            }}
-                        />
-                    </div>
-
-                    {isProfileOpen && (
-                        <div className={styles.dropdown}>
-                            <div className={styles.dropdownItem}>
-                                <Settings size={16} />
-                                <span>Settings</span>
-                            </div>
-                            <div className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>
-                                <LogOut size={16} />
-                                <span>Logout</span>
-                            </div>
-                        </div>
-                    )}
+                        <Menu size={24} />
+                    </button>
                 </div>
-            </nav >
-        </header >
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className={`${styles.mobileNav} ${isMobileMenuOpen ? styles.mobileNavOpen : ''}`}>
+                <div className={styles.mobileHeader}>
+                    <div className={styles.logo}>
+                        <Palette size={24} />
+                        <span className={styles.logoText}>ArtGallery</span>
+                    </div>
+                    <button onClick={() => setIsMobileMenuOpen(false)}>
+                        <X size={24} />
+                    </button>
+                </div>
+                <div className={styles.mobileLinks}>
+                    <Link href="/customer/products" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
+                    <Link href="/customer/categories" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
+                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Artists</Link>
+                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Exhibitions</Link>
+                </div>
+                <div className={styles.mobileFooter}>
+                    <button className={styles.mobileCta} onClick={() => { setIsMobileMenuOpen(false); router.push('/customer/products'); }}>
+                        Get Started
+                    </button>
+                    <button className={styles.mobileLogout} onClick={handleLogout}>
+                        <LogOut size={18} /> Logout
+                    </button>
+                </div>
+            </div>
+
+            <div
+                className={`${styles.overlay} ${isMobileMenuOpen ? styles.overlayVisible : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+        </header>
     );
 }

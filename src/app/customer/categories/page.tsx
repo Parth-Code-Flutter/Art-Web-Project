@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Loader2, Package, ArrowRight, Layers } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import DashboardHeader from '@/components/customer/DashboardHeader';
 import styles from './categories.module.css';
 
 interface Category {
@@ -74,7 +73,6 @@ export default function CustomerCategories() {
 
     return (
         <main className={styles.container}>
-            <DashboardHeader />
 
             {loading ? (
                 <div className={styles.loadingState}>

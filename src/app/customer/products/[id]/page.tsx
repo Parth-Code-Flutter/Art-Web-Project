@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import DashboardHeader from '@/components/customer/DashboardHeader';
 import styles from './details.module.css';
 
 interface Product {
@@ -94,7 +93,6 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
     return (
         <main className={styles.container}>
-            <DashboardHeader />
 
             <div className={styles.wrapper}>
                 {/* Media Section */}

@@ -1,0 +1,241 @@
+.footer {
+    background: #0f172a;
+    color: #ffffff;
+    padding: 100px 0 30px;
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.topSection {
+    display: flex;
+    justify-content: space-between;
+    gap: 4rem;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+.brandCol {
+    flex: 1;
+    min-width: 300px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: #ffffff;
+}
+
+.logoText {
+    background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brandDesc {
+    color: #94a3b8;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+    max-width: 400px;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.socialIcon {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+}
+
+.socialIcon:hover {
+    background: #3b82f6;
+    color: #ffffff;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.linksGrid {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+}
+
+.linkCol h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #ffffff;
+    position: relative;
+    padding-bottom: 0.8rem;
+}
+
+.linkCol h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: #3b82f6;
+}
+
+.linkCol ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.linkCol ul li {
+    margin-bottom: 1.2rem;
+}
+
+.linkCol ul li a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.linkCol ul li a:hover {
+    color: #3b82f6;
+    padding-left: 5px;
+}
+
+.contactBanner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 24px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.contactIcon {
+    width: 60px;
+    height: 60px;
+    background: #3b82f61a;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+}
+
+.contactInfo span {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.contactInfo strong {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.bottomBar {
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.copyright {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.legalLinks {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.legalLinks a {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+.legalLinks a:hover {
+    color: #3b82f6;
+}
+
+@media (max-width: 1200px) {
+    .linksGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 60px 0 30px;
+    }
+
+    .topSection {
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .linksGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contactBanner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 30px;
+    }
+
+    .bottomBar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .legalLinks {
+        gap: 1.5rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .linksGrid {
+        grid-template-columns: 1fr;
+    }
+}

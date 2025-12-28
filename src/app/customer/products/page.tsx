@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import DashboardHeader from '@/components/customer/DashboardHeader';
 import styles from './products.module.css';
 
 interface Product {
@@ -93,7 +92,6 @@ export default function CustomerProducts() {
 
     return (
         <main className={styles.container}>
-            <DashboardHeader />
 
             {/* Premium Filter Bar */}
             <div className={styles.filterBar}>
