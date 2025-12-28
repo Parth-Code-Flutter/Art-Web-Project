@@ -1,6 +1,6 @@
 .container {
     min-height: 100vh;
-    padding: 10rem 2rem 4rem;
+    padding: 6.5rem 2rem 4rem;
     /* Increased top padding to clear the header */
     background-color: #ffffff;
     display: flex;
@@ -372,7 +372,7 @@
 
 @media (max-width: 768px) {
     .container {
-        padding: 6rem 1rem 2rem;
+        padding: 5.5rem 1rem 2rem;
     }
 
     .title {

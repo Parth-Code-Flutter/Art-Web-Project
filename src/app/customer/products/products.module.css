@@ -1,7 +1,7 @@
 /* Modern Editorial Gallery Theme */
 .container {
     min-height: 100vh;
-    padding: 120px 2rem 4rem;
+    padding: 90px 2rem 4rem;
     background-color: #f8fafc;
     background-image:
         radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
@@ -370,7 +370,7 @@
 /* Mobile Responsive */
 @media (max-width: 640px) {
     .container {
-        padding: 100px 1rem 2rem;
+        padding: 85px 1rem 2rem;
     }
 
     .filterBar {
