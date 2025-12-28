@@ -11,6 +11,7 @@ import {
     Truck,
     Clock
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import styles from './details.module.css';
@@ -96,7 +97,12 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
             <div className={styles.wrapper}>
                 {/* Media Section */}
-                <section className={styles.mediaSection}>
+                <motion.section
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className={styles.mediaSection}
+                >
                     <button
                         onClick={() => router.back()}
                         style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontWeight: 600, cursor: 'pointer', marginBottom: '1rem', width: 'max-content' }}
@@ -115,20 +121,27 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                     {product.images.length > 1 && (
                         <div className={styles.thumbnailGrid}>
                             {product.images.map((img, idx) => (
-                                <div
+                                <motion.div
                                     key={idx}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     className={`${styles.thumbnail} ${activeImage === idx ? styles.activeThumbnail : ''}`}
                                     onClick={() => setActiveImage(idx)}
                                 >
                                     <img src={img} alt={`${product.name} thumbnail ${idx}`} />
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     )}
-                </section>
+                </motion.section>
 
                 {/* Info Section */}
-                <section className={styles.infoSection}>
+                <motion.section
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className={styles.infoSection}
+                >
                     <div className={styles.header}>
                         <span className={styles.category}>{product.category}</span>
                         <h1 className={styles.title}>{product.name}</h1>
@@ -182,42 +195,60 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                     </div>
 
                     <div className={styles.actions}>
-                        <button className={styles.buyButton}>
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={styles.buyButton}
+                        >
                             Acquire Masterpiece <ArrowLeft size={18} style={{ transform: 'rotate(180deg)' }} />
-                        </button>
-                        <button className={styles.cartButton}>
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={styles.cartButton}
+                        >
                             Add to Private Collection
-                        </button>
+                        </motion.button>
                     </div>
-                </section>
+                </motion.section>
             </div>
 
             {/* Zoom Modal - Enhanced with Controls */}
-            {isZoomOpen && (
-                <div className={styles.zoomOverlay} onClick={() => setIsZoomOpen(false)}>
-                    <div className={styles.closeZoom}>
-                        <X size={24} />
-                    </div>
+            <AnimatePresence>
+                {isZoomOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className={styles.zoomOverlay}
+                        onClick={() => setIsZoomOpen(false)}
+                    >
+                        <div className={styles.closeZoom}>
+                            <X size={24} />
+                        </div>
 
-                    <div className={styles.zoomControls} onClick={(e) => e.stopPropagation()}>
-                        <button className={styles.zoomBtn} onClick={() => handleZoom('out')} disabled={zoomScale <= 1}>
-                            -
-                        </button>
-                        <span style={{ fontWeight: 800, minWidth: '3rem', textAlign: 'center' }}>{zoomScale * 100}%</span>
-                        <button className={styles.zoomBtn} onClick={() => handleZoom('in')} disabled={zoomScale >= 4}>
-                            +
-                        </button>
-                    </div>
+                        <div className={styles.zoomControls} onClick={(e) => e.stopPropagation()}>
+                            <button className={styles.zoomBtn} onClick={() => handleZoom('out')} disabled={zoomScale <= 1}>
+                                -
+                            </button>
+                            <span style={{ fontWeight: 800, minWidth: '3rem', textAlign: 'center' }}>{zoomScale * 100}%</span>
+                            <button className={styles.zoomBtn} onClick={() => handleZoom('in')} disabled={zoomScale >= 4}>
+                                +
+                            </button>
+                        </div>
 
-                    <img
-                        src={product.images[activeImage]}
-                        alt={product.name}
-                        className={styles.zoomedImage}
-                        style={{ transform: `scale(${zoomScale})` }}
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                </div>
-            )}
+                        <motion.img
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: zoomScale }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            src={product.images[activeImage]}
+                            alt={product.name}
+                            className={styles.zoomedImage}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }
