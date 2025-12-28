@@ -14,7 +14,8 @@ import {
     Palette,
     Menu,
     X,
-    ArrowRight
+    ArrowRight,
+    ShoppingCart
 } from 'lucide-react';
 import styles from './DashboardHeader.module.css';
 
@@ -26,13 +27,31 @@ export default function DashboardHeader() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-    // Prevent hydration mismatch
+    // Prevent hydration mismatch and load initial cart count
     useEffect(() => {
         setMounted(true);
+        updateCartCount();
+
+        const handleCartUpdate = () => updateCartCount();
+        window.addEventListener('cartUpdated', handleCartUpdate);
+        window.addEventListener('storage', handleCartUpdate);
+
+        return () => {
+            window.removeEventListener('cartUpdated', handleCartUpdate);
+            window.removeEventListener('storage', handleCartUpdate);
+        };
     }, []);
+
+    const updateCartCount = () => {
+        if (typeof window !== 'undefined') {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartCount(cart.length);
+        }
+    };
 
     // Handle scroll to show/hide header
     useEffect(() => {
@@ -107,6 +126,12 @@ export default function DashboardHeader() {
 
                 {/* Right Section */}
                 <div className={styles.rightSection}>
+                    {/* Cart Icon */}
+                    <Link href="/customer/cart" className={styles.cartBtn}>
+                        <ShoppingCart size={22} className={styles.cartIcon} />
+                        <span className={styles.cartCount}>{cartCount}</span>
+                    </Link>
+
                     <div className={styles.divider} />
 
                     {/* Profile Section */}
@@ -168,6 +193,7 @@ export default function DashboardHeader() {
                 <div className={styles.mobileLinks}>
                     <Link href="/customer/products" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
                     <Link href="/customer/categories" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
+                    <Link href="/customer/cart" onClick={() => setIsMobileMenuOpen(false)}>My Cart</Link>
                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Artists</Link>
                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Exhibitions</Link>

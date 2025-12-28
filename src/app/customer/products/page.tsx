@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import styles from './products.module.css';
 
@@ -90,6 +90,22 @@ export default function CustomerProducts() {
         }).format(price);
     };
 
+    const handleAddToCart = (e: React.MouseEvent, product: Product) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        localStorage.setItem('cart', JSON.stringify([...currentCart, { ...product, quantity: 1 }]));
+
+        // Dispatch custom event to notify header
+        window.dispatchEvent(new Event('cartUpdated'));
+
+        // Success state feedback
+        const btn = e.currentTarget as HTMLButtonElement;
+        btn.classList.add(styles.success);
+        setTimeout(() => btn.classList.remove(styles.success), 2000);
+    };
+
     return (
         <main className={styles.container}>
 
@@ -171,16 +187,19 @@ export default function CustomerProducts() {
                             </div>
 
                             <div className={styles.cardBody}>
-                                <h3 className={styles.productName}>{product.name}</h3>
+                                <div className={styles.titleRow}>
+                                    <h3 className={styles.productName}>{product.name}</h3>
+                                    <button
+                                        className={styles.collectButton}
+                                        onClick={(e) => handleAddToCart(e, product)}
+                                    >
+                                        <ShoppingCart size={16} className={styles.cartIcon} />
+                                        <Check size={16} className={styles.tickIcon} />
+                                    </button>
+                                </div>
                                 <p className={styles.description}>
                                     {product.description || 'No description available for this masterpiece.'}
                                 </p>
-
-                                <div className={styles.cardFooter}>
-                                    <span className={styles.viewButton}>
-                                        View Details <ArrowRight size={16} />
-                                    </span>
-                                </div>
                             </div>
                         </Link>
                     ))}
