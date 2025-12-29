@@ -13,11 +13,13 @@ import {
     ZoomIn,
     Check,
     Share2,
-    Heart
+    Heart,
+    Maximize2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import VirtualMockup from '@/components/customer/VirtualMockup';
 
 interface Product {
     id: string;
@@ -38,6 +40,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     const [activeImage, setActiveImage] = useState(0);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
     const [zoomScale, setZoomScale] = useState(1);
+    const [isMockupOpen, setIsMockupOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState(false);
 
     useEffect(() => {
@@ -138,8 +141,20 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                 alt={product.name}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
-                            <div className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white/70 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <ZoomIn size={20} />
+                            <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setIsZoomOpen(true); }}
+                                    className="p-2 bg-black/50 backdrop-blur-md rounded-full text-white/70 hover:text-white transition-all border border-white/10"
+                                >
+                                    <ZoomIn size={20} />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setIsMockupOpen(true); }}
+                                    className="p-2 bg-black/50 backdrop-blur-md rounded-full text-white/70 hover:text-white transition-all border border-white/10 group/mockup"
+                                    title="View In Room"
+                                >
+                                    <Maximize2 size={20} className="group-hover/mockup:scale-110 transition-transform" />
+                                </button>
                             </div>
                         </div>
 
@@ -227,6 +242,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                             <ShoppingBag size={20} /> Add to Collection
                                         </>
                                     )}
+                                </button>
+                                <button
+                                    onClick={() => setIsMockupOpen(true)}
+                                    className="flex-1 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white flex items-center justify-center gap-2 group"
+                                >
+                                    <Maximize2 size={18} className="group-hover:scale-110 transition-transform" />
+                                    View In Your Room
                                 </button>
                                 <button className="px-6 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white">
                                     Make an Offer
@@ -337,6 +359,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                     </motion.div>
                 )}
             </AnimatePresence>
+            {/* Virtual Mockup Modal */}
+            <VirtualMockup
+                isOpen={isMockupOpen}
+                onClose={() => setIsMockupOpen(false)}
+                productImage={product.images[activeImage]}
+                productName={product.name}
+            />
         </main>
     );
 }
