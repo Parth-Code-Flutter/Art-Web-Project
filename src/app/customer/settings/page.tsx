@@ -5,7 +5,10 @@ import { motion } from 'framer-motion';
 import { User, Mail, Shield, Bell, Lock, Save, Camera, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
+import { useRouter } from 'next/navigation';
+
 export default function SettingsPage() {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [formData, setFormData] = useState({
@@ -34,17 +37,23 @@ export default function SettingsPage() {
 
     const fetchUserProfile = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                setFormData({
-                    ...formData,
-                    email: user.email || '',
-                    fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
-                    bio: user.user_metadata?.bio || ''
-                });
+            const { data: { user }, error } = await supabase.auth.getUser();
+
+            if (error || !user) {
+                console.warn('User not found, redirecting to login');
+                router.push('/login');
+                return;
             }
+
+            setFormData({
+                ...formData,
+                email: user.email || '',
+                fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
+                bio: user.user_metadata?.bio || ''
+            });
         } catch (error) {
             console.error('Error fetching user:', error);
+            router.push('/login');
         } finally {
             setLoading(false);
         }
@@ -53,19 +62,30 @@ export default function SettingsPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Verify session exists before attempting update
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                throw new Error('No active session. Please log in again.');
+            }
+
             const { error } = await supabase.auth.updateUser({
                 data: {
                     full_name: formData.fullName,
                     bio: formData.bio,
-                    name: formData.fullName // redundancy for safety
+                    name: formData.fullName
                 }
             });
 
             if (error) throw error;
             setShowToast(true);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error updating profile:', error);
-            alert("Failed to update profile.");
+            if (error.message?.includes('session') || error.message?.includes('Auth session missing')) {
+                alert("Your session has expired. Please log in again.");
+                router.push('/login');
+            } else {
+                alert("Failed to update profile: " + error.message);
+            }
         } finally {
             setSaving(false);
         }
