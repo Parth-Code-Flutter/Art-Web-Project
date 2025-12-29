@@ -14,7 +14,8 @@ import {
     Check,
     Share2,
     Heart,
-    Maximize2
+    Maximize2,
+    Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -247,10 +248,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => setIsMockupOpen(true)}
-                                        className="flex-1 py-4 px-2 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white flex items-center justify-center gap-2 group text-sm md:text-base"
+                                        className="flex-[1.2] py-4 px-2 rounded-xl bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-500/30 font-bold hover:border-blue-500/60 hover:bg-blue-500/20 transition-all duration-300 text-white flex items-center justify-center gap-2 group text-sm md:text-base shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_25px_rgba(59,130,246,0.2)]"
                                     >
-                                        <Maximize2 size={18} className="group-hover:scale-110 transition-transform" />
-                                        <span className="truncate">View In Your Room</span>
+                                        <div className="relative">
+                                            <Maximize2 size={18} className="group-hover:scale-110 transition-transform text-blue-400" />
+                                            <Sparkles size={8} className="absolute -top-1 -right-1 text-blue-300 animate-pulse" />
+                                        </div>
+                                        <span className="truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-white font-black uppercase tracking-tight">View In Room</span>
                                     </button>
                                     <button className="flex-1 py-4 px-2 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white text-sm md:text-base truncate">
                                         Make an Offer
