@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, Bell, Lock, Save, Camera, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-
 import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
@@ -37,32 +36,50 @@ export default function SettingsPage() {
 
     const fetchUserProfile = async () => {
         try {
-            // Use getSession for faster, non-blocking UI load
-            // We verify the session on critical actions (like Save) separately
-            const { data: { session }, error } = await supabase.auth.getSession();
+            // 1. Try Supabase Auth first
+            const { data: { session } } = await supabase.auth.getSession();
 
-            if (error || !session?.user) {
-                console.warn('No active session found, redirecting to login.', error);
-                router.push('/login');
+            if (session?.user) {
+                const user = session.user;
+                setFormData(prev => ({
+                    ...prev,
+                    fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
+                    email: user.email || '',
+                    bio: user.user_metadata?.bio || '',
+                }));
+                setLoading(false);
                 return;
             }
 
-            const user = session.user;
+            // 2. Try Custom Local Session
+            const localUserString = localStorage.getItem('customer_user');
+            if (localUserString) {
+                const localUser = JSON.parse(localUserString);
+                // Fetch latest data from DB to be sure
+                const { data, error } = await supabase
+                    .from('customers')
+                    .select('*')
+                    .eq('id', localUser.id)
+                    .single();
 
-            setFormData({
-                fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
-                email: user.email || '',
-                bio: user.user_metadata?.bio || '',
-                notifications: {
-                    email: true,
-                    push: false,
-                    marketing: true
+                if (data && !error) {
+                    setFormData(prev => ({
+                        ...prev,
+                        fullName: data.full_name || '',
+                        email: data.email || '',
+                        bio: data.bio || '',
+                    }));
+                    setLoading(false);
+                    return;
                 }
-            });
+            }
+
+            // 3. No session found
+            console.warn('No active session found, redirecting to login.');
+            router.push('/login');
         } catch (error) {
             console.error('Error fetching user profile:', error);
-            // Don't auto-redirect here to avoid infinite loops if it's just a partial error
-            // router.push('/login'); 
+            router.push('/login');
         } finally {
             setLoading(false);
         }
@@ -71,29 +88,49 @@ export default function SettingsPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Verify session exists before attempting update
+            // 1. Try Supabase Auth Update
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                throw new Error('No active session. Please log in again.');
+            if (session) {
+                const { error } = await supabase.auth.updateUser({
+                    data: {
+                        full_name: formData.fullName,
+                        bio: formData.bio,
+                        name: formData.fullName
+                    }
+                });
+                if (error) throw error;
+                setShowToast(true);
+                return;
             }
 
-            const { error } = await supabase.auth.updateUser({
-                data: {
-                    full_name: formData.fullName,
-                    bio: formData.bio,
-                    name: formData.fullName
-                }
-            });
+            // 2. Try Custom DB Update
+            const localUserString = localStorage.getItem('customer_user');
+            if (localUserString) {
+                const localUser = JSON.parse(localUserString);
+                const { error } = await supabase
+                    .from('customers')
+                    .update({
+                        full_name: formData.fullName,
+                        bio: formData.bio
+                    })
+                    .eq('id', localUser.id);
 
-            if (error) throw error;
-            setShowToast(true);
+                if (error) throw error;
+
+                // Update local storage too
+                const updatedUser = { ...localUser, full_name: formData.fullName, bio: formData.bio };
+                localStorage.setItem('customer_user', JSON.stringify(updatedUser));
+
+                setShowToast(true);
+                return;
+            }
+
+            throw new Error('No active session. Please log in again.');
         } catch (error: any) {
             console.error('Error updating profile:', error);
-            if (error.message?.includes('session') || error.message?.includes('Auth session missing')) {
-                alert("Your session has expired. Please log in again.");
+            alert("Failed to update profile: " + error.message);
+            if (error.message.includes('No active session')) {
                 router.push('/login');
-            } else {
-                alert("Failed to update profile: " + error.message);
             }
         } finally {
             setSaving(false);
@@ -126,7 +163,7 @@ export default function SettingsPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    {/* Sidebar / Navigation (Visual only for now or functional links) */}
+                    {/* Sidebar / Navigation */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -168,12 +205,9 @@ export default function SettingsPage() {
                             {/* Avatar */}
                             <div className="flex items-center gap-6 mb-8 group cursor-pointer">
                                 <div className="relative w-24 h-24 rounded-full bg-zinc-800 border-2 border-zinc-700 overflow-hidden">
-                                    {/* Placeholder Avatar */}
                                     <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-zinc-500 bg-gradient-to-br from-zinc-800 to-black">
                                         {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : 'U'}
                                     </div>
-
-                                    {/* Overlay */}
                                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Camera className="text-white" size={24} />
                                     </div>
@@ -220,7 +254,7 @@ export default function SettingsPage() {
                                         className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-zinc-600 resize-none"
                                         placeholder="Tell us a bit about yourself..."
                                     />
-                                    <p className="text-xs text-zinc-600 text-right">0/500 characters</p>
+                                    <p className="text-xs text-zinc-600 text-right">{formData.bio.length}/500 characters</p>
                                 </div>
                             </div>
 
@@ -236,7 +270,7 @@ export default function SettingsPage() {
                             </div>
                         </motion.section>
 
-                        {/* Security Section (Compact) */}
+                        {/* Security Section */}
                         <motion.section
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

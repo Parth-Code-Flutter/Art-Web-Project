@@ -21,16 +21,22 @@ export default function BentoHero() {
 
             // 2. Fetch User
             try {
+                // Check Supabase Auth
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
-                    // Try to get name from metadata, fallback to email prefix
                     const name = user.user_metadata?.full_name ||
                         user.user_metadata?.name ||
                         user.email?.split('@')[0] ||
                         'Collector';
                     setUserName(name);
                 } else {
-                    setUserName('Collector');
+                    // Fallback to custom local session
+                    const customUser = JSON.parse(localStorage.getItem('customer_user') || 'null');
+                    if (customUser) {
+                        setUserName(customUser.full_name || 'Collector');
+                    } else {
+                        setUserName('Collector');
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching user:', error);

@@ -39,19 +39,35 @@ export default function DashboardHeader() {
         fetchUser();
 
         const handleCartUpdate = () => updateCartCount();
+        const handleLoginUpdate = () => fetchUser();
+
         window.addEventListener('cartUpdated', handleCartUpdate);
         window.addEventListener('storage', handleCartUpdate);
+        window.addEventListener('customerLogin', handleLoginUpdate);
 
         return () => {
             window.removeEventListener('cartUpdated', handleCartUpdate);
             window.removeEventListener('storage', handleCartUpdate);
+            window.removeEventListener('customerLogin', handleLoginUpdate);
         };
     }, []);
 
     const fetchUser = async () => {
+        // 1. Check Supabase Auth
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Collector');
+            return;
+        }
+
+        // 2. Fallback to Custom Local Session
+        if (typeof window !== 'undefined') {
+            const customUser = JSON.parse(localStorage.getItem('customer_user') || 'null');
+            if (customUser) {
+                setUserName(customUser.full_name || 'Collector');
+            } else {
+                setUserName('Collector');
+            }
         }
     };
 
@@ -99,6 +115,7 @@ export default function DashboardHeader() {
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
+        localStorage.removeItem('customer_user');
         router.push('/login');
     };
 

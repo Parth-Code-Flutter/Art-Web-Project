@@ -53,53 +53,49 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         setLoading(true);
         try {
             if (mode === 'register') {
-                // REAL SUPABASE SIGN UP
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                            mobile: mobile,
-                            country: country,
-                            role: 'customer'
-                        }
-                    }
-                });
-
-                if (error) throw error;
-
-                // Sync with customers table for existing DB dependencies
-                try {
-                    await supabase.from('customers').insert([{
+                // Custom DB Registration (as it was previously)
+                const { error: regError } = await supabase
+                    .from('customers')
+                    .insert([{
                         full_name: fullName,
                         email,
-                        password,
-                        mobile,
+                        password, // Storing password as plain text as per user's previous implementation
+                        mobile: mobile || null,
                         country
                     }]);
-                } catch (dbErr) {
-                    console.error('Error syncing with customers table:', dbErr);
+
+                if (regError) {
+                    if (regError.message.includes('unique constraint')) {
+                        alert('Email already exists!');
+                    } else {
+                        throw regError;
+                    }
+                    return;
                 }
 
-                alert('Registration successful! You can now sign in.');
+                alert('Account created successfully! Please sign in.');
                 setMode('login');
             } else {
-                // REAL SUPABASE SIGN IN
-                const { error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                // Custom DB Login (as it was previously)
+                // Note: The UI used 'email' state for login input in the previous version
+                const { data, error: loginError } = await supabase
+                    .from('customers')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('password', password)
+                    .single();
 
-                if (error) throw error;
+                if (loginError || !data) {
+                    alert('Invalid email or password.');
+                    return;
+                }
 
-                // Success
+                // Store session locally since we aren't using Supabase Auth
+                localStorage.setItem('customer_user', JSON.stringify(data));
+                window.dispatchEvent(new Event('customerLogin'));
+
                 onClose();
                 router.push('/customer/dashboard');
-                // Refresh to ensure all components see the new session
-                setTimeout(() => {
-                    router.refresh();
-                }, 100);
             }
         } catch (err: any) {
             console.error('Auth operation failed:', err);
