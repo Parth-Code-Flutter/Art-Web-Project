@@ -37,23 +37,32 @@ export default function SettingsPage() {
 
     const fetchUserProfile = async () => {
         try {
-            const { data: { user }, error } = await supabase.auth.getUser();
+            // Use getSession for faster, non-blocking UI load
+            // We verify the session on critical actions (like Save) separately
+            const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (error || !user) {
-                console.warn('User not found, redirecting to login');
+            if (error || !session?.user) {
+                console.warn('No active session found, redirecting to login.', error);
                 router.push('/login');
                 return;
             }
 
+            const user = session.user;
+
             setFormData({
-                ...formData,
-                email: user.email || '',
                 fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
-                bio: user.user_metadata?.bio || ''
+                email: user.email || '',
+                bio: user.user_metadata?.bio || '',
+                notifications: {
+                    email: true,
+                    push: false,
+                    marketing: true
+                }
             });
         } catch (error) {
-            console.error('Error fetching user:', error);
-            router.push('/login');
+            console.error('Error fetching user profile:', error);
+            // Don't auto-redirect here to avoid infinite loops if it's just a partial error
+            // router.push('/login'); 
         } finally {
             setLoading(false);
         }
