@@ -17,7 +17,6 @@ import {
     ArrowRight,
     ShoppingCart
 } from 'lucide-react';
-import styles from './DashboardHeader.module.css';
 
 export default function DashboardHeader() {
     const router = useRouter();
@@ -29,7 +28,6 @@ export default function DashboardHeader() {
     const [mounted, setMounted] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const mobileMenuRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch and load initial cart count
     useEffect(() => {
@@ -92,126 +90,190 @@ export default function DashboardHeader() {
         router.push('/login');
     };
 
+    const navLinks = [
+        { name: 'Products', href: '/customer/products' },
+        { name: 'Categories', href: '/customer/categories' },
+        { name: 'About Us', href: '#' },
+        { name: 'Artists', href: '#' },
+        { name: 'Exhibitions', href: '#' },
+    ];
+
     return (
-        <header className={`${styles.header} ${!isHeaderVisible ? styles.hidden : ''} ${lastScrollY > 50 ? styles.scrolled : ''}`}>
-            <div className={styles.container}>
-                {/* Logo */}
-                <div className={styles.logo} onClick={() => router.push('/customer/dashboard')}>
-                    <div className={styles.logoIcon}>
-                        <Palette size={24} />
+        <>
+            <header
+                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-transparent
+                ${!isHeaderVisible ? '-translate-y-full' : 'translate-y-0'}
+                ${lastScrollY > 20 ? 'bg-background/80 backdrop-blur-md border-white/10 shadow-lg' : 'bg-transparent'}
+            `}
+            >
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    {/* Logo */}
+                    <div
+                        className="flex items-center gap-3 cursor-pointer group"
+                        onClick={() => router.push('/customer/dashboard')}
+                    >
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
+                            <Palette size={20} />
+                        </div>
+                        <span className="text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                            ArtGallery
+                        </span>
                     </div>
-                    <span className={styles.logoText}>ArtGallery</span>
-                </div>
 
-                {/* Main Navigation */}
-                <nav className={styles.nav}>
-                    <div className={styles.navLinks}>
-                        <Link
-                            href="/customer/products"
-                            className={`${styles.navItem} ${mounted && (pathname === '/customer/products' || pathname.startsWith('/customer/products/')) ? styles.active : ''}`}
-                        >
-                            Products
+                    {/* Main Navigation */}
+                    <nav className="hidden md:flex items-center gap-8">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                className={`text-sm font-medium tracking-wide transition-colors duration-200 hover:text-white
+                                    ${mounted && (pathname === link.href || (link.href !== '#' && pathname.startsWith(link.href)))
+                                        ? 'text-white'
+                                        : 'text-zinc-400'
+                                    }
+                                `}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    {/* Right Section */}
+                    <div className="flex items-center gap-4">
+                        {/* Cart Icon */}
+                        <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
+                            <ShoppingCart size={22} strokeWidth={1.5} />
+                            {cartCount > 0 && (
+                                <span className="absolute top-0 right-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
+                                    {cartCount}
+                                </span>
+                            )}
                         </Link>
-                        <Link
-                            href="/customer/categories"
-                            className={`${styles.navItem} ${mounted && pathname === '/customer/categories' ? styles.active : ''}`}
-                        >
-                            Categories
-                        </Link>
-                        <Link href="#" className={styles.navItem}>About Us</Link>
-                        <Link href="#" className={styles.navItem}>Artists</Link>
-                        <Link href="#" className={styles.navItem}>Exhibitions</Link>
-                    </div>
-                </nav>
 
-                {/* Right Section */}
-                <div className={styles.rightSection}>
-                    {/* Cart Icon */}
-                    <Link href="/customer/cart" className={styles.cartBtn}>
-                        <ShoppingCart size={22} className={styles.cartIcon} />
-                        <span className={styles.cartCount}>{cartCount}</span>
-                    </Link>
+                        <div className="hidden md:block w-px h-8 bg-zinc-800" />
 
-                    <div className={styles.divider} />
+                        {/* Profile Section */}
+                        <div className="relative hidden md:block" ref={dropdownRef}>
+                            <button
+                                className="flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 transition-all duration-300"
+                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                            >
+                                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
+                                    <User size={14} />
+                                </div>
+                                <ChevronDown
+                                    size={14}
+                                    className={`text-zinc-500 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`}
+                                />
+                            </button>
 
-                    {/* Profile Section */}
-                    <div className={styles.profileSection} ref={dropdownRef}>
-                        <div
-                            className={styles.profileTrigger}
-                            onClick={() => setIsProfileOpen(!isProfileOpen)}
-                        >
-                            <User size={20} className={styles.userIcon} />
-                            <ChevronDown
-                                size={14}
-                                className={`${styles.chevron} ${isProfileOpen ? styles.rotate : ''}`}
-                            />
+                            {/* Dropdown */}
+                            {isProfileOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-56 p-2 rounded-2xl bg-[#111] border border-zinc-800 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="px-3 py-2 mb-2 border-b border-zinc-800/50">
+                                        <div className="text-sm font-semibold text-white">My Account</div>
+                                        <div className="text-xs text-zinc-500">Manage your details</div>
+                                    </div>
+                                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                                        <Settings size={16} />
+                                        Settings
+                                    </button>
+                                    <button
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                                        onClick={handleLogout}
+                                    >
+                                        <LogOut size={16} />
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
-                        {isProfileOpen && (
-                            <div className={styles.dropdown}>
-                                <div className={styles.dropdownHeader}>
-                                    <strong>My Account</strong>
-                                    <span>Manage your details</span>
-                                </div>
-                                <div className={styles.dropdownItem}>
-                                    <Settings size={16} />
-                                    <span>Settings</span>
-                                </div>
-                                <div className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>
-                                    <LogOut size={16} />
-                                    <span>Logout</span>
-                                </div>
-                            </div>
-                        )}
+                        {/* CTA Button */}
+                        <button
+                            className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-sm font-semibold hover:bg-zinc-200 transition-colors shadow-lg shadow-white/5"
+                            onClick={() => router.push('/customer/products')}
+                        >
+                            Get Started
+                        </button>
+
+                        {/* Mobile Menu Toggle */}
+                        <button
+                            className="md:hidden p-2 text-zinc-400 hover:text-white"
+                            onClick={() => setIsMobileMenuOpen(true)}
+                        >
+                            <Menu size={24} />
+                        </button>
                     </div>
-
-                    <button className={styles.ctaButton} onClick={() => router.push('/customer/products')}>
-                        Get Started <ArrowRight size={16} />
-                    </button>
-
-                    {/* Mobile Menu Toggle */}
-                    <button
-                        className={styles.menuToggle}
-                        onClick={() => setIsMobileMenuOpen(true)}
-                    >
-                        <Menu size={24} />
-                    </button>
                 </div>
-            </div>
+            </header>
 
-            {/* Mobile Navigation */}
-            <div className={`${styles.mobileNav} ${isMobileMenuOpen ? styles.mobileNavOpen : ''}`}>
-                <div className={styles.mobileHeader}>
-                    <div className={styles.logo}>
-                        <Palette size={24} />
-                        <span className={styles.logoText}>ArtGallery</span>
-                    </div>
-                    <button onClick={() => setIsMobileMenuOpen(false)}>
-                        <X size={24} />
-                    </button>
-                </div>
-                <div className={styles.mobileLinks}>
-                    <Link href="/customer/products" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
-                    <Link href="/customer/categories" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
-                    <Link href="/customer/cart" onClick={() => setIsMobileMenuOpen(false)}>My Cart</Link>
-                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Artists</Link>
-                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>Exhibitions</Link>
-                </div>
-                <div className={styles.mobileFooter}>
-                    <button className={styles.mobileCta} onClick={() => { setIsMobileMenuOpen(false); router.push('/customer/products'); }}>
-                        Get Started
-                    </button>
-                    <button className={styles.mobileLogout} onClick={handleLogout}>
-                        <LogOut size={18} /> Logout
-                    </button>
-                </div>
-            </div>
-
+            {/* Mobile Navigation Overlay */}
             <div
-                className={`${styles.overlay} ${isMobileMenuOpen ? styles.overlayVisible : ''}`}
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 md:hidden
+                    ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+                `}
                 onClick={() => setIsMobileMenuOpen(false)}
             />
-        </header>
+
+            {/* Mobile Navigation Drawer */}
+            <div className={`fixed inset-y-0 right-0 w-[80%] max-w-sm bg-[#0a0a0a] border-l border-zinc-800 z-50 transform transition-transform duration-300 md:hidden
+                ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
+            `}>
+                <div className="p-6 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white">
+                                <Palette size={16} />
+                            </div>
+                            <span className="text-lg font-heading font-bold text-white">ArtGallery</span>
+                        </div>
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-zinc-400 hover:text-white">
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    <div className="flex flex-col gap-2 flex-1">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`px-4 py-3 rounded-xl text-base font-medium transition-colors
+                                    ${pathname === link.href
+                                        ? 'bg-zinc-900 text-white'
+                                        : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'}
+                                `}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                        <Link
+                            href="/customer/cart"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex justify-between items-center"
+                        >
+                            My Cart
+                            {cartCount > 0 && <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
+                        </Link>
+                    </div>
+
+                    <div className="mt-8 flex flex-col gap-3">
+                        <button
+                            className="w-full py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-colors"
+                            onClick={() => { setIsMobileMenuOpen(false); router.push('/customer/products'); }}
+                        >
+                            Get Started
+                        </button>
+                        <button
+                            className="w-full py-3 rounded-xl border border-zinc-800 text-red-400 font-medium hover:bg-zinc-900 transition-colors flex items-center justify-center gap-2"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={18} /> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
