@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, Bell, Lock, Save, Camera, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -8,12 +8,16 @@ import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [profilePreview, setProfilePreview] = useState<string | null>(null);
+    const [profileFile, setProfileFile] = useState<File | null>(null);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         bio: '',
+        profile_image_url: '',
         notifications: {
             email: true,
             push: false,
@@ -46,7 +50,9 @@ export default function SettingsPage() {
                     fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
                     email: user.email || '',
                     bio: user.user_metadata?.bio || '',
+                    profile_image_url: user.user_metadata?.profile_image_url || '',
                 }));
+                setProfilePreview(user.user_metadata?.profile_image_url || null);
                 setLoading(false);
                 return;
             }
@@ -68,7 +74,9 @@ export default function SettingsPage() {
                         fullName: data.full_name || '',
                         email: data.email || '',
                         bio: data.bio || '',
+                        profile_image_url: data.profile_image_url || '',
                     }));
+                    setProfilePreview(data.profile_image_url || null);
                     setLoading(false);
                     return;
                 }
@@ -85,9 +93,43 @@ export default function SettingsPage() {
         }
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size exceeds 2MB limit.');
+                return;
+            }
+            setProfileFile(file);
+            setProfilePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSave = async () => {
         setSaving(true);
         try {
+            let currentProfileUrl = formData.profile_image_url;
+
+            // 0. Upload Image if new one selected
+            if (profileFile) {
+                const fileExt = profileFile.name.split('.').pop();
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                const filePath = `customer-profiles/${fileName}`;
+
+                // Upload to 'products' bucket as it likely already exists and has public access
+                const { error: uploadError } = await supabase.storage
+                    .from('products')
+                    .upload(filePath, profileFile);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('products')
+                    .getPublicUrl(filePath);
+
+                currentProfileUrl = publicUrl;
+            }
+
             // 1. Try Supabase Auth Update
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
@@ -95,7 +137,8 @@ export default function SettingsPage() {
                     data: {
                         full_name: formData.fullName,
                         bio: formData.bio,
-                        name: formData.fullName
+                        name: formData.fullName,
+                        profile_image_url: currentProfileUrl
                     }
                 });
                 if (error) throw error;
@@ -111,16 +154,23 @@ export default function SettingsPage() {
                     .from('customers')
                     .update({
                         full_name: formData.fullName,
-                        bio: formData.bio
+                        bio: formData.bio,
+                        profile_image_url: currentProfileUrl
                     })
                     .eq('id', localUser.id);
 
                 if (error) throw error;
 
                 // Update local storage too
-                const updatedUser = { ...localUser, full_name: formData.fullName, bio: formData.bio };
+                const updatedUser = {
+                    ...localUser,
+                    full_name: formData.fullName,
+                    bio: formData.bio,
+                    profile_image_url: currentProfileUrl
+                };
                 localStorage.setItem('customer_user', JSON.stringify(updatedUser));
 
+                setFormData(prev => ({ ...prev, profile_image_url: currentProfileUrl }));
                 setShowToast(true);
                 return;
             }
@@ -128,8 +178,9 @@ export default function SettingsPage() {
             throw new Error('No active session. Please log in again.');
         } catch (error: any) {
             console.error('Error updating profile:', error);
-            alert("Failed to update profile: " + error.message);
-            if (error.message.includes('No active session')) {
+            const errMsg = error?.message || 'An unknown error occurred';
+            alert("Failed to update profile: " + errMsg);
+            if (errMsg.toLowerCase().includes('session')) {
                 router.push('/login');
             }
         } finally {
@@ -203,11 +254,28 @@ export default function SettingsPage() {
                             </div>
 
                             {/* Avatar */}
-                            <div className="flex items-center gap-6 mb-8 group cursor-pointer">
+                            <div className="flex items-center gap-6 mb-8 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
                                 <div className="relative w-24 h-24 rounded-full bg-zinc-800 border-2 border-zinc-700 overflow-hidden">
-                                    <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-zinc-500 bg-gradient-to-br from-zinc-800 to-black">
-                                        {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : 'U'}
-                                    </div>
+                                    {profilePreview ? (
+                                        <img
+                                            src={profilePreview}
+                                            alt="Profile"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-zinc-500 bg-gradient-to-br from-zinc-800 to-black">
+                                            {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : 'U'}
+                                        </div>
+                                    )}
+
+                                    {/* Overlay */}
                                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Camera className="text-white" size={24} />
                                     </div>
@@ -215,7 +283,16 @@ export default function SettingsPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg">Profile Photo</h3>
                                     <p className="text-sm text-zinc-500 mb-2">Recommended 400x400px.</p>
-                                    <button className="text-xs font-bold text-blue-400 hover:text-blue-300">Change Photo</button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            fileInputRef.current?.click();
+                                        }}
+                                        className="text-xs font-bold text-blue-400 hover:text-blue-300"
+                                    >
+                                        Change Photo
+                                    </button>
                                 </div>
                             </div>
 
@@ -270,7 +347,7 @@ export default function SettingsPage() {
                             </div>
                         </motion.section>
 
-                        {/* Security Section */}
+                        {/* Security Section (Compact) */}
                         <motion.section
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

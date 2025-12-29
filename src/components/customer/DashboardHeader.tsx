@@ -30,6 +30,7 @@ export default function DashboardHeader() {
     const [mounted, setMounted] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [userName, setUserName] = useState<string>('Collector');
+    const [userProfileUrl, setUserProfileUrl] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch and load initial cart count
@@ -57,6 +58,7 @@ export default function DashboardHeader() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Collector');
+            setUserProfileUrl(user.user_metadata?.profile_image_url || null);
             return;
         }
 
@@ -65,8 +67,10 @@ export default function DashboardHeader() {
             const customUser = JSON.parse(localStorage.getItem('customer_user') || 'null');
             if (customUser) {
                 setUserName(customUser.full_name || 'Collector');
+                setUserProfileUrl(customUser.profile_image_url || null);
             } else {
                 setUserName('Collector');
+                setUserProfileUrl(null);
             }
         }
     };
@@ -187,8 +191,12 @@ export default function DashboardHeader() {
                                 className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-800 border-zinc-700' : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700'}`}
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                             >
-                                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
-                                    <User size={14} />
+                                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 overflow-hidden">
+                                    {mounted && userProfileUrl ? (
+                                        <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User size={14} />
+                                    )}
                                 </div>
                                 <span className="text-xs font-semibold text-zinc-300">
                                     {mounted ? userName : '...'}
