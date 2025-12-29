@@ -29,11 +29,11 @@ export default function BentoHero() {
                         </div>
                         <h1 className="text-4xl md:text-5xl font-heading font-medium tracking-tight text-white leading-tight">
                             Good Morning, <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 font-bold">Alexandra.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 font-bold">Isabella Chen.</span>
                         </h1>
                     </div>
                     <p className="text-zinc-400 max-w-sm mt-4">
-                        Explore the latest additions to your curated collection. Key pieces are selling fast today.
+                        Your reserved preview of the <span className="text-white font-medium">"Neon Horizons"</span> collection expires in 4 hours.
                     </p>
                 </motion.div>
 
@@ -45,14 +45,15 @@ export default function BentoHero() {
                     className={`${itemClasses} md:col-span-1`}
                 >
                     <div className={badgeClasses}>
-                        <ShoppingBag size={12} /> My Collection
+                        <ShoppingBag size={12} /> My Activity
                     </div>
                     <div>
-                        <h3 className="text-zinc-400 font-medium">Live Auctions</h3>
-                        <div className="text-4xl font-heading font-bold text-white mt-2">12</div>
+                        <h3 className="text-zinc-400 font-medium">Active Bids</h3>
+                        <div className="text-4xl font-heading font-bold text-white mt-2">3</div>
+                        <p className="text-xs text-green-400 mt-1 font-medium">● Highest Bidder on 2</p>
                     </div>
                     <button className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors mt-auto group-hover:translate-x-1 duration-300">
-                        Track Orders <ArrowRight size={14} />
+                        View Bids <ArrowRight size={14} />
                     </button>
                 </motion.div>
 
@@ -95,16 +96,16 @@ export default function BentoHero() {
                     className={`${itemClasses} md:col-span-2 lg:col-span-1 bg-gradient-to-br from-indigo-900/20 to-purple-900/20`}
                 >
                     <div className={badgeClasses}>
-                        <LayoutGrid size={12} /> Explore
+                        <LayoutGrid size={12} /> Curated
                     </div>
                     <div>
-                        <h3 className="text-xl font-bold text-white mb-2">Trending: Abstract</h3>
+                        <h3 className="text-xl font-bold text-white mb-2">Modern Abstract</h3>
                         <p className="text-sm text-zinc-400 leading-relaxed">
-                            Discover over 2,400 abstract works from world-class artists. The collection is growing daily.
+                            "Chaos in Order" — A curated selection of 2,400+ works challenging traditional boundaries.
                         </p>
                     </div>
                     <button className="flex items-center justify-between w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-colors mt-4">
-                        <span className="text-sm font-medium text-white">Explore All</span>
+                        <span className="text-sm font-medium text-white">Start Exploring</span>
                         <ArrowRight size={16} className="text-white/60" />
                     </button>
                 </motion.div>
@@ -121,12 +122,12 @@ export default function BentoHero() {
                             <div className={badgeClasses}>
                                 <Users size={12} /> Community
                             </div>
-                            <h3 className="text-xl font-bold text-white">Following</h3>
+                            <h3 className="text-xl font-bold text-white">Artists You Follow</h3>
                         </div>
                         <div className="flex -space-x-3">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-[#0a0a0a] flex items-center justify-center text-xs text-zinc-500">
-                                    U{i}
+                            {['JD', 'AS', 'MK'].map((initial, i) => (
+                                <div key={i} className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-[#0a0a0a] flex items-center justify-center text-xs text-zinc-300 font-medium tracking-wider">
+                                    {initial}
                                 </div>
                             ))}
                             <div className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-[#0a0a0a] flex items-center justify-center text-xs text-white font-medium">
@@ -138,7 +139,7 @@ export default function BentoHero() {
                     <div className="mt-auto">
                         <div className="text-4xl font-heading font-bold text-white">48</div>
                         <p className="text-sm text-zinc-500 mt-1">
-                            3 artists posted new work today. Don't miss out.
+                            <span className="text-white font-medium">Sarah Jenkins</span> and 2 others posted new work today.
                         </p>
                     </div>
                 </motion.div>
