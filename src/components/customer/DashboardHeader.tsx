@@ -18,6 +18,7 @@ import {
     ArrowRight,
     ShoppingCart
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function DashboardHeader() {
     const router = useRouter();
@@ -28,12 +29,14 @@ export default function DashboardHeader() {
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    const [userName, setUserName] = useState<string>('Collector');
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch and load initial cart count
     useEffect(() => {
         setMounted(true);
         updateCartCount();
+        fetchUser();
 
         const handleCartUpdate = () => updateCartCount();
         window.addEventListener('cartUpdated', handleCartUpdate);
@@ -44,6 +47,13 @@ export default function DashboardHeader() {
             window.removeEventListener('storage', handleCartUpdate);
         };
     }, []);
+
+    const fetchUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Collector');
+        }
+    };
 
     const updateCartCount = () => {
         if (typeof window !== 'undefined') {
@@ -87,8 +97,8 @@ export default function DashboardHeader() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleLogout = () => {
-        // Clear session logic here later
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
         router.push('/login');
     };
 
@@ -163,6 +173,9 @@ export default function DashboardHeader() {
                                 <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
                                     <User size={14} />
                                 </div>
+                                <span className="text-xs font-semibold text-zinc-300">
+                                    {mounted ? userName : '...'}
+                                </span>
                                 <ChevronDown
                                     size={14}
                                     className={`text-zinc-500 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`}

@@ -2,21 +2,15 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { X, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, Globe } from 'lucide-react';
-import styles from './CustomerAuth.module.css';
+import { X, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, Globe, Loader2, Sparkles } from 'lucide-react';
 
 interface CustomerAuthProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
-/**
- * CustomerAuth Component
- * 
- * Provides a premium Login/Registration interface for customers.
- * Theme: White (Primary) & Light Blue (Secondary).
- */
 export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
     const router = useRouter();
     const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -26,40 +20,16 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [mobile, setMobile] = useState('');
     const [country, setCountry] = useState('IN');
-    const [profileImage, setProfileImage] = useState<File | null>(null);
-    const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
-    // Visibility states
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    if (!isOpen) return null;
 
     const toggleMode = () => {
         setMode(mode === 'login' ? 'register' : 'login');
-        // Reset fields when toggling
         setEmail('');
         setFullName('');
         setPassword('');
         setConfirmPassword('');
         setMobile('');
-        setProfileImage(null);
-        setProfilePreview(null);
-        setShowPassword(false);
-        setShowConfirmPassword(false);
-    };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Image size exceeds 2MB limit.');
-                return;
-            }
-            setProfileImage(file);
-            setProfilePreview(URL.createObjectURL(file));
-        }
     };
 
     const validateForm = () => {
@@ -68,8 +38,8 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
                 alert('Passwords do not match!');
                 return false;
             }
-            if (mobile && !/^\d{10,15}$/.test(mobile)) {
-                alert('Please enter a valid mobile number (10-15 digits).');
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters.');
                 return false;
             }
         }
@@ -83,66 +53,53 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         setLoading(true);
         try {
             if (mode === 'register') {
-                // REGISTRATION LOGIC
-                let profileImageUrl = null;
+                // REAL SUPABASE SIGN UP
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: fullName,
+                            mobile: mobile,
+                            country: country,
+                            role: 'customer'
+                        }
+                    }
+                });
 
-                // 1. Upload Profile Image if selected
-                if (profileImage) {
-                    const fileExt = profileImage.name.split('.').pop();
-                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-                    const filePath = `customer-profiles/${fileName}`;
+                if (error) throw error;
 
-                    const { error: uploadError } = await supabase.storage
-                        .from('products')
-                        .upload(filePath, profileImage);
-
-                    if (uploadError) throw uploadError;
-
-                    const { data: { publicUrl } } = supabase.storage
-                        .from('products')
-                        .getPublicUrl(filePath);
-
-                    profileImageUrl = publicUrl;
-                }
-
-                const { error: regError } = await supabase
-                    .from('customers')
-                    .insert([{
+                // Sync with customers table for existing DB dependencies
+                try {
+                    await supabase.from('customers').insert([{
                         full_name: fullName,
                         email,
                         password,
-                        mobile: mobile || null,
-                        country,
-                        profile_image_url: profileImageUrl
+                        mobile,
+                        country
                     }]);
-
-                if (regError) {
-                    if (regError.message.includes('unique constraint')) {
-                        alert('Email or Mobile number already exists!');
-                    } else {
-                        throw regError;
-                    }
-                    return;
+                } catch (dbErr) {
+                    console.error('Error syncing with customers table:', dbErr);
                 }
 
-                alert('Account created successfully! Please sign in.');
+                alert('Registration successful! You can now sign in.');
                 setMode('login');
             } else {
-                // LOGIN LOGIC
-                const { data, error: loginError } = await supabase
-                    .from('customers')
-                    .select('*')
-                    .eq('email', fullName)
-                    .eq('password', password)
-                    .single();
+                // REAL SUPABASE SIGN IN
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
 
-                if (loginError || !data) {
-                    alert('Invalid email or password.');
-                    return;
-                }
+                if (error) throw error;
 
-                // Navigate to Customer Dashboard
+                // Success
+                onClose();
                 router.push('/customer/dashboard');
+                // Refresh to ensure all components see the new session
+                setTimeout(() => {
+                    router.refresh();
+                }, 100);
             }
         } catch (err: any) {
             console.error('Auth operation failed:', err);
@@ -153,197 +110,187 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
     };
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <button className={styles.closeBtn} onClick={onClose}>
-                    <X size={24} />
-                </button>
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                    />
 
-                <div className={styles.header}>
-                    <h1 className={styles.title}>
-                        {mode === 'login' ? 'Welcome Back' : 'Join the Gallery'}
-                    </h1>
-                    <p className={styles.subtitle}>
-                        {mode === 'login'
-                            ? 'Sign in to explore your curated art collection.'
-                            : 'Create an account to start your artistic journey.'}
-                    </p>
-                </div>
+                    {/* Modal */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className="relative w-full max-w-lg bg-zinc-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+                    >
+                        {/* Close Button */}
+                        <button
+                            onClick={onClose}
+                            className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/5 text-zinc-500 hover:text-white transition-colors z-10"
+                        >
+                            <X size={24} />
+                        </button>
 
-                <form className={styles.form} onSubmit={handleSubmit}>
-                    {mode === 'register' && (
-                        <div className={styles.profileUpload}>
-                            <div className={styles.profilePreview}>
-                                {profilePreview ? (
-                                    <img src={profilePreview} alt="Profile Preview" />
-                                ) : (
-                                    <User size={48} />
-                                )}
-                            </div>
-                            <input
-                                type="file"
-                                id="profileImg"
-                                accept="image/*"
-                                style={{ display: 'none' }}
-                                onChange={handleImageChange}
-                            />
-                            <button
-                                type="button"
-                                className={styles.uploadTrigger}
-                                onClick={() => document.getElementById('profileImg')?.click()}
-                            >
-                                {profilePreview ? 'Change Photo' : 'Upload Photo (Optional)'}
-                            </button>
-                        </div>
-                    )}
-
-                    <div className={styles.inputGroup} style={{ '--idx': 1 } as React.CSSProperties}>
-                        <label className={styles.label}>
-                            {mode === 'login' ? 'Email or Username' : 'Full Name'}
-                        </label>
-                        <div className={styles.inputWrapper}>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                placeholder={mode === 'login' ? 'john@example.com' : 'John Doe'}
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                required
-                            />
-                            <div className={styles.icon}>
-                                {mode === 'login' ? <Mail size={18} /> : <User size={18} />}
-                            </div>
-                        </div>
-                    </div>
-
-                    {mode === 'register' && (
-                        <>
-                            <div className={styles.inputGroup} style={{ '--idx': 2 } as React.CSSProperties}>
-                                <label className={styles.label}>Email Address</label>
-                                <div className={styles.inputWrapper}>
-                                    <input
-                                        type="email"
-                                        className={styles.input}
-                                        placeholder="john@example.com"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                    />
-                                    <div className={styles.icon}>
-                                        <Mail size={18} />
-                                    </div>
+                        <div className="p-8 md:p-12">
+                            {/* Header */}
+                            <div className="text-center mb-10">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold tracking-wider uppercase mb-4">
+                                    <Sparkles size={14} /> {mode === 'login' ? 'Welcome Back' : 'Create Account'}
                                 </div>
+                                <h2 className="text-3xl font-heading font-bold text-white mb-2">
+                                    {mode === 'login' ? 'Signed in for Art' : 'Join the Elite Gallery'}
+                                </h2>
+                                <p className="text-zinc-400 text-sm">
+                                    {mode === 'login'
+                                        ? 'Access your curated collection and private bids.'
+                                        : 'Experience art ownership like never before.'}
+                                </p>
                             </div>
 
-                            <div className={styles.inputGroup} style={{ '--idx': 3 } as React.CSSProperties}>
-                                <label className={styles.label}>Country & Mobile (Optional)</label>
-                                <div className={styles.phoneRow}>
-                                    <div className={styles.inputWrapper}>
-                                        <select
-                                            className={styles.select}
-                                            value={country}
-                                            onChange={(e) => setCountry(e.target.value)}
-                                        >
-                                            <option value="IN">India (+91)</option>
-                                            <option value="US">USA (+1)</option>
-                                            <option value="GB">UK (+44)</option>
-                                            <option value="AE">UAE (+971)</option>
-                                            <option value="AU">AUS (+61)</option>
-                                        </select>
-                                    </div>
-                                    <div className={styles.inputWrapper}>
-                                        <input
-                                            type="tel"
-                                            className={styles.input}
-                                            placeholder="9876543210"
-                                            value={mobile}
-                                            onChange={(e) => setMobile(e.target.value)}
-                                        />
-                                        <div className={styles.icon}>
-                                            <Phone size={18} />
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                {mode === 'register' && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Full Name</label>
+                                        <div className="relative">
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                            <input
+                                                type="text"
+                                                value={fullName}
+                                                onChange={(e) => setFullName(e.target.value)}
+                                                className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700"
+                                                placeholder="John Doe"
+                                                required
+                                            />
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </>
-                    )}
+                                )}
 
-                    <div className={styles.inputGroup} style={{ '--idx': 4 } as React.CSSProperties}>
-                        <label className={styles.label}>Password</label>
-                        <div className={styles.inputWrapper}>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                className={styles.input}
-                                style={{ paddingRight: '3.5rem' }}
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                            <div className={styles.icon}>
-                                <Lock size={18} />
-                            </div>
-                            <button
-                                type="button"
-                                className={styles.visibilityBtn}
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {mode === 'register' && (
-                        <div className={styles.inputGroup} style={{ '--idx': 5 } as React.CSSProperties}>
-                            <label className={styles.label}>Confirm Password</label>
-                            <div className={styles.inputWrapper}>
-                                <input
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    className={styles.input}
-                                    style={{ paddingRight: '3.5rem' }}
-                                    placeholder="••••••••"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
-                                <div className={styles.icon}>
-                                    <Lock size={18} />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Email Address</label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700"
+                                            placeholder="collector@example.com"
+                                            required
+                                        />
+                                    </div>
                                 </div>
+
+                                {mode === 'register' && (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Country</label>
+                                            <div className="relative">
+                                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                                <select
+                                                    value={country}
+                                                    onChange={(e) => setCountry(e.target.value)}
+                                                    className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all appearance-none"
+                                                >
+                                                    <option value="IN">India</option>
+                                                    <option value="US">USA</option>
+                                                    <option value="GB">UK</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Mobile</label>
+                                            <div className="relative">
+                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                                <input
+                                                    type="tel"
+                                                    value={mobile}
+                                                    onChange={(e) => setMobile(e.target.value)}
+                                                    className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700"
+                                                    placeholder="987..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Password</label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-12 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700"
+                                            placeholder="••••••••"
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {mode === 'register' && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold text-zinc-500 uppercase ml-1">Confirm Password</label>
+                                        <div className="relative">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                                            <input
+                                                type="password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                className="w-full bg-black/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700"
+                                                placeholder="••••••••"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
                                 <button
-                                    type="button"
-                                    className={styles.visibilityBtn}
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 mt-6 shadow-xl shadow-white/5 group"
                                 >
-                                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    {loading ? (
+                                        <Loader2 size={20} className="animate-spin" />
+                                    ) : (
+                                        <>
+                                            {mode === 'login' ? 'Enter Gallery' : 'Create My Account'}
+                                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
                                 </button>
+                            </form>
+
+                            <div className="mt-8 text-center text-sm text-zinc-500">
+                                {mode === 'login' ? (
+                                    <p>
+                                        Don't have an account?{' '}
+                                        <button onClick={toggleMode} className="text-white font-bold hover:underline">Register now</button>
+                                    </p>
+                                ) : (
+                                    <p>
+                                        Already a member?{' '}
+                                        <button onClick={toggleMode} className="text-white font-bold hover:underline">Sign in here</button>
+                                    </p>
+                                )}
                             </div>
                         </div>
-                    )}
-
-                    <button type="submit" className={styles.submitBtn} disabled={loading}>
-                        {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
-                        {!loading && <ArrowRight size={22} />}
-                    </button>
-                </form>
-
-                <div className={styles.footer}>
-                    {mode === 'login' ? (
-                        <>
-                            New to ArtGallery?
-                            <button className={styles.toggleBtn} onClick={toggleMode}>
-                                Create an account
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            Already have an account?
-                            <button className={styles.toggleBtn} onClick={toggleMode}>
-                                Sign in
-                            </button>
-                        </>
-                    )}
+                    </motion.div>
                 </div>
-            </div>
-        </div>
+            )}
+        </AnimatePresence>
     );
 }
