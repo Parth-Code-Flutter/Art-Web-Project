@@ -222,11 +222,11 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                 )}
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex flex-col gap-4">
                                 <button
                                     onClick={addToCart}
                                     disabled={addingToCart}
-                                    className={`flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95
+                                    className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95
                                         ${addingToCart
                                             ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                                             : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5 hover:translate-y-[-2px]'
@@ -243,16 +243,19 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                         </>
                                     )}
                                 </button>
-                                <button
-                                    onClick={() => setIsMockupOpen(true)}
-                                    className="flex-1 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white flex items-center justify-center gap-2 group"
-                                >
-                                    <Maximize2 size={18} className="group-hover:scale-110 transition-transform" />
-                                    View In Your Room
-                                </button>
-                                <button className="px-6 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white">
-                                    Make an Offer
-                                </button>
+
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setIsMockupOpen(true)}
+                                        className="flex-1 py-4 px-2 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white flex items-center justify-center gap-2 group text-sm md:text-base"
+                                    >
+                                        <Maximize2 size={18} className="group-hover:scale-110 transition-transform" />
+                                        <span className="truncate">View In Your Room</span>
+                                    </button>
+                                    <button className="flex-1 py-4 px-2 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white text-sm md:text-base truncate">
+                                        Make an Offer
+                                    </button>
+                                </div>
                             </div>
                             <p className="text-center text-xs text-zinc-500 mt-4">
                                 Free reliable shipping and 7-day returns included.
