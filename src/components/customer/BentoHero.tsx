@@ -1,11 +1,48 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, Sparkles, ShoppingBag, LayoutGrid, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
 
 export default function BentoHero() {
+    const [userName, setUserName] = useState<string>('');
+    const [greeting, setGreeting] = useState<string>('Good Morning');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const init = async () => {
+            // 1. Set Time-based Greeting
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) setGreeting('Good Morning');
+            else if (hour >= 12 && hour < 18) setGreeting('Good Afternoon');
+            else setGreeting('Good Evening');
+
+            // 2. Fetch User
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    // Try to get name from metadata, fallback to email prefix
+                    const name = user.user_metadata?.full_name ||
+                        user.user_metadata?.name ||
+                        user.email?.split('@')[0] ||
+                        'Collector';
+                    setUserName(name);
+                } else {
+                    setUserName('Collector');
+                }
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                setUserName('Collector');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        init();
+    }, []);
+
     const itemClasses = "relative overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 backdrop-blur-md p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:border-white/10 hover:bg-zinc-900/60 shadow-xl group";
     const badgeClasses = "w-fit flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-zinc-300 border border-white/5 mb-4 group-hover:bg-white/10 transition-colors";
 
@@ -28,8 +65,10 @@ export default function BentoHero() {
                             <span>Exclusive Early Access</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-heading font-medium tracking-tight text-white leading-tight">
-                            Good Morning, <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 font-bold">Isabella Chen.</span>
+                            {greeting}, <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 font-bold capitalize">
+                                {loading ? '...' : userName}.
+                            </span>
                         </h1>
                     </div>
                     <p className="text-zinc-400 max-w-sm mt-4">
