@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Package, ArrowRight, Layers } from 'lucide-react';
+import { Loader2, Package, ArrowRight, Layers, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import styles from './categories.module.css';
 
 interface Category {
     id: string;
@@ -73,74 +72,96 @@ export default function CustomerCategories() {
     };
 
     return (
-        <main className={styles.container}>
+        <main className="min-h-screen bg-black text-white pt-24 pb-20 px-6 md:px-12">
 
             {loading ? (
-                <div className={styles.loadingState}>
-                    <Loader2 className="animate-spin" size={40} />
-                    <p>Loading categories...</p>
+                <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">
+                    <Loader2 className="animate-spin text-blue-500 mb-4" size={48} />
+                    <p className="font-medium tracking-wide">Curating collections...</p>
                 </div>
             ) : categories.length > 0 ? (
-                <>
+                <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={styles.pageHeader}
+                        className="text-center mb-16"
                     >
-                        <h1 className={styles.title}>Curated Collections</h1>
-                        <p className={styles.subtitle}>Explore the finest works across every medium and style</p>
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
+                            <Sparkles size={14} />
+                            <span>Discover by Genre</span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 tracking-tight">
+                            Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">Collections</span>
+                        </h1>
+                        <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                            Explore the finest works across every medium and style, hand-picked for the modern collector.
+                        </p>
                     </motion.div>
 
-                    <div className={styles.categoryGrid}>
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
                         <AnimatePresence>
                             {categories.map((category, index) => (
                                 <motion.div
                                     key={category.id}
-                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    initial={{ opacity: 0, scale: 0.9, y: 50 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                    className="break-inside-avoid"
                                 >
                                     <Link
                                         href={`/customer/products?category=${encodeURIComponent(category.name)}`}
-                                        className={styles.categoryCard}
+                                        className="group block relative bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden hover:bg-zinc-900/60 hover:border-white/20 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 shadow-2xl"
                                     >
                                         {/* Category Image/Icon */}
-                                        <div className={styles.cardImage}>
+                                        <div className="relative aspect-[4/3] w-full bg-zinc-800/50 overflow-hidden">
                                             {category.sample_images && category.sample_images.length > 0 ? (
-                                                <div className={`${styles.imageCollage} ${styles[`grid${category.sample_images.length}`]}`}>
+                                                <div className={`grid h-full w-full ${category.sample_images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-0.5 bg-black`}>
                                                     {category.sample_images.map((img, idx) => (
-                                                        <div key={idx} className={styles.collageItem}>
-                                                            <img src={img} alt={`${category.name} ${idx + 1}`} />
+                                                        <div key={idx} className="relative overflow-hidden w-full h-full">
+                                                            <img
+                                                                src={img}
+                                                                alt={`${category.name} ${idx + 1}`}
+                                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                                            />
                                                         </div>
                                                     ))}
                                                 </div>
                                             ) : category.image ? (
-                                                <img src={category.image} alt={category.name} className={styles.fullImage} />
+                                                <img
+                                                    src={category.image}
+                                                    alt={category.name}
+                                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                                />
                                             ) : (
-                                                <div className={styles.placeholderIcon}>
-                                                    <Package size={48} />
+                                                <div className="flex items-center justify-center w-full h-full text-zinc-700">
+                                                    <Package size={64} strokeWidth={1} />
                                                 </div>
                                             )}
-                                            <div className={styles.gradientOverlay} />
-                                        </div>
 
-                                        {/* Category Info */}
-                                        <div className={styles.cardContent}>
-                                            <div className={styles.cardHeader}>
-                                                <h3 className={styles.categoryName}>{category.name}</h3>
-                                                <div className={styles.countBadge}>
-                                                    <span className={styles.count}>{category.product_count}</span>
-                                                    <span className={styles.countLabel}>items</span>
+                                            {/* Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+
+                                            {/* Content Overlay */}
+                                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                                <div className="transform transition-transform duration-500 group-hover:translate-y-[-8px]">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-white text-3xl font-heading font-bold">{category.name}</span>
+                                                        <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-bold text-white">
+                                                            {category.product_count} works
+                                                        </span>
+                                                    </div>
+                                                    {category.description && (
+                                                        <p className="text-zinc-300 text-sm line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                                            {category.description}
+                                                        </p>
+                                                    )}
                                                 </div>
-                                            </div>
 
-                                            {category.description && (
-                                                <p className={styles.description}>{category.description}</p>
-                                            )}
-
-                                            <div className={styles.exploreButton}>
-                                                <span>Explore</span>
-                                                <ArrowRight size={16} />
+                                                <div className="absolute bottom-8 right-8 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                                    <div className="p-3 rounded-full bg-white text-black hover:bg-zinc-200 transition-colors shadow-lg">
+                                                        <ArrowRight size={20} />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </Link>
@@ -148,11 +169,11 @@ export default function CustomerCategories() {
                             ))}
                         </AnimatePresence>
                     </div>
-                </>
+                </div>
             ) : (
-                <div className={styles.emptyState}>
-                    <Layers size={64} style={{ opacity: 0.2 }} />
-                    <h3>No Categories Found</h3>
+                <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-600">
+                    <Layers size={64} strokeWidth={1} className="mb-4 opacity-50" />
+                    <h3 className="text-2xl font-bold text-white mb-2">No Categories Found</h3>
                     <p>Categories will appear here once they are created.</p>
                 </div>
             )}
