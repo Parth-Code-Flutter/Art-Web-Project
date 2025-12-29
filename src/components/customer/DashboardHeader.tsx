@@ -184,7 +184,10 @@ export default function DashboardHeader() {
                                             <div className="text-xs text-zinc-500 mt-1">Manage your details</div>
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left">
+                                            <button
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left"
+                                                onClick={() => { setIsProfileOpen(false); router.push('/customer/settings'); }}
+                                            >
                                                 <Settings size={16} />
                                                 Settings
                                             </button>
