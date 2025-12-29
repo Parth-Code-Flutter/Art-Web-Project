@@ -11,14 +11,18 @@ import {
     ChevronRight,
     Eye,
     Pencil,
-    Trash2
+    Trash2,
+    LayoutDashboard,
+    Search,
+    Monitor,
+    Zap,
+    Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import EmptyStateGraphic from '@/components/admin/EmptyStateGraphic';
 import CategoryModal from '@/components/admin/CategoryModal';
 import ProductModal from '@/components/admin/ProductModal';
-import styles from './admin.module.css';
 
 interface Product {
     id: string;
@@ -38,21 +42,13 @@ interface Category {
     created_at: string;
 }
 
-/**
- * Admin Dashboard - Premium Redesign & Full CRUD
- * 
- * Objectives:
- * - Proper Sidebar-based Layout
- * - Category CRUD (Create, Read, Update, Delete)
- * - Product Management (CRUD via Modal)
- * - Currency: ₹ (Rupee)
- */
 export default function AdminDashboard() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Modal States
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -151,66 +147,114 @@ export default function AdminDashboard() {
         }
     };
 
+    const filteredItems = activeTab === 'products'
+        ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category?.toLowerCase().includes(searchQuery.toLowerCase()))
+        : categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return (
-        <div className={styles.wrapper}>
-            {/* Sidebar Navigation */}
-            <aside className={styles.sidebar}>
-                <div className={styles.logo}>ArtGallery Admin</div>
+        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-blue-500/30">
 
-                <nav className={styles.nav}>
-                    <div
-                        className={`${styles.navItem} ${activeTab === 'products' ? styles.activeNavItem : ''}`}
+            {/* Sidebar */}
+            <aside className="w-64 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col fixed inset-y-0 z-50">
+                <div className="p-8">
+                    <div className="flex items-center gap-3 group cursor-pointer">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
+                            <Monitor className="text-white" size={20} />
+                        </div>
+                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-500 tracking-tight">
+                            Quantum
+                        </span>
+                    </div>
+                </div>
+
+                <nav className="flex-1 px-4 space-y-2 mt-4">
+                    <button
                         onClick={() => setActiveTab('products')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'products' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
-                        <ShoppingBag size={20} />
-                        <span>Products</span>
-                    </div>
+                        <div className={`p-2 rounded-lg transition-colors ${activeTab === 'products' ? 'bg-blue-500/20 text-blue-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
+                            <ShoppingBag size={18} />
+                        </div>
+                        <span className="font-medium">Masterpieces</span>
+                    </button>
 
-                    <div
-                        className={`${styles.navItem} ${activeTab === 'categories' ? styles.activeNavItem : ''}`}
+                    <button
                         onClick={() => setActiveTab('categories')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'categories' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
-                        <Layers size={20} />
-                        <span>Categories</span>
-                    </div>
+                        <div className={`p-2 rounded-lg transition-colors ${activeTab === 'categories' ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
+                            <Layers size={18} />
+                        </div>
+                        <span className="font-medium">Collections</span>
+                    </button>
 
-                    <div className={styles.navItem}>
-                        <Settings size={20} />
-                        <span>Settings</span>
-                    </div>
+                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-300 group">
+                        <div className="p-2 rounded-lg bg-zinc-900 group-hover:bg-zinc-800 transition-colors">
+                            <Settings size={18} />
+                        </div>
+                        <span className="font-medium">Neural Config</span>
+                    </button>
                 </nav>
 
-                <div className={styles.sidebarFooter}>
-                    <button onClick={handleLogout} className={styles.logoutBtn}>
-                        <LogOut size={20} />
-                        <span>Logout</span>
+                <div className="p-4 border-t border-white/5">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 group"
+                    >
+                        <div className="p-2 rounded-lg bg-zinc-900 group-hover:bg-red-500/10 transition-colors">
+                            <LogOut size={18} />
+                        </div>
+                        <span className="font-medium text-sm">Terminate Session</span>
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
-            <main className={styles.mainContent}>
-                {/* Top Bar with Breadcrumbs and Action */}
-                <header className={styles.topBar}>
-                    <div className={styles.breadcrumb}>
-                        <span>Admin</span>
-                        <ChevronRight size={14} />
-                        <span className={styles.breadcrumbCurrent}>
-                            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                        </span>
+            {/* Main Content */}
+            <main className="flex-1 ml-64 p-8 relative min-h-screen">
+
+                {/* Decorative Background Elements */}
+                <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
+                <div className="fixed bottom-0 left-64 w-[500px] h-[500px] bg-violet-600/5 blur-[120px] rounded-full -ml-32 -mb-32 pointer-events-none" />
+
+                {/* Header */}
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
+                    <div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
+                            <span>Central Ops</span>
+                            <ChevronRight size={12} />
+                            <span className="text-blue-500">{activeTab}</span>
+                        </div>
+                        <h1 className="text-4xl font-black text-white tracking-tight flex items-center gap-4">
+                            {activeTab === 'products' ? 'Masterpieces' : 'Collections'}
+                            <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
+                                {activeTab === 'products' ? products.length : categories.length} Total
+                            </span>
+                        </h1>
                     </div>
 
-                    <div className={styles.topActions}>
-                        {(activeTab === 'products' ? products.length > 0 : categories.length > 0) && (
-                            <button className={styles.addBtn} onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}>
-                                <Plus size={18} />
-                                Add {activeTab === 'products' ? 'Product' : 'Category'}
-                            </button>
-                        )}
+                    <div className="flex items-center gap-4">
+                        <div className="relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-blue-500 transition-colors" size={18} />
+                            <input
+                                type="text"
+                                placeholder={`Scan ${activeTab}...`}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="bg-zinc-900/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 w-[300px] focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-600 text-sm"
+                            />
+                        </div>
+
+                        <button
+                            onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
+                            className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm"
+                        >
+                            <Plus size={18} />
+                            Initialize {activeTab === 'products' ? 'Piece' : 'Category'}
+                        </button>
                     </div>
                 </header>
 
-                {/* Content Sections */}
+                {/* Content Section */}
                 <AnimatePresence mode="wait">
                     {loading ? (
                         <motion.div
@@ -218,182 +262,161 @@ export default function AdminDashboard() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className={styles.contentCard}
+                            className="h-[60vh] flex flex-col items-center justify-center gap-4"
                         >
-                            <p style={{ color: '#666' }}>Synchronizing your data...</p>
+                            <div className="relative">
+                                <div className="w-16 h-16 rounded-full border-t-2 border-blue-500 animate-spin" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Zap className="text-blue-500 animate-pulse" size={24} />
+                                </div>
+                            </div>
+                            <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Syncing Database...</p>
+                        </motion.div>
+                    ) : filteredItems.length === 0 ? (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-12 text-center backdrop-blur-sm"
+                        >
+                            <div className="max-w-md mx-auto space-y-6">
+                                <div className="w-24 h-24 bg-zinc-800/50 rounded-3xl mx-auto flex items-center justify-center">
+                                    <EmptyStateGraphic />
+                                </div>
+                                <h2 className="text-2xl font-bold text-white">Quantum Void Detected</h2>
+                                <p className="text-zinc-500 leading-relaxed text-sm">
+                                    It looks like your gallery is currently oscillating in a state of emptiness.
+                                    Bring your masterpieces into existence by initializing your first entry.
+                                </p>
+                                <button
+                                    onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
+                                    className="px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all text-sm"
+                                >
+                                    Initialize First {activeTab === 'products' ? 'Masterpiece' : 'Collection'}
+                                </button>
+                            </div>
                         </motion.div>
                     ) : (
-                        <motion.section
+                        <motion.div
                             key={activeTab}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="space-y-4"
                         >
-                            {activeTab === 'products' ? (
-                                products.length === 0 ? (
-                                    <div className={styles.contentCard}>
-                                        <div className={styles.emptyStateGraphic}>
-                                            <EmptyStateGraphic />
-                                        </div>
-                                        <h2 className={styles.emptyTitle}>Your Gallery is Empty</h2>
-                                        <p className={styles.emptySubtitle}>
-                                            It looks like you haven&apos;t uploaded any masterpieces yet.
-                                            Start your collection by adding your first product.
-                                        </p>
-                                        <button className={styles.addBtn} onClick={handleAddProduct}>
-                                            <Plus size={18} />
-                                            Add Your First Product
-                                        </button>
-                                    </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                {activeTab === 'products' ? (
+                                    products.map((product, index) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-3xl p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                        >
+                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                                                <img
+                                                    src={product.images?.[0] || '/placeholder-art.jpg'}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+
+                                            <div className="flex-1 space-y-1">
+                                                <div className="flex items-center gap-3">
+                                                    <h3 className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{product.name}</h3>
+                                                    <span className="px-2 py-0.5 rounded-lg bg-white/5 text-[10px] font-bold text-zinc-500 uppercase">
+                                                        {product.category || 'Legacy'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Valuation</span>
+                                                        <span className="text-blue-400 font-black">₹{product.price.toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Inventory</span>
+                                                        <span className={`font-black ${product.quantity > 0 ? 'text-zinc-300' : 'text-red-500'}`}>
+                                                            {product.quantity.toString().padStart(2, '0')}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                <button
+                                                    onClick={() => handleViewProduct(product)}
+                                                    className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                                                >
+                                                    <Eye size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEditProduct(product)}
+                                                    className="p-3 rounded-xl bg-blue-500/10 text-blue-400 hover:text-white hover:bg-blue-500 transition-all"
+                                                >
+                                                    <Pencil size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                    className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))
                                 ) : (
-                                    <div className={styles.listContainer}>
-                                        <div className={styles.tableContainer}>
-                                            <table className={styles.table}>
-                                                <thead>
-                                                    <tr>
-                                                        <th className={styles.th}>Product</th>
-                                                        <th className={styles.th}>Category</th>
-                                                        <th className={styles.th}>Price</th>
-                                                        <th className={styles.th}>Stock</th>
-                                                        <th className={styles.th}>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <AnimatePresence>
-                                                        {products.map((product, index) => (
-                                                            <motion.tr
-                                                                key={product.id}
-                                                                initial={{ opacity: 0, y: 10 }}
-                                                                animate={{ opacity: 1, y: 0 }}
-                                                                transition={{ delay: index * 0.03 }}
-                                                            >
-                                                                <td className={styles.td}>
-                                                                    <div className={styles.categoryCell}>
-                                                                        <img src={product.images?.[0] || '/placeholder-art.jpg'} className={styles.categoryImg} alt={product.name} />
-                                                                        <span>{product.name}</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td className={styles.td}>{product.category || 'Uncategorized'}</td>
-                                                                <td className={styles.td}>₹{product.price}</td>
-                                                                <td className={styles.td}>{product.quantity}</td>
-                                                                <td className={styles.td}>
-                                                                    <div className={styles.actionBtns}>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.viewIcon}`}
-                                                                            title="View"
-                                                                            onClick={() => handleViewProduct(product)}
-                                                                        >
-                                                                            <Eye size={16} />
-                                                                        </button>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.editIcon}`}
-                                                                            title="Edit"
-                                                                            onClick={() => handleEditProduct(product)}
-                                                                        >
-                                                                            <Pencil size={16} />
-                                                                        </button>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.deleteIcon}`}
-                                                                            title="Delete"
-                                                                            onClick={() => handleDeleteProduct(product.id)}
-                                                                        >
-                                                                            <Trash2 size={16} />
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </motion.tr>
-                                                        ))}
-                                                    </AnimatePresence>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )
-                            ) : (
-                                categories.length === 0 ? (
-                                    <div className={styles.contentCard}>
-                                        <div className={styles.emptyStateGraphic}>
-                                            <EmptyStateGraphic />
-                                        </div>
-                                        <h2 className={styles.emptyTitle}>No Categories Defined</h2>
-                                        <p className={styles.emptySubtitle}>
-                                            Organize your artworks into meaningful groups by
-                                            creating your first category.
-                                        </p>
-                                        <button className={styles.addBtn} onClick={handleAddCategory}>
-                                            <Plus size={18} />
-                                            Create First Category
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className={styles.listContainer}>
-                                        <div className={styles.tableContainer}>
-                                            <table className={styles.table}>
-                                                <thead>
-                                                    <tr>
-                                                        <th className={styles.th}>Category Name</th>
-                                                        <th className={styles.th}>Created At</th>
-                                                        <th className={styles.th}>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <AnimatePresence>
-                                                        {categories.map((cat, index) => (
-                                                            <motion.tr
-                                                                key={cat.id}
-                                                                initial={{ opacity: 0, y: 10 }}
-                                                                animate={{ opacity: 1, y: 0 }}
-                                                                transition={{ delay: index * 0.03 }}
-                                                            >
-                                                                <td className={styles.td}>
-                                                                    <div className={styles.categoryCell}>
-                                                                        <img src={cat.image_url || '/placeholder-category.jpg'} className={styles.categoryImg} alt={cat.name} />
-                                                                        <span style={{ fontWeight: 600 }}>{cat.name}</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td className={styles.td}>
-                                                                    {new Date(cat.created_at).toLocaleDateString()}
-                                                                </td>
-                                                                <td className={styles.td}>
-                                                                    <div className={styles.actionBtns}>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.viewIcon}`}
-                                                                            title="View"
-                                                                            onClick={() => handleViewCategory(cat)}
-                                                                        >
-                                                                            <Eye size={16} />
-                                                                        </button>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.editIcon}`}
-                                                                            title="Edit"
-                                                                            onClick={() => handleEditCategory(cat)}
-                                                                        >
-                                                                            <Pencil size={16} />
-                                                                        </button>
-                                                                        <button
-                                                                            className={`${styles.actionIcon} ${styles.deleteIcon}`}
-                                                                            title="Delete"
-                                                                            onClick={() => handleDeleteCategory(cat.id)}
-                                                                        >
-                                                                            <Trash2 size={16} />
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </motion.tr>
-                                                        ))}
-                                                    </AnimatePresence>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )
-                            )}
-                        </motion.section>
+                                    categories.map((cat, index) => (
+                                        <motion.div
+                                            key={cat.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                        >
+                                            <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                                                <img
+                                                    src={cat.image_url || '/placeholder-category.jpg'}
+                                                    alt={cat.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-white group-hover:text-violet-400 transition-colors uppercase tracking-tight">{cat.name}</h3>
+                                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
+                                                    Initialized: {new Date(cat.created_at).toLocaleDateString()}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                <button
+                                                    onClick={() => handleViewCategory(cat)}
+                                                    className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                                                >
+                                                    <Eye size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEditCategory(cat)}
+                                                    className="p-3 rounded-xl bg-violet-500/10 text-violet-400 hover:text-white hover:bg-violet-500 transition-all"
+                                                >
+                                                    <Pencil size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteCategory(cat.id)}
+                                                    className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                )}
+                            </div>
+                        </motion.div>
                     )}
                 </AnimatePresence>
 
-                {/* Category Modals */}
+                {/* Modals */}
                 <CategoryModal
                     isOpen={isCategoryModalOpen}
                     onClose={() => setIsCategoryModalOpen(false)}
@@ -402,7 +425,6 @@ export default function AdminDashboard() {
                     isViewOnly={isCategoryViewOnly}
                 />
 
-                {/* Product Modals */}
                 <ProductModal
                     isOpen={isProductModalOpen}
                     onClose={() => setIsProductModalOpen(false)}

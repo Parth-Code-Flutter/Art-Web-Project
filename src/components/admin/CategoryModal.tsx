@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Check } from 'lucide-react';
+import { X, Upload, Check, Loader2, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import styles from './CategoryModal.module.css';
 
 interface Category {
     id: string;
@@ -20,18 +19,12 @@ interface CategoryModalProps {
     isViewOnly?: boolean;
 }
 
-/**
- * CategoryModal Component
- * 
- * Supports Creating, Editing, and Viewing categories.
- */
 export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEdit, isViewOnly }: CategoryModalProps) {
     const [name, setName] = useState('');
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Load existing data if editing or viewing
     useEffect(() => {
         if (categoryToEdit) {
             setName(categoryToEdit.name);
@@ -67,7 +60,6 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
         try {
             let imageUrl = preview || '';
 
-            // 1. Upload new image if chosen
             if (image) {
                 const fileExt = image.name.split('.').pop();
                 const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -77,9 +69,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                     .from('products')
                     .upload(filePath, image);
 
-                if (uploadError) {
-                    throw new Error(`Storage Error: ${uploadError.message}. Ensure 'products' bucket exists and is PUBLIC.`);
-                }
+                if (uploadError) throw uploadError;
 
                 if (data) {
                     const { data: { publicUrl } } = supabase.storage
@@ -89,16 +79,13 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                 }
             }
 
-            // 2. Perform Insert or Update
             if (categoryToEdit) {
-                // UPDATE
                 const { error } = await supabase
                     .from('categories')
                     .update({ name, image_url: imageUrl })
                     .eq('id', categoryToEdit.id);
                 if (error) throw error;
             } else {
-                // INSERT
                 const { error } = await supabase
                     .from('categories')
                     .insert([{ name, image_url: imageUrl }]);
@@ -107,14 +94,9 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
 
             onSuccess();
             onClose();
-            alert(categoryToEdit ? 'Category updated!' : 'Category created!');
         } catch (err: any) {
             console.error('Operation failed:', err);
-            if (err.message.includes('row-level security')) {
-                alert('Security Error: You need to enable RLS policies in Supabase for this operation.');
-            } else {
-                alert(err.message || 'Error saving category');
-            }
+            alert(err.message || 'Error saving category');
         } finally {
             setLoading(false);
         }
@@ -123,111 +105,128 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className={styles.overlay}
-                    onClick={onClose}
-                >
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    {/* Backdrop */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                    />
+
+                    {/* Modal */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 40 }}
                         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className={styles.modal}
-                        onClick={(e) => e.stopPropagation()}
+                        className="relative w-full max-w-xl bg-zinc-900 border border-white/5 rounded-[2.5rem] shadow-2xl overflow-hidden"
                     >
-                        <button className={styles.closeBtn} onClick={onClose}>
-                            <X size={24} />
-                        </button>
+                        {/* Decorative Gradient */}
+                        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
 
-                        <header>
-                            <h2 className={styles.title}>
-                                {isViewOnly ? 'Category Details' : categoryToEdit ? 'Edit Category' : 'New Category'}
-                            </h2>
-                            <p className={styles.subtitle}>
-                                {isViewOnly
-                                    ? 'Viewing category information.'
-                                    : categoryToEdit
-                                        ? 'Update your category details below.'
-                                        : 'Organize your art pieces by creating a new group.'}
-                            </p>
-                        </header>
+                        <div className="p-8 md:p-12">
+                            <button
+                                onClick={onClose}
+                                className="absolute top-8 right-8 p-2 rounded-xl bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                            >
+                                <X size={20} />
+                            </button>
 
-                        <form className={styles.form} onSubmit={handleSave}>
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label}>Category Name</label>
-                                <input
-                                    type="text"
-                                    className={styles.input}
-                                    placeholder="e.g. Modernism, Abstract"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    disabled={isViewOnly}
-                                    required
-                                />
-                            </div>
+                            <header className="mb-10 text-center">
+                                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
+                                    <Sparkles size={24} />
+                                </div>
+                                <h2 className="text-3xl font-black text-white tracking-tight uppercase">
+                                    {isViewOnly ? 'Quantum Archive' : categoryToEdit ? 'Data Reconfiguration' : 'New Collection'}
+                                </h2>
+                                <p className="text-zinc-500 text-sm mt-2 font-medium tracking-wide">
+                                    {isViewOnly
+                                        ? 'Accessing historical collection records.'
+                                        : 'Synchronizing new category parameters into the grid.'}
+                                </p>
+                            </header>
 
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label}>Category Cover Image</label>
-                                <div
-                                    className={`${styles.uploadArea} ${isViewOnly ? styles.viewOnlyArea : ''}`}
-                                    onClick={() => !isViewOnly && document.getElementById('catImageInput')?.click()}
-                                >
+                            <form onSubmit={handleSave} className="space-y-8">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Collection Identity</label>
                                     <input
-                                        id="catImageInput"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        style={{ display: 'none' }}
+                                        type="text"
+                                        placeholder="Enter collection name..."
+                                        className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-700 font-bold"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         disabled={isViewOnly}
+                                        required
                                     />
-                                    {preview ? (
-                                        <div className={styles.preview}>
-                                            <img src={preview} alt="Category preview" />
-                                        </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Visual Signature</label>
+                                    <div
+                                        className={`group relative aspect-video rounded-[2rem] bg-zinc-950/50 border-2 border-dashed border-white/5 overflow-hidden flex flex-col items-center justify-center gap-4 transition-all duration-300 ${!isViewOnly ? 'hover:border-blue-500/50 cursor-pointer' : ''}`}
+                                        onClick={() => !isViewOnly && document.getElementById('catImageInput')?.click()}
+                                    >
+                                        <input
+                                            id="catImageInput"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                            disabled={isViewOnly}
+                                        />
+
+                                        {preview ? (
+                                            <>
+                                                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                                {!isViewOnly && (
+                                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
+                                                        <Upload className="text-white" size={32} />
+                                                        <span className="text-white text-xs font-black uppercase tracking-widest">Update Essence</span>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="p-4 rounded-full bg-zinc-900 text-zinc-600 group-hover:text-blue-500 group-hover:bg-blue-500/5 transition-all">
+                                                    <ImageIcon size={40} strokeWidth={1.5} />
+                                                </div>
+                                                <div className="text-center">
+                                                    <p className="text-xs font-black text-zinc-500 uppercase tracking-widest">
+                                                        {isViewOnly ? 'Empty Signature' : 'Inject Visual Data'}
+                                                    </p>
+                                                    {!isViewOnly && <p className="text-[10px] text-zinc-700 mt-1 uppercase font-bold tracking-tighter">Recommended: 1280x720px</p>}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="pt-4">
+                                    {!isViewOnly ? (
+                                        <button
+                                            type="submit"
+                                            disabled={loading || !name}
+                                            className="w-full h-16 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 shadow-xl shadow-white/5 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-sm"
+                                        >
+                                            {loading ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} strokeWidth={3} />}
+                                            {categoryToEdit ? 'Commit Changes' : 'Initialize Collection'}
+                                        </button>
                                     ) : (
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                                            <Upload size={32} color="#3b82f6" opacity={0.6} />
-                                            <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                                                {isViewOnly ? 'No Image Provided' : 'Upload Image (Max 5MB)'}
-                                            </p>
-                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={onClose}
+                                            className="w-full h-16 bg-zinc-800 text-white font-black rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-sm"
+                                        >
+                                            Exit Archive
+                                        </button>
                                     )}
                                 </div>
-                            </div>
-
-                            {!isViewOnly && (
-                                <button
-                                    type="submit"
-                                    className={styles.saveBtn}
-                                    disabled={loading || !name}
-                                >
-                                    {loading ? (
-                                        categoryToEdit ? 'Updating...' : 'Creating...'
-                                    ) : (
-                                        <>
-                                            <Check size={20} />
-                                            {categoryToEdit ? 'Update Category' : 'Save Category'}
-                                        </>
-                                    )}
-                                </button>
-                            )}
-
-                            {isViewOnly && (
-                                <button
-                                    type="button"
-                                    className={styles.saveBtn}
-                                    onClick={onClose}
-                                    style={{ background: 'rgba(255,255,255,0.05)', color: '#fff' }}
-                                >
-                                    Close Viewer
-                                </button>
-                            )}
-                        </form>
+                            </form>
+                        </div>
                     </motion.div>
-                </motion.div>
+                </div>
             )}
         </AnimatePresence>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Check, Trash2 } from 'lucide-react';
+import { X, Upload, Check, Trash2, Loader2, Sparkles, Image as ImageIcon, Layers, Tag, Coins, Box, AlignLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
@@ -42,14 +42,12 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Load categories
     useEffect(() => {
         if (isOpen) {
             fetchCategories();
         }
     }, [isOpen]);
 
-    // Load existing data if editing or viewing
     useEffect(() => {
         if (productToEdit) {
             setName(productToEdit.name);
@@ -59,8 +57,8 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             setQuantity(productToEdit.quantity.toString());
             setDescription(productToEdit.description || '');
             setExistingImages(productToEdit.images || []);
-            setPreviews([]); // Clear local previews
-            setImages([]); // Clear local files
+            setPreviews([]);
+            setImages([]);
         } else {
             setName('');
             setCategory('');
@@ -84,7 +82,6 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isViewOnly) return;
         const files = Array.from(e.target.files || []);
-
         const validFiles: File[] = [];
         const newPreviews: string[] = [];
 
@@ -119,7 +116,6 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
         try {
             let uploadedImageUrls: string[] = [...existingImages];
 
-            // 1. Upload new images if any
             for (const file of images) {
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -149,7 +145,6 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                 images: uploadedImageUrls
             };
 
-            // 2. Perform Insert or Update
             if (productToEdit) {
                 const { error } = await supabase
                     .from('products')
@@ -165,7 +160,6 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
 
             onSuccess();
             onClose();
-            alert(productToEdit ? 'Product updated!' : 'Product added!');
         } catch (err: any) {
             console.error('Operation failed:', err);
             alert(err.message || 'Error saving product');
@@ -177,86 +171,122 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                    onClick={onClose}
-                >
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    {/* Backdrop */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                    />
+
+                    {/* Modal */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="bg-[#0a0a0a] border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
-                        onClick={(e) => e.stopPropagation()}
+                        exit={{ opacity: 0, scale: 0.95, y: 40 }}
+                        className="relative w-full max-w-3xl bg-zinc-900 border border-white/5 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
                     >
-                        <div className="flex items-center justify-between p-6 border-b border-white/5">
+                        {/* Header */}
+                        <div className="p-8 md:p-10 border-b border-white/5 flex items-center justify-between shrink-0">
                             <div>
-                                <h2 className="text-xl font-heading font-semibold text-white">
-                                    {isViewOnly ? 'Product Details' : productToEdit ? 'Edit Product' : 'New Product'}
-                                </h2>
-                                <p className="text-sm text-zinc-400 mt-1">
-                                    {isViewOnly
-                                        ? 'Viewing product information.'
-                                        : productToEdit
-                                            ? 'Update your product details below.'
-                                            : 'List a new masterpiece in your gallery.'}
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                        <Sparkles size={20} />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-white tracking-tight uppercase">
+                                        {isViewOnly ? 'Entity Analysis' : productToEdit ? 'Masterpiece Revision' : 'New Creation'}
+                                    </h2>
+                                </div>
+                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest pl-1">
+                                    {isViewOnly ? 'Viewing secure object metadata' : 'Synchronizing visual data into the grid'}
                                 </p>
                             </div>
                             <button
-                                className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
                                 onClick={onClose}
+                                className="p-2 rounded-xl bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
                             >
-                                <X size={18} />
+                                <X size={20} />
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                            <form className="space-y-6" onSubmit={handleSave}>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-zinc-300">Product Name</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                        placeholder="e.g. Starry Night Recreation"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        disabled={isViewOnly}
-                                        required
-                                    />
-                                </div>
+                        {/* Form Body */}
+                        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 scrollbar-hide">
+                            <form id="productForm" onSubmit={handleSave} className="space-y-8">
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Identity Block */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-300">Category</label>
-                                        <div className="relative">
-                                            <select
-                                                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer"
-                                                value={category}
-                                                onChange={(e) => setCategory(e.target.value)}
-                                                disabled={isViewOnly}
-                                                required
-                                            >
-                                                <option value="">Select Category</option>
-                                                {categories.map(cat => (
-                                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                                ))}
-                                            </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
-                                                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </div>
-                                        </div>
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Tag size={12} /> Masterpiece Identity
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter piece name..."
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-700 font-bold"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            disabled={isViewOnly}
+                                            required
+                                        />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-300">Quantity / Stock</label>
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Layers size={12} /> Collection Segment
+                                        </label>
+                                        <select
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold appearance-none cursor-pointer"
+                                            value={category}
+                                            onChange={(e) => setCategory(e.target.value)}
+                                            disabled={isViewOnly}
+                                            required
+                                        >
+                                            <option value="" className="bg-zinc-900">Select Collection</option>
+                                            {categories.map(cat => (
+                                                <option key={cat.id} value={cat.name} className="bg-zinc-900">{cat.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Logistics Block */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Coins size={12} /> Valuation (₹)
+                                        </label>
                                         <input
                                             type="number"
-                                            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                            placeholder="e.g. 5"
+                                            placeholder="0.00"
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold"
+                                            value={price}
+                                            onChange={(e) => setPrice(e.target.value)}
+                                            disabled={isViewOnly}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Tag size={12} /> Discounted (₹)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="Optional"
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold"
+                                            value={discountPrice}
+                                            onChange={(e) => setDiscountPrice(e.target.value)}
+                                            disabled={isViewOnly}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Box size={12} /> Grid Stock
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="00"
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold"
                                             value={quantity}
                                             onChange={(e) => setQuantity(e.target.value)}
                                             disabled={isViewOnly}
@@ -265,122 +295,87 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-300">Price (₹)</label>
-                                        <input
-                                            type="number"
-                                            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                            placeholder="e.g. 5000"
-                                            value={price}
-                                            onChange={(e) => setPrice(e.target.value)}
-                                            disabled={isViewOnly}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-300">Discount Price (₹)</label>
-                                        <input
-                                            type="number"
-                                            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                            placeholder="e.g. 4500 (Optional)"
-                                            value={discountPrice}
-                                            onChange={(e) => setDiscountPrice(e.target.value)}
-                                            disabled={isViewOnly}
-                                        />
-                                    </div>
-                                </div>
-
+                                {/* Description Block */}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-zinc-300">Description</label>
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                        <AlignLeft size={12} /> Masterpiece Codex
+                                    </label>
                                     <textarea
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all min-h-[120px] resize-none"
-                                        placeholder="Describe the artwork, medium, size, etc."
+                                        placeholder="Describe the essence of this artwork..."
+                                        className="w-full bg-zinc-950/50 border border-white/5 rounded-[2rem] px-6 py-5 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-700 min-h-[120px] resize-none font-medium leading-relaxed"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         disabled={isViewOnly}
                                     />
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-sm font-medium text-zinc-300">Artwork Images</label>
-                                    {!isViewOnly && (
-                                        <div
-                                            className="w-full h-32 border-2 border-dashed border-zinc-800 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-zinc-900/50 transition-all group"
-                                            onClick={() => document.getElementById('prodImageInput')?.click()}
-                                        >
-                                            <input
-                                                id="prodImageInput"
-                                                type="file"
-                                                accept="image/*"
-                                                multiple
-                                                onChange={handleImageChange}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                                <Upload size={18} className="text-zinc-400 group-hover:text-blue-500 transition-colors" />
-                                            </div>
-                                            <p className="text-sm text-zinc-500 group-hover:text-zinc-300 transition-colors">
-                                                Click to upload files (Max 5MB)
-                                            </p>
-                                        </div>
-                                    )}
+                                {/* Visual Data Block */}
+                                <div className="space-y-4">
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                        <ImageIcon size={12} /> Visual Signature Array
+                                    </label>
 
-                                    {/* Image Grid */}
-                                    {(existingImages.length > 0 || previews.length > 0) && (
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
-                                            {existingImages.map((url, i) => (
-                                                <div key={`existing-${i}`} className="relative aspect-square rounded-lg overflow-hidden border border-zinc-800 group">
-                                                    <img src={url} alt="existing preview" className="w-full h-full object-cover" />
-                                                    {!isViewOnly && (
-                                                        <button
-                                                            type="button"
-                                                            className="absolute top-1 right-1 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                                            onClick={() => removeImage(i, true)}
-                                                        >
-                                                            <Trash2 size={12} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            {previews.map((url, i) => (
-                                                <div key={`new-${i}`} className="relative aspect-square rounded-lg overflow-hidden border border-zinc-800 group">
-                                                    <img src={url} alt="new preview" className="w-full h-full object-cover" />
-                                                    {!isViewOnly && (
-                                                        <button
-                                                            type="button"
-                                                            className="absolute top-1 right-1 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                                            onClick={() => removeImage(i, false)}
-                                                        >
-                                                            <Trash2 size={12} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+                                        {/* Existing & Previews */}
+                                        {[...existingImages.map((u, i) => ({ url: u, id: i, existing: true })),
+                                        ...previews.map((u, i) => ({ url: u, id: i, existing: false }))].map((img, idx) => (
+                                            <motion.div
+                                                layout
+                                                key={`${img.existing ? 'e' : 'p'}-${img.id}`}
+                                                className="group relative aspect-square rounded-2xl overflow-hidden border border-white/5 bg-zinc-950 shadow-inner"
+                                            >
+                                                <img src={img.url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                                {!isViewOnly && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeImage(img.id, img.existing)}
+                                                        className="absolute top-1 right-1 p-1.5 rounded-lg bg-red-500/80 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                )}
+                                            </motion.div>
+                                        ))}
+
+                                        {/* Upload Trigger */}
+                                        {!isViewOnly && (
+                                            <div
+                                                onClick={() => document.getElementById('prodImageInput')?.click()}
+                                                className="aspect-square rounded-2xl border-2 border-dashed border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                                            >
+                                                <input id="prodImageInput" type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
+                                                <Upload className="text-zinc-700 group-hover:text-blue-500 transition-colors" size={24} strokeWidth={1.5} />
+                                                <span className="text-[8px] font-black uppercase text-zinc-600 group-hover:text-blue-400 tracking-widest">Inject Data</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
                         </div>
 
-                        {!isViewOnly && (
-                            <div className="p-6 border-t border-white/5 bg-zinc-900/30">
+                        {/* Footer */}
+                        <div className="p-8 md:p-10 border-t border-white/5 bg-zinc-900/50 backdrop-blur-xl shrink-0">
+                            {!isViewOnly ? (
                                 <button
-                                    onClick={handleSave}
-                                    className="w-full bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadowed-btn"
+                                    form="productForm"
+                                    type="submit"
                                     disabled={loading || !name}
+                                    className="w-full h-16 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 shadow-2xl shadow-blue-500/10 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-sm"
                                 >
-                                    {loading ? 'Saving...' : (
-                                        <>
-                                            <Check size={18} />
-                                            {productToEdit ? 'Update Product' : 'Add Product'}
-                                        </>
-                                    )}
+                                    {loading ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} strokeWidth={3} />}
+                                    {productToEdit ? 'Commit Revision' : 'Initialize Masterpiece'}
                                 </button>
-                            </div>
-                        )}
+                            ) : (
+                                <button
+                                    onClick={onClose}
+                                    className="w-full h-16 bg-zinc-800 text-white font-black rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-sm"
+                                >
+                                    Exit Analysis
+                                </button>
+                            )}
+                        </div>
                     </motion.div>
-                </motion.div>
+                </div>
             )}
         </AnimatePresence>
     );
