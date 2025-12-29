@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, Bell, Lock, Save, Camera, Loader2 } from 'lucide-react';
@@ -16,7 +14,6 @@ export default function SettingsPage() {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
-        bio: '',
         profile_image_url: '',
         notifications: {
             email: true,
@@ -49,7 +46,6 @@ export default function SettingsPage() {
                     ...prev,
                     fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
                     email: user.email || '',
-                    bio: user.user_metadata?.bio || '',
                     profile_image_url: user.user_metadata?.profile_image_url || '',
                 }));
                 setProfilePreview(user.user_metadata?.profile_image_url || null);
@@ -73,7 +69,6 @@ export default function SettingsPage() {
                         ...prev,
                         fullName: data.full_name || '',
                         email: data.email || '',
-                        bio: data.bio || '',
                         profile_image_url: data.profile_image_url || '',
                     }));
                     setProfilePreview(data.profile_image_url || null);
@@ -136,7 +131,6 @@ export default function SettingsPage() {
                 const { error } = await supabase.auth.updateUser({
                     data: {
                         full_name: formData.fullName,
-                        bio: formData.bio,
                         name: formData.fullName,
                         profile_image_url: currentProfileUrl
                     }
@@ -154,7 +148,6 @@ export default function SettingsPage() {
                     .from('customers')
                     .update({
                         full_name: formData.fullName,
-                        bio: formData.bio,
                         profile_image_url: currentProfileUrl
                     })
                     .eq('id', localUser.id);
@@ -165,7 +158,6 @@ export default function SettingsPage() {
                 const updatedUser = {
                     ...localUser,
                     full_name: formData.fullName,
-                    bio: formData.bio,
                     profile_image_url: currentProfileUrl
                 };
                 localStorage.setItem('customer_user', JSON.stringify(updatedUser));
@@ -320,18 +312,6 @@ export default function SettingsPage() {
                                             />
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-zinc-400">Bio <span className="text-xs text-zinc-600">(Optional)</span></label>
-                                    <textarea
-                                        rows={4}
-                                        value={formData.bio}
-                                        onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-zinc-600 resize-none"
-                                        placeholder="Tell us a bit about yourself..."
-                                    />
-                                    <p className="text-xs text-zinc-600 text-right">{formData.bio.length}/500 characters</p>
                                 </div>
                             </div>
 
