@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, Bell, Lock, Save, Camera, Loader2 } from 'lucide-react';
