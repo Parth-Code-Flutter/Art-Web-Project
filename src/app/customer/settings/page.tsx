@@ -19,9 +19,18 @@ export default function SettingsPage() {
         }
     });
 
+    const [showToast, setShowToast] = useState(false);
+
     useEffect(() => {
         fetchUserProfile();
     }, []);
+
+    useEffect(() => {
+        if (showToast) {
+            const timer = setTimeout(() => setShowToast(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showToast]);
 
     const fetchUserProfile = async () => {
         try {
@@ -30,7 +39,7 @@ export default function SettingsPage() {
                 setFormData({
                     ...formData,
                     email: user.email || '',
-                    fullName: user.user_metadata?.full_name || '',
+                    fullName: user.user_metadata?.full_name || user.user_metadata?.name || '',
                     bio: user.user_metadata?.bio || ''
                 });
             }
@@ -47,13 +56,13 @@ export default function SettingsPage() {
             const { error } = await supabase.auth.updateUser({
                 data: {
                     full_name: formData.fullName,
-                    bio: formData.bio
+                    bio: formData.bio,
+                    name: formData.fullName // redundancy for safety
                 }
             });
 
             if (error) throw error;
-            // Success feedback could go here (toast)
-            alert("Profile updated successfully!"); // Placeholder for a better toast
+            setShowToast(true);
         } catch (error) {
             console.error('Error updating profile:', error);
             alert("Failed to update profile.");
@@ -220,6 +229,24 @@ export default function SettingsPage() {
 
                     </div>
                 </div>
+            </div>
+
+            {/* Success Toast */}
+            <div className="fixed bottom-8 right-8 z-50">
+                <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                    animate={showToast ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className={`flex items-center gap-3 px-6 py-4 bg-zinc-900 border border-green-500/20 rounded-2xl shadow-2xl ${showToast ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                >
+                    <div className="p-2 rounded-full bg-green-500/10 text-green-400">
+                        <Save size={18} />
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-white text-sm">Profile Updated</h4>
+                        <p className="text-xs text-zinc-400">Your changes have been saved successfully.</p>
+                    </div>
+                </motion.div>
             </div>
         </main>
     );
