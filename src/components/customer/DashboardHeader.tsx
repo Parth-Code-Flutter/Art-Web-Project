@@ -287,6 +287,23 @@ export default function DashboardHeader() {
                     </div>
 
                     <div className="flex flex-col gap-2 flex-1">
+                        {/* Profile Summary in Mobile */}
+                        {mounted && (userName || userProfileUrl) && (
+                            <div className="px-4 py-4 mb-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 overflow-hidden shrink-0">
+                                    {userProfileUrl ? (
+                                        <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User size={20} />
+                                    )}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-sm font-bold text-white truncate">{userName || 'Collector'}</span>
+                                    <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-0.5">Active Session</span>
+                                </div>
+                            </div>
+                        )}
+
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
@@ -309,17 +326,29 @@ export default function DashboardHeader() {
                             My Cart
                             {cartCount > 0 && <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
                         </Link>
+                        <Link
+                            href="/customer/settings"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`px-4 py-3 rounded-xl text-base font-medium transition-colors flex items-center gap-3
+                                ${pathname === '/customer/settings'
+                                    ? 'bg-zinc-900 text-white'
+                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'}
+                            `}
+                        >
+                            <Settings size={18} className="text-zinc-500" />
+                            Profile Settings
+                        </Link>
                     </div>
 
                     <div className="mt-8 flex flex-col gap-3">
                         <button
-                            className="w-full py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-colors"
+                            className="w-full py-4 rounded-2xl bg-white text-black font-bold hover:bg-zinc-200 shadow-xl shadow-white/5 transition-all active:scale-[0.98]"
                             onClick={() => { setIsMobileMenuOpen(false); router.push('/customer/products'); }}
                         >
                             Get Started
                         </button>
                         <button
-                            className="w-full py-3 rounded-xl border border-zinc-800 text-red-400 font-medium hover:bg-zinc-900 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-4 rounded-2xl border border-zinc-800 text-red-400 font-bold hover:bg-red-500/5 hover:border-red-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
                             onClick={handleLogout}
                         >
                             <LogOut size={18} /> Logout
