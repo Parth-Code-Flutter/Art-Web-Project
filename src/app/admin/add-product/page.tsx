@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, Plus, Upload, X, Loader2, Sparkles, Tag, Layers, Coins, Box, AlignLeft, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, X, Loader2, Sparkles, Tag, Layers, Coins, Box, AlignLeft, Image as ImageIcon, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Category {
