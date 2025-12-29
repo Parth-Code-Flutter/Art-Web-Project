@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutGrid,
     ShoppingBag,
@@ -63,6 +64,7 @@ export default function DashboardHeader() {
             // Hide when scrolling down, show when scrolling up
             else if (currentScrollY > lastScrollY) {
                 setIsHeaderVisible(false);
+                setIsProfileOpen(false); // Close profile when scrolling down
             } else {
                 setIsHeaderVisible(true);
             }
@@ -101,7 +103,7 @@ export default function DashboardHeader() {
     return (
         <>
             <header
-                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-transparent
+                className={`fixed top-0 left-0 w-full z-[999] transition-all duration-300 border-b border-transparent
                 ${!isHeaderVisible ? '-translate-y-full' : 'translate-y-0'}
                 ${lastScrollY > 20 ? 'bg-background/80 backdrop-blur-md border-white/10 shadow-lg' : 'bg-transparent'}
             `}
@@ -155,7 +157,7 @@ export default function DashboardHeader() {
                         {/* Profile Section */}
                         <div className="relative hidden md:block" ref={dropdownRef}>
                             <button
-                                className="flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 transition-all duration-300"
+                                className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-800 border-zinc-700' : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700'}`}
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                             >
                                 <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
@@ -168,25 +170,35 @@ export default function DashboardHeader() {
                             </button>
 
                             {/* Dropdown */}
-                            {isProfileOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-56 p-2 rounded-2xl bg-[#111] border border-zinc-800 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="px-3 py-2 mb-2 border-b border-zinc-800/50">
-                                        <div className="text-sm font-semibold text-white">My Account</div>
-                                        <div className="text-xs text-zinc-500">Manage your details</div>
-                                    </div>
-                                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
-                                        <Settings size={16} />
-                                        Settings
-                                    </button>
-                                    <button
-                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-                                        onClick={handleLogout}
+                            <AnimatePresence>
+                                {isProfileOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute top-full right-0 mt-3 w-64 p-2 rounded-2xl bg-[#0a0a0a] border border-zinc-800 shadow-2xl overflow-hidden"
                                     >
-                                        <LogOut size={16} />
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
+                                        <div className="px-4 py-3 mb-2 border-b border-zinc-800/50">
+                                            <div className="text-sm font-semibold text-white">My Account</div>
+                                            <div className="text-xs text-zinc-500 mt-1">Manage your details</div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left">
+                                                <Settings size={16} />
+                                                Settings
+                                            </button>
+                                            <button
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
+                                                onClick={handleLogout}
+                                            >
+                                                <LogOut size={16} />
+                                                Logout
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* CTA Button */}
