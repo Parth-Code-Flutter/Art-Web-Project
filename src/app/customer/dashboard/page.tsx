@@ -7,19 +7,24 @@ import { ArrowRight, Star, TrendingUp, Award, Clock } from 'lucide-react';
 import BentoHero from '@/components/customer/BentoHero';
 import { supabase } from '@/lib/supabase';
 
-// Mock data for categories/collections to make the dashboard feel curated
-const collections = [
-    { id: 1, name: 'Abstract Expressionism', image: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000&auto=format&fit=crop', count: '45+ Works' },
-    { id: 2, name: 'Modern Minimalism', image: 'https://images.unsplash.com/photo-1507643179173-bed61c596f23?q=80&w=1000&auto=format&fit=crop', count: '32+ Works' },
-    { id: 3, name: 'Digital Renaissance', image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop', count: '18+ Works' },
-];
+interface DashboardCategory {
+    id: string;
+    name: string;
+    image: string;
+    count: number;
+}
 
 export default function CustomerDashboard() {
     const [recentProducts, setRecentProducts] = useState<any[]>([]);
+    const [curatedCollections, setCuratedCollections] = useState<DashboardCategory[]>([]);
 
     useEffect(() => {
-        fetchRecentDrops();
+        fetchData();
     }, []);
+
+    const fetchData = async () => {
+        await Promise.all([fetchRecentDrops(), fetchCuratedCollections()]);
+    };
 
     const fetchRecentDrops = async () => {
         const { data } = await supabase
@@ -29,6 +34,49 @@ export default function CustomerDashboard() {
             .limit(4);
 
         if (data) setRecentProducts(data);
+    };
+
+    const fetchCuratedCollections = async () => {
+        try {
+            // Fetch top 3 categories
+            const { data: categories } = await supabase
+                .from('categories')
+                .select('*')
+                .limit(3);
+
+            if (!categories) return;
+
+            const collectionsWithData = await Promise.all(categories.map(async (cat) => {
+                // Get product count
+                const { count } = await supabase
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('category', cat.name);
+
+                // Get one sample image if category image is missing or just to be safe
+                let image = cat.image;
+                if (!image) {
+                    const { data: products } = await supabase
+                        .from('products')
+                        .select('images')
+                        .eq('category', cat.name)
+                        .limit(1)
+                        .single();
+                    image = products?.images?.[0] || 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000&auto=format&fit=crop';
+                }
+
+                return {
+                    id: cat.id,
+                    name: cat.name,
+                    image: image,
+                    count: count || 0
+                };
+            }));
+
+            setCuratedCollections(collectionsWithData);
+        } catch (error) {
+            console.error('Error fetching collections:', error);
+        }
     };
 
     return (
@@ -53,26 +101,34 @@ export default function CustomerDashboard() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {collections.map((collection, idx) => (
-                            <motion.div
-                                key={collection.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.1 }}
-                                className="group relative h-64 rounded-3xl overflow-hidden cursor-pointer"
-                            >
-                                <img
-                                    src={collection.image}
-                                    alt={collection.name}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                                <div className="absolute bottom-6 left-6">
-                                    <span className="text-xs font-medium text-blue-400 mb-1 block">{collection.count}</span>
-                                    <h3 className="text-xl font-bold font-heading">{collection.name}</h3>
-                                </div>
-                            </motion.div>
-                        ))}
+                        {curatedCollections.length > 0 ? (
+                            curatedCollections.map((collection, idx) => (
+                                <Link href={`/customer/products?category=${encodeURIComponent(collection.name)}`} key={collection.id} className="block w-full">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="group relative h-64 rounded-3xl overflow-hidden cursor-pointer"
+                                    >
+                                        <img
+                                            src={collection.image}
+                                            alt={collection.name}
+                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                        <div className="absolute bottom-6 left-6">
+                                            <span className="text-xs font-medium text-blue-400 mb-1 block">{collection.count} Works</span>
+                                            <h3 className="text-xl font-bold font-heading">{collection.name}</h3>
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ))
+                        ) : (
+                            // Loading Skeletons
+                            [1, 2, 3].map((i) => (
+                                <div key={i} className="h-64 rounded-3xl bg-zinc-900 animate-pulse border border-zinc-800" />
+                            ))
+                        )}
                     </div>
                 </section>
 
