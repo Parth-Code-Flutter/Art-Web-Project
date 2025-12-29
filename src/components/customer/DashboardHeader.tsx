@@ -222,14 +222,14 @@ export default function DashboardHeader() {
 
             {/* Mobile Navigation Overlay */}
             <div
-                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 md:hidden
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] transition-opacity duration-300 md:hidden
                     ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
                 `}
                 onClick={() => setIsMobileMenuOpen(false)}
             />
 
             {/* Mobile Navigation Drawer */}
-            <div className={`fixed inset-y-0 right-0 w-[80%] max-w-sm bg-[#0a0a0a] border-l border-zinc-800 z-50 transform transition-transform duration-300 md:hidden
+            <div className={`fixed inset-y-0 right-0 w-[80%] max-w-sm bg-[#0a0a0a] border-l border-zinc-800 z-[1001] transform transition-transform duration-300 md:hidden
                 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
             `}>
                 <div className="p-6 h-full flex flex-col">

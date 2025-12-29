@@ -120,7 +120,7 @@ export default function CustomerProducts() {
 
                 {/* Premium Filter Bar */}
                 <div className="sticky top-20 z-40 mb-10">
-                    <div className="bg-zinc-900/70 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xl">
+                    <div className="bg-zinc-900/70 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-row flex-wrap items-center justify-between gap-4 shadow-2xl">
                         <div className="flex items-center gap-3 text-zinc-300">
                             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
                                 <Filter size={20} />
