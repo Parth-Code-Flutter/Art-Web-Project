@@ -101,7 +101,7 @@ export default function CartPage() {
                                     className={styles.backLink}
                                 >
                                     <Link href="/customer/products" className={styles.continueShopping}>
-                                        <ChevronLeft size={18} /> Continue Curation
+                                        <ChevronLeft size={18} /> Back to Gallery
                                     </Link>
                                 </motion.div>
                                 <motion.h1
@@ -109,9 +109,9 @@ export default function CartPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className={styles.title}
                                 >
-                                    Your Collection
+                                    Shopping Cart
                                 </motion.h1>
-                                <span className={styles.itemCountLabel}>{cartItems.length} Masterpieces selected</span>
+                                <span className={styles.itemCountLabel}>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart</span>
                             </div>
 
                             <div className={styles.itemsList}>
@@ -131,10 +131,12 @@ export default function CartPage() {
                                             </div>
 
                                             <div className={styles.itemInfo}>
-                                                <span className={styles.itemCategory}>{item.category}</span>
-                                                <Link href={`/customer/products/${item.id}`} className={styles.itemName}>
-                                                    {item.name}
-                                                </Link>
+                                                <div className={styles.itemHeader}>
+                                                    <span className={styles.itemCategory}>{item.category}</span>
+                                                    <Link href={`/customer/products/${item.id}`} className={styles.itemName}>
+                                                        {item.name}
+                                                    </Link>
+                                                </div>
                                                 <span className={styles.itemPrice}>{formatPrice(item.discount_price || item.price)}</span>
                                             </div>
 
@@ -148,7 +150,7 @@ export default function CartPage() {
                                                         <Plus size={14} />
                                                     </button>
                                                 </div>
-                                                <button onClick={() => removeItem(item.id)} className={styles.removeBtn}>
+                                                <button onClick={() => removeItem(item.id)} className={styles.removeBtn} title="Remove item">
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>
@@ -161,46 +163,36 @@ export default function CartPage() {
                         <motion.aside
                             initial={{ opacity: 0, x: 40 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.3 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
                             className={styles.summaryCard}
                         >
-                            <h2 className={styles.summaryTitle}>Investment Summary</h2>
+                            <h2 className={styles.summaryTitle}>Summary</h2>
 
                             <div className={styles.summaryDetail}>
                                 <div className={styles.summaryRow}>
-                                    <span>Artwork Value</span>
+                                    <span>Subtotal</span>
                                     <span>{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className={styles.summaryRow}>
-                                    <span>Shipping & Handling</span>
-                                    <span>{formatPrice(shipping)}</span>
-                                </div>
-                                <div className={styles.summaryRow}>
-                                    <span>Taxes</span>
-                                    <span>Calculated at checkout</span>
+                                    <span>Shipping</span>
+                                    <span style={{ color: '#10b981', fontWeight: 600 }}>Free</span>
                                 </div>
                             </div>
 
                             <div className={styles.summaryDivider} />
 
                             <div className={`${styles.summaryRow} ${styles.total}`}>
-                                <span>Total Investment</span>
-                                <span>{formatPrice(total)}</span>
-                            </div>
-
-                            <div className={styles.trustBadges}>
-                                <div className={styles.trustItem}>
-                                    <ShieldCheck size={16} /> Authenticity Guaranteed
-                                </div>
+                                <span>Total</span>
+                                <span>{formatPrice(subtotal)}</span>
                             </div>
 
                             <button className={styles.checkoutBtn}>
-                                Secure Checkout <ArrowRight size={20} />
+                                Checkout <ArrowRight size={20} />
                             </button>
 
-                            <p className={styles.disclaimer}>
-                                Secure SSL encrypted transaction. 30-day prestige satisfaction guarantee.
-                            </p>
+                            <div className={styles.secureBadge}>
+                                <ShieldCheck size={14} /> Secure SSL Checkout
+                            </div>
                         </motion.aside>
                     </>
                 ) : (
