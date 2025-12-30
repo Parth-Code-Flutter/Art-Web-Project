@@ -632,42 +632,82 @@ export default function AdminDashboard() {
                                                     <ShieldAlert size={40} />
                                                 </div>
                                                 <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Pending Applications</h3>
-                                                <ProductModal
-                                                    isOpen={isProductModalOpen}
-                                                    onClose={() => setIsProductModalOpen(false)}
-                                                    onSuccess={fetchData}
-                                                    productToEdit={productToEdit}
-                                                    isViewOnly={isProductViewOnly}
-                                                />
-                                            </main>
-                                </div>
+                                                <p className="text-zinc-500 max-w-sm mx-auto text-sm">
+                                                    Everything is processed. New artist requests will appear here for your verification.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Modals */}
+                    <CategoryModal
+                        isOpen={isCategoryModalOpen}
+                        onClose={() => setIsCategoryModalOpen(false)}
+                        onSuccess={fetchData}
+                        categoryToEdit={categoryToEdit}
+                        isViewOnly={isCategoryViewOnly}
+                    />
+
+                    <ProductModal
+                        isOpen={isProductModalOpen}
+                        onClose={() => setIsProductModalOpen(false)}
+                        onSuccess={fetchData}
+                        productToEdit={productToEdit}
+                        isViewOnly={isProductViewOnly}
+                    />
+                </main>
+            </div>
+        );
+    }
+
+    function getHeaderText(tab: string) {
+        switch (tab) {
+            case 'products': return 'Artwork';
+            case 'categories': return 'Categories';
+            case 'applications': return 'Artist Applications';
+            case 'settings': return 'Platform Settings';
+            default: return 'Dashboard';
+        }
+    }
+    isOpen = { isProductModalOpen }
+    onClose = {() => setIsProductModalOpen(false)
+}
+onSuccess = { fetchData }
+productToEdit = { productToEdit }
+isViewOnly = { isProductViewOnly }
+    />
+                                            </main >
+                                </div >
                                     );
 }
 
-                                    // Helper for 'shipping' display in header logic
-                                    function getHeaderText(tab: string) {
-    switch(tab) {
+// Helper for 'shipping' display in header logic
+function getHeaderText(tab: string) {
+    switch (tab) {
         case 'products': return 'Artwork';
-                                    case 'categories': return 'Categories';
-                                    case 'applications': return 'Artist Applications';
-                                    case 'settings': return 'Platform Settings';
-                                    default: return 'Dashboard';
+        case 'categories': return 'Categories';
+        case 'applications': return 'Artist Applications';
+        case 'settings': return 'Platform Settings';
+        default: return 'Dashboard';
     }
 }
-                                    Everything is processed. New artist requests will appear here for your verification.
-                                </p>
-                            </div>
+                                    Everything is processed.New artist requests will appear here for your verification.
+                                </p >
+                            </div >
                         )}
-                    </div>
+                    </div >
                 </motion.div >
                 )
     }
             </AnimatePresence >
 
-        {/* Modals */ }
-        < CategoryModal
-    isOpen = { isCategoryModalOpen }
-    onClose = {() => setIsCategoryModalOpen(false)
+    {/* Modals */ }
+    < CategoryModal
+isOpen = { isCategoryModalOpen }
+onClose = {() => setIsCategoryModalOpen(false)
 }
 onSuccess = { fetchData }
 categoryToEdit = { categoryToEdit }
@@ -686,13 +726,13 @@ isViewOnly = { isCategoryViewOnly }
     );
     }
 
-    // Helper for 'shipping' display in header logic
-    function getHeaderText(tab: string) {
-        switch (tab) {
-            case 'products': return 'Artwork';
-            case 'categories': return 'Categories';
-            case 'applications': return 'Artist Applications';
-            case 'shipping': return 'Global Shipping';
-            default: return 'Dashboard';
-        }
+// Helper for 'shipping' display in header logic
+function getHeaderText(tab: string) {
+    switch (tab) {
+        case 'products': return 'Artwork';
+        case 'categories': return 'Categories';
+        case 'applications': return 'Artist Applications';
+        case 'shipping': return 'Global Shipping';
+        default: return 'Dashboard';
     }
+}
