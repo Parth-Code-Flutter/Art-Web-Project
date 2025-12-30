@@ -399,280 +399,276 @@ export default function AdminDashboard() {
                             </div>
                             <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Loading Data...</p>
                         </motion.div>
-                            <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Loading Data...</p>
-                        </motion.div>
-                ) : (filteredItems.length === 0 && activeTab !== 'applications' && activeTab !== 'shipping') ? (
-                <motion.div
-                    <motion.div
-                            key="empty"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-12 text-center backdrop-blur-sm"
-                >
-                    <div className="max-w-md mx-auto space-y-6">
-                        <div className="w-24 h-24 bg-zinc-800/50 rounded-3xl mx-auto flex items-center justify-center">
-                            <EmptyStateGraphic />
-                        </div>
-                        <h2 className="text-2xl font-bold text-white">No Items Found</h2>
-                        <p className="text-zinc-500 leading-relaxed text-sm">
-                            It looks like your gallery is currently empty.
-                            Start by adding your first entry to the system.
-                        </p>
-                        <button
-                            onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
-                            className="px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all text-sm"
-                        >
-                            Add First {activeTab === 'products' ? 'Artwork' : 'Category'}
-                        </button>
-                    </div>
-                </motion.div>
-                ) : (
-                <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                >
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="grid grid-cols-1 gap-4">
-                            {activeTab === 'shipping' ? (
-                                <ShippingManager />
-                            ) : activeTab === 'products' ? (
-                                (filteredItems as Product[]).map((product, index) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-3xl p-4 flex flex-col md:flex-row items-start md:items-center gap-6 backdrop-blur-sm transition-all duration-300"
-                                    >
-                                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-2xl">
-                                            <img
-                                                src={product.images?.[0] || '/placeholder-art.jpg'}
-                                                alt={product.name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                            />
-                                        </div>
-
-                                        <div className="flex-1 space-y-1 w-full">
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight line-clamp-1">{product.name}</h3>
-                                                <span className="px-2 py-0.5 rounded-lg bg-white/5 text-[10px] font-bold text-zinc-500 uppercase whitespace-nowrap">
-                                                    {product.category || 'Legacy'}
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-6">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Valuation</span>
-                                                    <span className="text-blue-400 font-black">₹{product.price.toLocaleString()}</span>
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Inventory</span>
-                                                    <span className={`font-black ${product.quantity > 0 ? 'text-zinc-300' : 'text-red-500'}`}>
-                                                        {product.quantity.toString().padStart(2, '0')}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex md:hidden w-full gap-2 mt-4 pt-4 border-t border-white/5">
-                                            <button onClick={() => handleEditProduct(product)} className="flex-1 py-3 rounded-xl bg-blue-500/10 text-blue-400 font-bold text-sm">Edit</button>
-                                            <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm">Delete</button>
-                                        </div>
-
-                                        <div className="hidden md:flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                            <button
-                                                onClick={() => handleViewProduct(product)}
-                                                className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
-                                            >
-                                                <Eye size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleEditProduct(product)}
-                                                className="p-3 rounded-xl bg-blue-500/10 text-blue-400 hover:text-white hover:bg-blue-500 transition-all"
-                                            >
-                                                <Pencil size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteProduct(product.id)}
-                                                className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                ))
-                            ) : activeTab === 'categories' ? (
-                                (filteredItems as Category[]).map((cat, index) => (
-                                    key = { cat.id }
-                                            initial = {{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
-                                        >
-                            key={cat.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
-                                        >
-                            <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
-                                <img
-                                    src={cat.image_url || '/placeholder-category.jpg'}
-                                    alt={cat.name}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-                            </div>
-
-                            <div className="flex-1">
-                                <h3 className="font-bold text-white group-hover:text-violet-400 transition-colors uppercase tracking-tight">{cat.name}</h3>
-                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-                                    Initialized: {new Date(cat.created_at).toLocaleDateString()}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                <button
-                                    onClick={() => handleViewCategory(cat)}
-                                    className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
-                                >
-                                    <Eye size={18} />
-                                </button>
-                                <button
-                                    onClick={() => handleEditCategory(cat)}
-                                    className="p-3 rounded-xl bg-violet-500/10 text-violet-400 hover:text-white hover:bg-violet-500 transition-all"
-                                >
-                                    <Pencil size={18} />
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteCategory(cat.id)}
-                                    className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        </motion.div>
-                        ))
-                                ) : filteredItems.length > 0 ? (
-                                    (filteredItems as Applicant[]).map((app, index) => (
+                    ) : (filteredItems.length === 0 && activeTab !== 'applications' && activeTab !== 'shipping') ? (
                         <motion.div
-                            key={app.id}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-12 text-center backdrop-blur-sm"
+                        >
+                            <div className="max-w-md mx-auto space-y-6">
+                                <div className="w-24 h-24 bg-zinc-800/50 rounded-3xl mx-auto flex items-center justify-center">
+                                    <EmptyStateGraphic />
+                                </div>
+                                <h2 className="text-2xl font-bold text-white">No Items Found</h2>
+                                <p className="text-zinc-500 leading-relaxed text-sm">
+                                    It looks like your gallery is currently empty.
+                                    Start by adding your first entry to the system.
+                                </p>
+                                <button
+                                    onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
+                                    className="px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all text-sm"
+                                >
+                                    Add First {activeTab === 'products' ? 'Artwork' : 'Category'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key={activeTab}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="group relative bg-zinc-900/20 hover:bg-zinc-900/40 border border-white/5 hover:border-blue-500/20 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center gap-8 backdrop-blur-xl transition-all duration-500 overflow-hidden"
+                            className="space-y-4"
                         >
-                            {/* Ambient Background Glow */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                            {/* Avatar/Visual Profile */}
-                            <div className="relative shrink-0">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                                <div className="relative w-24 h-24 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center">
-                                    {app.avatar_url ? (
-                                        <img src={app.avatar_url} alt={app.full_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                    ) : (
-                                        <User size={32} className="text-zinc-700" />
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Data Section */}
-                            <div className="flex-1 space-y-4">
-                                <div>
-                                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                                        <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">{app.full_name}</h3>
-                                        <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
-                                            Pending Review
-                                        </span>
-                                        {app.portfolio_url && (
-                                            <a
-                                                href={app.portfolio_url.startsWith('http') ? app.portfolio_url : `https://${app.portfolio_url}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-1.5 text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[0.2em] transition-colors"
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-4">
+                                    {activeTab === 'shipping' ? (
+                                        <ShippingManager />
+                                    ) : activeTab === 'products' ? (
+                                        (filteredItems as Product[]).map((product, index) => (
+                                            <motion.div
+                                                key={product.id}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: index * 0.05 }}
+                                                className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-3xl p-4 flex flex-col md:flex-row items-start md:items-center gap-6 backdrop-blur-sm transition-all duration-300"
                                             >
-                                                Portfolio <ExternalLink size={12} />
-                                            </a>
-                                        )}
+                                                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-2xl">
+                                                    <img
+                                                        src={product.images?.[0] || '/placeholder-art.jpg'}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 space-y-1 w-full">
+                                                    <div className="flex items-center gap-3">
+                                                        <h3 className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight line-clamp-1">{product.name}</h3>
+                                                        <span className="px-2 py-0.5 rounded-lg bg-white/5 text-[10px] font-bold text-zinc-500 uppercase whitespace-nowrap">
+                                                            {product.category || 'Legacy'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-6">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Valuation</span>
+                                                            <span className="text-blue-400 font-black">₹{product.price.toLocaleString()}</span>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Inventory</span>
+                                                            <span className={`font-black ${product.quantity > 0 ? 'text-zinc-300' : 'text-red-500'}`}>
+                                                                {product.quantity.toString().padStart(2, '0')}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex md:hidden w-full gap-2 mt-4 pt-4 border-t border-white/5">
+                                                    <button onClick={() => handleEditProduct(product)} className="flex-1 py-3 rounded-xl bg-blue-500/10 text-blue-400 font-bold text-sm">Edit</button>
+                                                    <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm">Delete</button>
+                                                </div>
+
+                                                <div className="hidden md:flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                    <button
+                                                        onClick={() => handleViewProduct(product)}
+                                                        className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                                                    >
+                                                        <Eye size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleEditProduct(product)}
+                                                        className="p-3 rounded-xl bg-blue-500/10 text-blue-400 hover:text-white hover:bg-blue-500 transition-all"
+                                                    >
+                                                        <Pencil size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteProduct(product.id)}
+                                                        className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        ))
+                                    ) : activeTab === 'categories' ? (
+                                        (filteredItems as Category[]).map((cat, index) => (
+                                            key = { cat.id }
+                                            initial = {{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                        >
+                                    key={cat.id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                        >
+                                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                                        <img
+                                            src={cat.image_url || '/placeholder-category.jpg'}
+                                            alt={cat.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
                                     </div>
 
-                                    <p className="text-zinc-500 leading-relaxed font-medium max-w-2xl line-clamp-2 italic">
-                                        "{app.bio || 'This artist opted for a silent portfolio speak.'}"
+                                    <div className="flex-1">
+                                        <h3 className="font-bold text-white group-hover:text-violet-400 transition-colors uppercase tracking-tight">{cat.name}</h3>
+                                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
+                                            Initialized: {new Date(cat.created_at).toLocaleDateString()}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                        <button
+                                            onClick={() => handleViewCategory(cat)}
+                                            className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                                        >
+                                            <Eye size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleEditCategory(cat)}
+                                            className="p-3 rounded-xl bg-violet-500/10 text-violet-400 hover:text-white hover:bg-violet-500 transition-all"
+                                        >
+                                            <Pencil size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteCategory(cat.id)}
+                                            className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </motion.div>
+                                ))
+                                ) : filteredItems.length > 0 ? (
+                                    (filteredItems as Applicant[]).map((app, index) => (
+                                <motion.div
+                                    key={app.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="group relative bg-zinc-900/20 hover:bg-zinc-900/40 border border-white/5 hover:border-blue-500/20 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center gap-8 backdrop-blur-xl transition-all duration-500 overflow-hidden"
+                                >
+                                    {/* Ambient Background Glow */}
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                                    {/* Avatar/Visual Profile */}
+                                    <div className="relative shrink-0">
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                                        <div className="relative w-24 h-24 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center">
+                                            {app.avatar_url ? (
+                                                <img src={app.avatar_url} alt={app.full_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                            ) : (
+                                                <User size={32} className="text-zinc-700" />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Data Section */}
+                                    <div className="flex-1 space-y-4">
+                                        <div>
+                                            <div className="flex flex-wrap items-center gap-3 mb-2">
+                                                <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">{app.full_name}</h3>
+                                                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
+                                                    Pending Review
+                                                </span>
+                                                {app.portfolio_url && (
+                                                    <a
+                                                        href={app.portfolio_url.startsWith('http') ? app.portfolio_url : `https://${app.portfolio_url}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-1.5 text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[0.2em] transition-colors"
+                                                    >
+                                                        Portfolio <ExternalLink size={12} />
+                                                    </a>
+                                                )}
+                                            </div>
+
+                                            <p className="text-zinc-500 leading-relaxed font-medium max-w-2xl line-clamp-2 italic">
+                                                "{app.bio || 'This artist opted for a silent portfolio speak.'}"
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                                            <div className="flex items-center gap-2 text-zinc-600">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Email:</span>
+                                                <span className="text-[10px] font-bold text-zinc-400">{app.email}</span>
+                                            </div>
+                                            {app.mobile && (
+                                                <div className="flex items-center gap-2 text-zinc-600">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest">Mobile:</span>
+                                                    <span className="text-[10px] font-bold text-zinc-400">{app.mobile}</span>
+                                                </div>
+                                            )}
+                                            <div className="flex items-center gap-2 text-zinc-600">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Submitted:</span>
+                                                <span className="text-[10px] font-bold text-zinc-400">{new Date(app.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex items-center gap-3 shrink-0">
+                                        <button
+                                            onClick={() => handleApproveApplicant(app.id)}
+                                            className="px-8 py-4 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleRejectApplicant(app.id)}
+                                            className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/5 transition-all active:scale-95"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
+                                </motion.div>
+                                ))
+                                ) : (
+                                <div className="p-20 text-center rounded-[3rem] bg-zinc-900/10 border border-dashed border-white/5">
+                                    <div className="w-20 h-20 bg-zinc-900/50 rounded-3xl mx-auto flex items-center justify-center mb-6 text-zinc-700">
+                                        <ShieldAlert size={40} />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Pending Applications</h3>
+                                    <p className="text-zinc-500 max-w-sm mx-auto text-sm">
+                                        Everything is processed. New artist requests will appear here for your verification.
                                     </p>
                                 </div>
-
-                                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
-                                    <div className="flex items-center gap-2 text-zinc-600">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Email:</span>
-                                        <span className="text-[10px] font-bold text-zinc-400">{app.email}</span>
-                                    </div>
-                                    {app.mobile && (
-                                        <div className="flex items-center gap-2 text-zinc-600">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Mobile:</span>
-                                            <span className="text-[10px] font-bold text-zinc-400">{app.mobile}</span>
-                                        </div>
-                                    )}
-                                    <div className="flex items-center gap-2 text-zinc-600">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Submitted:</span>
-                                        <span className="text-[10px] font-bold text-zinc-400">{new Date(app.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="flex items-center gap-3 shrink-0">
-                                <button
-                                    onClick={() => handleApproveApplicant(app.id)}
-                                    className="px-8 py-4 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
-                                >
-                                    Approve
-                                </button>
-                                <button
-                                    onClick={() => handleRejectApplicant(app.id)}
-                                    className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/5 transition-all active:scale-95"
-                                >
-                                    Reject
-                                </button>
+                                )}
                             </div>
                         </motion.div>
-                        ))
-                        ) : (
-                        <div className="p-20 text-center rounded-[3rem] bg-zinc-900/10 border border-dashed border-white/5">
-                            <div className="w-20 h-20 bg-zinc-900/50 rounded-3xl mx-auto flex items-center justify-center mb-6 text-zinc-700">
-                                <ShieldAlert size={40} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Pending Applications</h3>
-                            <p className="text-zinc-500 max-w-sm mx-auto text-sm">
-                                Everything is processed. New artist requests will appear here for your verification.
-                            </p>
-                        </div>
-                                )}
-                    </div>
-                </motion.div>
                     )}
-            </AnimatePresence>
+                </AnimatePresence>
 
-            {/* Modals */}
-            <CategoryModal
-                isOpen={isCategoryModalOpen}
-                onClose={() => setIsCategoryModalOpen(false)}
-                onSuccess={fetchData}
-                categoryToEdit={categoryToEdit}
-                isViewOnly={isCategoryViewOnly}
-            />
+                {/* Modals */}
+                <CategoryModal
+                    isOpen={isCategoryModalOpen}
+                    onClose={() => setIsCategoryModalOpen(false)}
+                    onSuccess={fetchData}
+                    categoryToEdit={categoryToEdit}
+                    isViewOnly={isCategoryViewOnly}
+                />
 
-            <ProductModal
-                isOpen={isProductModalOpen}
-                onClose={() => setIsProductModalOpen(false)}
-                onSuccess={fetchData}
-                productToEdit={productToEdit}
-                isViewOnly={isProductViewOnly}
-            />
-        </main>
+                <ProductModal
+                    isOpen={isProductModalOpen}
+                    onClose={() => setIsProductModalOpen(false)}
+                    onSuccess={fetchData}
+                    productToEdit={productToEdit}
+                    isViewOnly={isProductViewOnly}
+                />
+            </main>
         </div >
     );
 }
