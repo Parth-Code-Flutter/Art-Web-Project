@@ -127,78 +127,53 @@ export default function CategoryDetailsPage() {
                     Back to Gallery
                 </button>
 
-                <header className="mb-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                        <Filter size={12} /> Filtered Collection
+                {/* Compact Top Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-2 text-zinc-400 text-sm font-medium">
+                        <Filter size={16} />
+                        <span>{products.length} Artworks Found</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-heading font-black text-white mb-4 tracking-tighter uppercase italic">
-                        {categoryName}
-                    </h1>
-                    <p className="text-zinc-400 max-w-2xl text-lg font-medium">
-                        Explore our curated selection of {categoryName.toLowerCase()} masterpieces.
-                    </p>
-                </header>
 
-                {/* Premium Filter Bar */}
-                <div className="sticky top-20 z-40 mb-10">
-                    <div className="bg-zinc-900/70 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-row flex-wrap items-center justify-between gap-4 shadow-2xl">
-                        <div className="flex items-center gap-3 text-zinc-300">
-                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                                <Filter size={20} />
-                            </div>
-                            <span className="font-medium">{products.length} Artworks Found</span>
-                        </div>
+                    <div className="relative sort-dropdown-container w-full sm:w-auto">
+                        <button
+                            className="w-full sm:w-48 bg-zinc-900 border border-white/10 hover:border-white/20 text-white px-4 py-2 rounded-lg flex items-center justify-between transition-all text-xs font-bold uppercase tracking-wider"
+                            onClick={() => setIsSortOpen(!isSortOpen)}
+                        >
+                            <span>
+                                {sortBy === 'date-new' && 'Newest'}
+                                {sortBy === 'date-old' && 'Oldest'}
+                                {sortBy === 'price-high' && 'Price: High'}
+                                {sortBy === 'price-low' && 'Price: Low'}
+                            </span>
+                            <TrendingDown size={14} className={`text-zinc-500 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+                        </button>
 
-                        <div className="relative sort-dropdown-container w-full sm:w-auto">
-                            <button
-                                className="w-full sm:w-64 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-3 rounded-xl flex items-center justify-between transition-all"
-                                onClick={() => setIsSortOpen(!isSortOpen)}
-                            >
-                                <span className="text-sm font-medium">
-                                    {sortBy === 'date-new' && 'Newest First'}
-                                    {sortBy === 'date-old' && 'Oldest First'}
-                                    {sortBy === 'price-high' && 'Price: High to Low'}
-                                    {sortBy === 'price-low' && 'Price: Low to High'}
-                                </span>
-                                <TrendingDown size={16} className={`text-zinc-400 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
-                            </button>
-
-                            <AnimatePresence>
-                                {isSortOpen && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 top-full mt-2 w-full sm:w-64 bg-[#111] border border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
-                                    >
+                        <AnimatePresence>
+                            {isSortOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 5, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                                    className="absolute right-0 top-full mt-2 w-full sm:w-48 bg-zinc-900 border border-white/10 rounded-lg shadow-xl overflow-hidden z-50 p-1"
+                                >
+                                    {[
+                                        { id: 'date-new', label: 'Newest' },
+                                        { id: 'date-old', label: 'Oldest' },
+                                        { id: 'price-high', label: 'Price: High' },
+                                        { id: 'price-low', label: 'Price: Low' }
+                                    ].map((opt) => (
                                         <button
-                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${sortBy === 'date-new' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'}`}
-                                            onClick={() => { setSortBy('date-new'); setIsSortOpen(false); }}
+                                            key={opt.id}
+                                            className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-colors ${sortBy === opt.id ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
+                                            onClick={() => { setSortBy(opt.id as SortOption); setIsSortOpen(false); }}
                                         >
-                                            <Calendar size={16} /> Newest First
+                                            {opt.label}
+                                            {sortBy === opt.id && <Check size={12} />}
                                         </button>
-                                        <button
-                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${sortBy === 'date-old' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'}`}
-                                            onClick={() => { setSortBy('date-old'); setIsSortOpen(false); }}
-                                        >
-                                            <Calendar size={16} /> Oldest First
-                                        </button>
-                                        <button
-                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${sortBy === 'price-high' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'}`}
-                                            onClick={() => { setSortBy('price-high'); setIsSortOpen(false); }}
-                                        >
-                                            <TrendingDown size={16} /> Price: High to Low
-                                        </button>
-                                        <button
-                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${sortBy === 'price-low' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'}`}
-                                            onClick={() => { setSortBy('price-low'); setIsSortOpen(false); }}
-                                        >
-                                            <TrendingUp size={16} /> Price: Low to High
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
 
