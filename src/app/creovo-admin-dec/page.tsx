@@ -22,6 +22,19 @@ export default function CreovoAdminLoginPage() {
 
             if (error) throw error;
 
+            // NEW: Verify if this user is actually an admin
+            const { data: isAdmin, error: roleError } = await supabase
+                .from('admins')
+                .select('id')
+                .eq('id', data.user.id)
+                .single();
+
+            if (roleError || !isAdmin) {
+                // If not an admin, sign them out immediately
+                await supabase.auth.signOut();
+                throw new Error('Access Denied: Unrecognized Protocol');
+            }
+
             console.log('Admin login successful');
             // Full reload to ensure middleware picks up the new session cookies
             window.location.href = '/creovo-admin-dec/vault';

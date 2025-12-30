@@ -62,7 +62,19 @@ export async function middleware(request: NextRequest) {
     // 1. CRITICAL: Obfuscate & Protect Vault (Admin) Routes
     if (url.pathname.startsWith('/creovo-admin-dec/vault')) {
         if (!user) {
-            // No user? Return a 404 rewrite so the page appears not to exist
+            const notFoundUrl = new URL('/404', request.url)
+            return NextResponse.rewrite(notFoundUrl)
+        }
+
+        // Check if user is actually an admin
+        const { data: adminData } = await supabase
+            .from('admins')
+            .select('id')
+            .eq('id', user.id)
+            .single()
+
+        if (!adminData) {
+            // Logged in user but NOT an admin? Show 404 (Obfuscation)
             const notFoundUrl = new URL('/404', request.url)
             return NextResponse.rewrite(notFoundUrl)
         }
