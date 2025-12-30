@@ -19,7 +19,12 @@ import {
     Loader2,
     ShieldCheck,
     ArrowRight,
-    User
+    User,
+    ExternalLink,
+    Check,
+    CheckCircle,
+    ShieldAlert,
+    X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -48,8 +53,9 @@ interface Category {
 interface Applicant {
     id: string;
     full_name: string;
-    bio: string;
-    portfolio_url: string;
+    email?: string;
+    bio?: string;
+    portfolio_url?: string;
     status: string;
     created_at: string;
 }
@@ -73,9 +79,28 @@ export default function AdminDashboard() {
     const [isProductViewOnly, setIsProductViewOnly] = useState(false);
 
     useEffect(() => {
+        checkAdmin();
         fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
+
+    const checkAdmin = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        const { data: admin, error } = await supabase
+            .from('admins')
+            .select('id')
+            .eq('id', user.id)
+            .single();
+
+        if (error || !admin) {
+            alert('Access Denied. Administrative privileges required.');
+            router.push('/login');
+        }
+    };
 
     async function fetchData() {
         setLoading(true);
@@ -90,21 +115,23 @@ export default function AdminDashboard() {
                 setCategories(data || []);
             } else {
                 const { data, error } = await supabase
-                    .from('profiles')
+                    .from('sellers')
                     .select('*')
                     .eq('status', 'pending')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
                 setApplicants(data || []);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(`Error fetching ${activeTab}:`, err);
+            alert(`Critial Sync Error: ${err.message || 'Check database connection'}`);
         } finally {
             setLoading(false);
         }
     }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
         router.push('/login');
     };
 
@@ -112,7 +139,7 @@ export default function AdminDashboard() {
     const handleApproveApplicant = async (id: string) => {
         try {
             const { error } = await supabase
-                .from('profiles')
+                .from('sellers')
                 .update({ status: 'approved' })
                 .eq('id', id);
             if (error) throw error;
@@ -126,7 +153,7 @@ export default function AdminDashboard() {
         if (!confirm('Reject this applicant?')) return;
         try {
             const { error } = await supabase
-                .from('profiles')
+                .from('sellers')
                 .update({ status: 'rejected' })
                 .eq('id', id);
             if (error) throw error;
@@ -197,10 +224,10 @@ export default function AdminDashboard() {
     };
 
     const filteredItems = activeTab === 'products'
-        ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category?.toLowerCase().includes(searchQuery.toLowerCase()))
+        ? products.filter(p => p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.category?.toLowerCase().includes(searchQuery.toLowerCase()))
         : activeTab === 'categories'
-            ? categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-            : applicants.filter(a => a.full_name?.toLowerCase().includes(searchQuery.toLowerCase()));
+            ? categories.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+            : applicants.filter(a => (a.full_name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (a.email || '').toLowerCase().includes(searchQuery.toLowerCase()));
 
     return (
         <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-blue-500/30">
@@ -368,7 +395,7 @@ export default function AdminDashboard() {
                         >
                             <div className="grid grid-cols-1 gap-4">
                                 {activeTab === 'products' ? (
-                                    products.map((product, index) => (
+                                    (filteredItems as Product[]).map((product, index) => (
                                         <motion.div
                                             key={product.id}
                                             initial={{ opacity: 0, x: -20 }}
@@ -376,7 +403,7 @@ export default function AdminDashboard() {
                                             transition={{ delay: index * 0.05 }}
                                             className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-3xl p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
                                         >
-                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-2xl">
                                                 <img
                                                     src={product.images?.[0] || '/placeholder-art.jpg'}
                                                     alt={product.name}
@@ -428,7 +455,7 @@ export default function AdminDashboard() {
                                         </motion.div>
                                     ))
                                 ) : activeTab === 'categories' ? (
-                                    categories.map((cat, index) => (
+                                    (filteredItems as Category[]).map((cat, index) => (
                                         <motion.div
                                             key={cat.id}
                                             initial={{ opacity: 0, x: -20 }}
@@ -473,8 +500,8 @@ export default function AdminDashboard() {
                                             </div>
                                         </motion.div>
                                     ))
-                                ) : (
-                                    applicants.map((app, index) => (
+                                ) : filteredItems.length > 0 ? (
+                                    (filteredItems as Applicant[]).map((app, index) => (
                                         <motion.div
                                             key={app.id}
                                             initial={{ opacity: 0, x: -20 }}
@@ -498,10 +525,15 @@ export default function AdminDashboard() {
                                                         View Portfolio <ArrowRight size={10} />
                                                     </a>
                                                 </div>
-                                                <p className="text-sm text-zinc-500 italic">"{app.bio}"</p>
-                                                <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
-                                                    Submitted: {new Date(app.created_at).toLocaleDateString()}
-                                                </p>
+                                                <p className="text-sm text-zinc-500 italic">"{app.bio || 'No artist bio provided.'}"</p>
+                                                <div className="flex items-center gap-4">
+                                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
+                                                        Email: <span className="text-zinc-400">{app.email}</span>
+                                                    </p>
+                                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
+                                                        Submitted: {new Date(app.created_at).toLocaleDateString()}
+                                                    </p>
+                                                </div>
                                             </div>
 
                                             <div className="flex items-center gap-3">
@@ -520,6 +552,16 @@ export default function AdminDashboard() {
                                             </div>
                                         </motion.div>
                                     ))
+                                ) : (
+                                    <div className="p-20 text-center rounded-[3rem] bg-zinc-900/10 border border-dashed border-white/5">
+                                        <div className="w-20 h-20 bg-zinc-900/50 rounded-3xl mx-auto flex items-center justify-center mb-6 text-zinc-700">
+                                            <ShieldAlert size={40} />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Pending Applications</h3>
+                                        <p className="text-zinc-500 max-w-sm mx-auto text-sm">
+                                            Everything is processed. New artist requests will appear here for your verification.
+                                        </p>
+                                    </div>
                                 )}
                             </div>
                         </motion.div>

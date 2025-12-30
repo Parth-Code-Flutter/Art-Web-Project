@@ -93,12 +93,29 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // 4. SECURE: Guest-Only Routes
+    // 4. SECURE: Guest-Only Routes (Redirect if already logged in)
     if (url.pathname === '/login' || url.pathname === '/creovo-admin-dec') {
         if (user) {
             if (url.pathname === '/creovo-admin-dec') {
                 return NextResponse.redirect(new URL('/creovo-admin-dec/vault', request.url))
             }
+
+            // Dual-Table Role Check
+            const { data: seller } = await supabase
+                .from('sellers')
+                .select('status')
+                .eq('id', user.id)
+                .single()
+
+            if (seller) {
+                if (seller.status === 'approved') {
+                    return NextResponse.redirect(new URL('/seller/dashboard', request.url))
+                }
+                return NextResponse.redirect(new URL('/customer/become-artist', request.url))
+            }
+
+            // If not a seller, assume customer or check customer table if needed
+            // For now, redirect to customer dashboard as default logged-in state
             return NextResponse.redirect(new URL('/customer/dashboard', request.url))
         }
     }
@@ -109,14 +126,13 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
 
-        // Check if user is an approved seller
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role, status')
+        const { data: seller } = await supabase
+            .from('sellers')
+            .select('status')
             .eq('id', user.id)
             .single()
 
-        if (!profile || profile.role !== 'seller' || profile.status !== 'approved') {
+        if (!seller || seller.status !== 'approved') {
             return NextResponse.redirect(new URL('/customer/become-artist', request.url))
         }
     }

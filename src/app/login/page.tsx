@@ -7,6 +7,12 @@ import CustomerAuth from '@/components/customer/CustomerAuth';
 export default function LoginPage() {
     // Customer Auth State
     const [isCustomerAuthOpen, setIsCustomerAuthOpen] = useState(false);
+    const [authType, setAuthType] = useState<'customer' | 'seller'>('customer');
+
+    const handleAuthOpen = (type: 'customer' | 'seller') => {
+        setAuthType(type);
+        setIsCustomerAuthOpen(true);
+    };
 
     return (
         <main className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-6">
@@ -40,7 +46,7 @@ export default function LoginPage() {
                         <p className="text-zinc-500 mb-8 text-sm">Please select your destination to continue.</p>
 
                         <button
-                            onClick={() => setIsCustomerAuthOpen(true)}
+                            onClick={() => handleAuthOpen('customer')}
                             className="w-full group p-8 rounded-[2rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 hover:border-blue-500/30 hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.3)] transition-all text-left flex items-center gap-6"
                         >
                             <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform duration-500">
@@ -56,7 +62,7 @@ export default function LoginPage() {
                         </button>
 
                         <button
-                            onClick={() => setIsCustomerAuthOpen(true)}
+                            onClick={() => handleAuthOpen('seller')}
                             className="w-full group p-8 rounded-[2rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 hover:border-violet-500/30 hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.3)] transition-all text-left flex items-center gap-6"
                         >
                             <div className="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500 group-hover:scale-110 transition-transform duration-500">
@@ -73,7 +79,7 @@ export default function LoginPage() {
 
                         <div className="pt-8 mt-8 border-t border-white/5">
                             <p className="text-center text-xs text-zinc-600 font-medium tracking-wide">
-                                NEW TO THE GALLERY? <button onClick={() => setIsCustomerAuthOpen(true)} className="text-zinc-400 hover:text-white transition-colors">CREATE AN ACCOUNT</button>
+                                NEW TO THE GALLERY? <button onClick={() => handleAuthOpen('customer')} className="text-zinc-400 hover:text-white transition-colors">CREATE AN ACCOUNT</button>
                             </p>
                         </div>
                     </div>
@@ -84,6 +90,7 @@ export default function LoginPage() {
             <CustomerAuth
                 isOpen={isCustomerAuthOpen}
                 onClose={() => setIsCustomerAuthOpen(false)}
+                initialType={authType}
             />
         </main>
     );

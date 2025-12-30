@@ -54,18 +54,18 @@ export default function SellerDashboard() {
         }
 
         // Verify seller status
-        const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('role, status')
+        const { data: seller, error } = await supabase
+            .from('sellers')
+            .select('status, full_name, avatar_url')
             .eq('id', user.id)
             .single();
 
-        if (error || profile?.role !== 'seller' || profile?.status !== 'approved') {
+        if (error || seller?.status !== 'approved') {
             router.push('/customer/become-artist');
             return;
         }
 
-        setUser(user);
+        setUser({ ...user, profile: seller });
         fetchSellerData(user.id);
     };
 
@@ -159,16 +159,26 @@ export default function SellerDashboard() {
                             <span className="text-blue-500">Dashboard</span>
                         </div>
                         <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tighter">
-                            WELCOME, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-600 uppercase">{user?.user_metadata?.full_name || 'Creator'}</span>
+                            WELCOME, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-600 uppercase">{user?.profile?.full_name || 'Creator'}</span>
                         </h1>
                     </div>
 
-                    <button
-                        onClick={() => router.push('/seller/add-piece')}
-                        className="px-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center gap-3 uppercase tracking-widest text-xs active:scale-95"
-                    >
-                        <Plus size={20} /> Add New Artwork
-                    </button>
+                    <div className="flex items-center gap-6">
+                        {user?.profile?.avatar_url && (
+                            <div className="relative group">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                                <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                                    <img src={user.profile.avatar_url} alt="Profile" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                </div>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => router.push('/seller/add-piece')}
+                            className="px-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center gap-3 uppercase tracking-widest text-xs active:scale-95"
+                        >
+                            <Plus size={20} /> Add New Artwork
+                        </button>
+                    </div>
                 </header>
 
                 {/* Stats Grid */}
