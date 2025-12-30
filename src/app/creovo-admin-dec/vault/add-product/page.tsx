@@ -104,7 +104,7 @@ export default function AddProductPage() {
             ]);
 
             if (error) throw error;
-            router.push('/admin');
+            router.push('/creovo-admin-dec/vault');
         } catch (err: any) {
             alert(err.message || 'Error adding product');
         } finally {

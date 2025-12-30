@@ -24,7 +24,7 @@ export default function CreovoAdminLoginPage() {
 
             console.log('Admin login successful');
             // Full reload to ensure middleware picks up the new session cookies
-            window.location.href = '/admin';
+            window.location.href = '/creovo-admin-dec/vault';
         } catch (err: any) {
             console.error('Admin login error:', err.message || err);
             alert(err.message || 'Invalid Admin Credentials');

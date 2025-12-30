@@ -59,31 +59,33 @@ export async function middleware(request: NextRequest) {
 
     const url = request.nextUrl.clone()
 
-    // 1. CRITICAL: Obfuscate Admin Routes
-    if (url.pathname.startsWith('/admin')) {
+    // 1. CRITICAL: Obfuscate & Protect Vault (Admin) Routes
+    if (url.pathname.startsWith('/creovo-admin-dec/vault')) {
         if (!user) {
             // No user? Return a 404 rewrite so the page appears not to exist
-            // This prevents anyone from knowing the admin portal even exists at this path
             const notFoundUrl = new URL('/404', request.url)
             return NextResponse.rewrite(notFoundUrl)
         }
     }
 
-    // 2. CRITICAL: Protect ALL Customer Routes (including categories, products, etc.)
+    // 2. EXTRA SECURE: Kill the old /admin path completely (Always 404)
+    if (url.pathname.startsWith('/admin')) {
+        const notFoundUrl = new URL('/404', request.url)
+        return NextResponse.rewrite(notFoundUrl)
+    }
+
+    // 3. CRITICAL: Protect ALL Customer Routes
     if (url.pathname.startsWith('/customer')) {
         if (!user) {
-            // No user? Boot them to login
             return NextResponse.redirect(new URL('/login', request.url))
         }
     }
 
-    // 3. SECURE: Guest-Only Routes (e.g., don't show login to someone already logged in)
+    // 4. SECURE: Guest-Only Routes
     if (url.pathname === '/login' || url.pathname === '/creovo-admin-dec') {
         if (user) {
-            // Already logged in? Redirect to appropriate dashboard
-            // If they were trying to hit the admin login, favor the admin dashboard
             if (url.pathname === '/creovo-admin-dec') {
-                return NextResponse.redirect(new URL('/admin', request.url))
+                return NextResponse.redirect(new URL('/creovo-admin-dec/vault', request.url))
             }
             return NextResponse.redirect(new URL('/customer/dashboard', request.url))
         }
@@ -93,11 +95,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Broad matcher to capture all sub-paths
     matcher: [
+        '/creovo-admin-dec/:path*',
         '/admin/:path*',
         '/customer/:path*',
-        '/login',
-        '/creovo-admin-dec'
+        '/login'
     ],
 }
