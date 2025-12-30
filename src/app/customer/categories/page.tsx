@@ -72,7 +72,7 @@ export default function CustomerCategories() {
     };
 
     return (
-        <main className="min-h-screen bg-black text-white pt-24 pb-20 px-6 md:px-12">
+        <main className="min-h-screen bg-black text-white pt-20 pb-20 px-6 md:px-12">
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">

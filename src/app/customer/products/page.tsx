@@ -107,7 +107,7 @@ export default function CustomerProducts() {
     };
 
     return (
-        <main className="min-h-screen bg-black pt-24 pb-20 px-4 md:px-8">
+        <main className="min-h-screen bg-black pt-20 pb-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
                 <header className="mb-12">
                     <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 tracking-tight">

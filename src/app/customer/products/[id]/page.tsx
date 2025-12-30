@@ -111,7 +111,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     if (!product) return null;
 
     return (
-        <main className="min-h-screen bg-black text-white pt-24 pb-20 px-4 md:px-8">
+        <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Back Button */}
                 <motion.button

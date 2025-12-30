@@ -81,7 +81,7 @@ export default function CustomerDashboard() {
 
     return (
         <main className="min-h-screen bg-black text-white">
-            <div className="pt-24 lg:pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-24 pb-20">
+            <div className="pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-24 pb-20">
 
                 {/* USP Feature Highlight: View In Your Room (TOP USP) */}
                 <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900/60 backdrop-blur-xl group shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)]">

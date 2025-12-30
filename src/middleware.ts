@@ -62,10 +62,9 @@ export async function middleware(request: NextRequest) {
     // 1. CRITICAL: Protect ALL Admin Routes
     if (url.pathname.startsWith('/admin')) {
         if (!user) {
-            // No user? Boot them to login
-            return NextResponse.redirect(new URL('/login', request.url))
+            // No user? Boot them to the SECRET login portal
+            return NextResponse.redirect(new URL('/creovo-admin-dec', request.url))
         }
-        // Optional: In a multi-role app, you'd check for an 'admin' flag here
     }
 
     // 2. CRITICAL: Protect ALL Customer Routes (including categories, products, etc.)
@@ -77,10 +76,13 @@ export async function middleware(request: NextRequest) {
     }
 
     // 3. SECURE: Guest-Only Routes (e.g., don't show login to someone already logged in)
-    if (url.pathname === '/login') {
+    if (url.pathname === '/login' || url.pathname === '/creovo-admin-dec') {
         if (user) {
-            // Already logged in? Take them to their workspace
-            // We can check metadata to see where they belong, or just default to dashboard
+            // Already logged in? Redirect to appropriate dashboard
+            // If they were trying to hit the admin login, favor the admin dashboard
+            if (url.pathname === '/creovo-admin-dec') {
+                return NextResponse.redirect(new URL('/admin', request.url))
+            }
             return NextResponse.redirect(new URL('/customer/dashboard', request.url))
         }
     }
@@ -89,11 +91,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Broad matcher to capture all sub-paths of /admin and /customer
-    // and also the /login path for the guest guard
+    // Broad matcher to capture all sub-paths
     matcher: [
         '/admin/:path*',
         '/customer/:path*',
-        '/login'
+        '/login',
+        '/creovo-admin-dec'
     ],
 }
