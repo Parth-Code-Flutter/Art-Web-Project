@@ -24,9 +24,8 @@ import {
     Check,
     CheckCircle,
     ShieldAlert,
-    X,
-    X,
     Menu,
+    X,
     Globe // Added Globe icon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
