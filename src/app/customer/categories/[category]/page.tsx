@@ -240,37 +240,33 @@ export default function CategoryDetailsPage() {
                                             )}
 
                                             {/* Badges */}
-                                            <div className="absolute top-4 left-4">
-                                                <span className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs font-medium text-white shadow-lg">
+                                            <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                                                <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white shadow-lg uppercase tracking-wider">
                                                     {product.category}
                                                 </span>
                                             </div>
 
                                             {/* Overlay Gradient */}
-                                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+                                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
 
                                             {/* Price Badge */}
-                                            <div className="absolute bottom-4 left-4">
-                                                <div className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold tracking-wide shadow-lg">
+                                            <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                                                <div className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-sm tracking-wide shadow-lg">
                                                     {formatPrice(product.discount_price || product.price)}
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Content Area */}
-                                        <div className="p-6">
-                                            <div className="flex items-start justify-between gap-4 mb-3">
-                                                <h3 className="text-xl font-heading font-semibold text-white leading-tight group-hover:text-blue-400 transition-colors">
+                                        <div className="p-4">
+                                            <div className="mb-4 h-12 flex items-center">
+                                                <h3 className="text-sm md:text-base font-heading font-bold text-white leading-tight group-hover:text-blue-400 transition-colors line-clamp-2">
                                                     {product.name}
                                                 </h3>
                                             </div>
 
-                                            <p className="text-zinc-500 text-sm line-clamp-2 mb-6 h-10 leading-relaxed">
-                                                {product.description || 'No description available for this masterpiece.'}
-                                            </p>
-
                                             <button
-                                                className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all duration-300
+                                                className={`w-full py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider transition-all duration-300
                                                     ${addingToCart === product.id
                                                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                                                         : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5'
@@ -280,11 +276,11 @@ export default function CategoryDetailsPage() {
                                             >
                                                 {addingToCart === product.id ? (
                                                     <>
-                                                        <Check size={18} /> Added
+                                                        <Check size={14} strokeWidth={3} /> Added
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <ShoppingCart size={18} /> Add to Collection
+                                                        <Plus size={14} strokeWidth={3} /> Add
                                                     </>
                                                 )}
                                             </button>
