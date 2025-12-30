@@ -109,7 +109,7 @@ export default function CustomerCategories() {
                                     className="break-inside-avoid"
                                 >
                                     <Link
-                                        href={`/customer/products?category=${encodeURIComponent(category.name)}`}
+                                        href={`/customer/categories/${encodeURIComponent(category.name)}`}
                                         className="group block relative bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden hover:bg-zinc-900/60 hover:border-white/20 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 shadow-2xl"
                                     >
                                         {/* Category Image/Icon */}
