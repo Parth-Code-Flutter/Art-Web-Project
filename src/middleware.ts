@@ -59,17 +59,29 @@ export async function middleware(request: NextRequest) {
 
     const url = request.nextUrl.clone()
 
-    // 1. Protect Admin Routes
+    // 1. CRITICAL: Protect ALL Admin Routes
     if (url.pathname.startsWith('/admin')) {
         if (!user) {
+            // No user? Boot them to login
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+        // Optional: In a multi-role app, you'd check for an 'admin' flag here
+    }
+
+    // 2. CRITICAL: Protect ALL Customer Routes (including categories, products, etc.)
+    if (url.pathname.startsWith('/customer')) {
+        if (!user) {
+            // No user? Boot them to login
             return NextResponse.redirect(new URL('/login', request.url))
         }
     }
 
-    // 2. Protect Customer Routes
-    if (url.pathname.startsWith('/customer/dashboard') || url.pathname.startsWith('/customer/settings')) {
-        if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url))
+    // 3. SECURE: Guest-Only Routes (e.g., don't show login to someone already logged in)
+    if (url.pathname === '/login') {
+        if (user) {
+            // Already logged in? Take them to their workspace
+            // We can check metadata to see where they belong, or just default to dashboard
+            return NextResponse.redirect(new URL('/customer/dashboard', request.url))
         }
     }
 
@@ -77,5 +89,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/customer/dashboard/:path*', '/customer/settings/:path*'],
+    // Broad matcher to capture all sub-paths of /admin and /customer
+    // and also the /login path for the guest guard
+    matcher: [
+        '/admin/:path*',
+        '/customer/:path*',
+        '/login'
+    ],
 }

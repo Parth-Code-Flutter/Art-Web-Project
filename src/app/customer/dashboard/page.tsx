@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, TrendingUp, Award, Clock } from 'lucide-react';
+import { ArrowRight, Star, TrendingUp, Award, Clock, Sparkles } from 'lucide-react';
 import BentoHero from '@/components/customer/BentoHero';
 import { supabase } from '@/lib/supabase';
 
@@ -81,56 +81,100 @@ export default function CustomerDashboard() {
 
     return (
         <main className="min-h-screen bg-black text-white">
-            <div className="pt-20 lg:pt-24 px-4 md:px-8 max-w-7xl mx-auto space-y-20 pb-20">
+            <div className="pt-24 lg:pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-24 pb-20">
 
-                {/* Hero Section */}
+                {/* USP Feature Highlight: View In Your Room (TOP USP) */}
+                <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900/60 backdrop-blur-xl group shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)]">
+                    <div className="absolute top-0 right-0 w-[600px] h-full bg-blue-600/20 blur-[150px] -mr-40 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/15 blur-[120px] -ml-20 -mb-20 pointer-events-none" />
+
+                    <div className="relative flex flex-col lg:flex-row items-center gap-16 p-8 md:p-16 lg:p-20">
+                        {/* Realistic AR Mockup */}
+                        <div className="w-full lg:w-1/2 relative aspect-square rounded-[2rem] overflow-hidden border border-white/20 shadow-2xl bg-zinc-950">
+                            <img
+                                src="/ar-preview-hero.png"
+                                alt="AR Art Preview"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            />
+
+                            {/* Scanning Animation Overlays */}
+                            <div className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent top-0 animate-scan pointer-events-none shadow-[0_0_20px_blue] z-20" />
+                            <div className="absolute inset-0 bg-blue-500/5 mix-blend-overlay z-10" />
+
+                            {/* Live Badge */}
+                            <div className="absolute top-8 left-8 px-5 py-2.5 bg-black/70 backdrop-blur-xl rounded-full border border-blue-500/30 flex items-center gap-3 shadow-lg z-30">
+                                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Live AI Vision 3.0</span>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="w-full lg:w-1/2 space-y-10">
+                            <div>
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-black tracking-[0.2em] uppercase mb-6">
+                                    <Sparkles size={14} /> The Masterpiece Experience
+                                </div>
+
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-black text-white leading-[1.1] mb-6">
+                                    Curate Your <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 italic">
+                                        Private View
+                                    </span>
+                                </h1>
+
+                                <p className="text-zinc-400 text-xl leading-relaxed max-w-xl">
+                                    Our proprietary AI-driven <span className="text-white font-medium italic underline decoration-blue-500 decoration-2 underline-offset-4">Virtual Mockup</span> allows you to visualize any masterpiece in your own living space with photorealistic precision.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4">
+                                {[
+                                    { icon: <TrendingUp size={18} />, title: "Precision Scale", text: "Mathematically accurate" },
+                                    { icon: <Star size={18} />, title: "Dynamic Logic", text: "Real lighting response" }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex flex-col gap-3 group/item">
+                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-blue-400 transition-colors group-hover/item:border-blue-500/50">
+                                            {item.icon}
+                                        </div>
+                                        <div>
+                                            <div className="text-white font-bold text-lg">{item.title}</div>
+                                            <div className="text-zinc-500 text-sm">{item.text}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-5">
+                                <Link href="/customer/products" className="relative group/btn overflow-hidden px-10 py-5 bg-white text-black font-black rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_-10px_rgba(255,255,255,0.2)]">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                                    <span className="relative flex items-center justify-center gap-3">
+                                        Experience AR <ArrowRight size={22} className="group-hover/btn:translate-x-2 transition-transform" />
+                                    </span>
+                                </Link>
+                                <button className="px-10 py-5 rounded-2xl border border-white/10 text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                                    Learn Technology
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <style jsx>{`
+                    @keyframes scan {
+                        0% { top: 0%; opacity: 0; }
+                        50% { opacity: 1; }
+                        100% { top: 100%; opacity: 0; }
+                    }
+                    .animate-scan {
+                        animation: scan 4s linear infinite;
+                    }
+                `}</style>
+
+                {/* Main Hero Bento */}
                 <section>
                     <BentoHero />
                 </section>
 
-                {/* Trending Collections */}
-                <section>
-                    <div className="flex items-end justify-between mb-8">
-                        <div>
-                            <h2 className="text-3xl font-heading font-bold mb-2">Curated Collections</h2>
-                            <p className="text-zinc-400">Explore art by genre and movement.</p>
-                        </div>
-                        <Link href="/customer/categories" className="flex items-center gap-2 text-sm font-semibold text-white hover:text-blue-400 transition-colors">
-                            View All <ArrowRight size={16} />
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {curatedCollections.length > 0 ? (
-                            curatedCollections.map((collection, idx) => (
-                                <Link href={`/customer/products?category=${encodeURIComponent(collection.name)}`} key={collection.id} className="block w-full">
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
-                                        className="group relative h-64 rounded-3xl overflow-hidden cursor-pointer"
-                                    >
-                                        <img
-                                            src={collection.image}
-                                            alt={collection.name}
-                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                                        <div className="absolute bottom-6 left-6">
-                                            <span className="text-xs font-medium text-blue-400 mb-1 block">{collection.count} Works</span>
-                                            <h3 className="text-xl font-bold font-heading">{collection.name}</h3>
-                                        </div>
-                                    </motion.div>
-                                </Link>
-                            ))
-                        ) : (
-                            // Loading Skeletons
-                            [1, 2, 3].map((i) => (
-                                <div key={i} className="h-64 rounded-3xl bg-zinc-900 animate-pulse border border-zinc-800" />
-                            ))
-                        )}
-                    </div>
-                </section>
 
                 {/* Recent Drops / New Arrivals */}
                 <section>
