@@ -223,26 +223,8 @@ export default function CategoryDetailsPage() {
                                                     </div>
                                                 )}
 
-                                                {/* Discount Badge */}
-                                                {product.discount_price && product.discount_price < product.price && (
-                                                    <div className="absolute top-3 left-3">
-                                                        <div className="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 shadow-2xl">
-                                                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                                                                -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-
                                                 {/* Hover Glow */}
                                                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-
-                                                {/* Quick View Icon */}
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100">
-                                                    <div className="p-4 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white">
-                                                        <Eye size={20} />
-                                                    </div>
-                                                </div>
                                             </div>
                                         </Link>
 
@@ -254,9 +236,11 @@ export default function CategoryDetailsPage() {
                                                         {product.name}
                                                     </h3>
                                                 </Link>
-                                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
-                                                    {product.category || 'Uncategorized'}
-                                                </p>
+                                                <div className="flex items-center justify-between mt-0.5">
+                                                    <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
+                                                        {product.category || 'Uncategorized'}
+                                                    </p>
+                                                </div>
                                             </div>
 
                                             <div className="flex items-end justify-between mt-auto pt-2 border-t border-white/5">
@@ -272,9 +256,9 @@ export default function CategoryDetailsPage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right flex flex-col">
-                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter text-right">Stock</span>
-                                                    <span className={`text-[10px] font-black ${(product.quantity || 0) > 0 ? 'text-zinc-400' : 'text-red-500'}`}>
-                                                        {(product.quantity || 0).toString().padStart(2, '0')}
+                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter text-right">Discount</span>
+                                                    <span className="text-[10px] font-black text-emerald-500">
+                                                        {Math.round(((product.price - (product.discount_price || product.price)) / product.price) * 100).toString().padStart(2, '0')}%
                                                     </span>
                                                 </div>
                                             </div>
