@@ -19,7 +19,7 @@ interface Product {
     created_at?: string;
 }
 
-type SortOption = 'price-high' | 'price-low' | 'date-new' | 'date-old';
+type SortOption = 'discount' | 'price-high' | 'price-low' | 'date-new' | 'date-old';
 
 export default function CategoryDetailsPage() {
     const params = useParams();
@@ -29,7 +29,7 @@ export default function CategoryDetailsPage() {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sortBy, setSortBy] = useState<SortOption>('date-new');
+    const [sortBy, setSortBy] = useState<SortOption>('discount');
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
@@ -79,6 +79,10 @@ export default function CategoryDetailsPage() {
             const priceB = b.discount_price || b.price;
 
             switch (sortBy) {
+                case 'discount':
+                    const discountA = ((a.price - (a.discount_price || a.price)) / a.price);
+                    const discountB = ((b.price - (b.discount_price || b.price)) / b.price);
+                    return discountB - discountA;
                 case 'price-high':
                     return priceB - priceA;
                 case 'price-low':
@@ -148,6 +152,7 @@ export default function CategoryDetailsPage() {
                         >
                             <span className="flex items-center gap-2">
                                 <SlidersHorizontal size={14} className="text-zinc-500" />
+                                {sortBy === 'discount' && 'Max Discount'}
                                 {sortBy === 'date-new' && 'Newest Arrivals'}
                                 {sortBy === 'date-old' && 'Oldest First'}
                                 {sortBy === 'price-high' && 'Valuation: High'}
@@ -165,6 +170,7 @@ export default function CategoryDetailsPage() {
                                     className="absolute right-0 top-full mt-3 w-full sm:w-56 bg-zinc-900/90 backdrop-blur-xl border border-white/5 rounded-[2rem] shadow-2xl overflow-hidden z-[60] p-2"
                                 >
                                     {[
+                                        { id: 'discount', label: 'Max Discount' },
                                         { id: 'date-new', label: 'Newest Arrivals' },
                                         { id: 'date-old', label: 'Oldest First' },
                                         { id: 'price-high', label: 'Valuation: High' },
