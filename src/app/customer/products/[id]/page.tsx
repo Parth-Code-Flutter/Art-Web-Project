@@ -44,6 +44,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     const [zoomScale, setZoomScale] = useState(1);
     const [isMockupOpen, setIsMockupOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState(false);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         fetchProduct();
@@ -102,7 +103,15 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
         setAddingToCart(true);
 
         const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        localStorage.setItem('cart', JSON.stringify([...currentCart, { ...product, quantity: 1 }]));
+        const existingItemIndex = currentCart.findIndex((item: any) => item.id === product.id);
+
+        if (existingItemIndex > -1) {
+            currentCart[existingItemIndex].quantity += quantity;
+        } else {
+            currentCart.push({ ...product, quantity });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(currentCart));
 
         window.dispatchEvent(new Event('cartUpdated'));
 
@@ -124,15 +133,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
         <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Back Button */}
-                <motion.button
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    onClick={() => router.back()}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8 group"
-                >
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-medium">Back to Gallery</span>
-                </motion.button>
+                {/* Back Button Removed */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
@@ -240,26 +241,45 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                <button
-                                    onClick={addToCart}
-                                    disabled={addingToCart}
-                                    className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95
+                                <div className="flex items-center gap-4">
+                                    {/* Quantity Selector */}
+                                    <div className="flex items-center bg-zinc-800 rounded-xl border border-white/5 h-14">
+                                        <button
+                                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="w-8 text-center font-bold text-white">{quantity}</span>
+                                        <button
+                                            onClick={() => setQuantity(quantity + 1)}
+                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        onClick={addToCart}
+                                        disabled={addingToCart}
+                                        className={`flex-1 h-14 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95
                                         ${addingToCart
-                                            ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
-                                            : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5 hover:translate-y-[-2px]'
-                                        }
+                                                ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                                                : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5 hover:translate-y-[-2px]'
+                                            }
                                     `}
-                                >
-                                    {addingToCart ? (
-                                        <>
-                                            <Check size={20} /> Added to Collection
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ShoppingBag size={20} /> Add to Collection
-                                        </>
-                                    )}
-                                </button>
+                                    >
+                                        {addingToCart ? (
+                                            <>
+                                                <Check size={20} /> Added
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ShoppingBag size={20} /> Add to Collection
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
 
                                 <div className="flex gap-3">
                                     <button
