@@ -38,10 +38,34 @@ export default function ShareModal({ isOpen, onClose, productName, productUrl }:
         },
     ];
 
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(productUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const copyToClipboard = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(productUrl);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } else {
+                // Fallback for insecure contexts
+                const textArea = document.createElement("textarea");
+                textArea.value = productUrl;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                } catch (err) {
+                    console.error('Fallback copy failed', err);
+                }
+                document.body.removeChild(textArea);
+            }
+        } catch (err) {
+            console.error('Clipboard error', err);
+        }
     };
 
     return (
