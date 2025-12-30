@@ -59,11 +59,13 @@ export async function middleware(request: NextRequest) {
 
     const url = request.nextUrl.clone()
 
-    // 1. CRITICAL: Protect ALL Admin Routes
+    // 1. CRITICAL: Obfuscate Admin Routes
     if (url.pathname.startsWith('/admin')) {
         if (!user) {
-            // No user? Boot them to the SECRET login portal
-            return NextResponse.redirect(new URL('/creovo-admin-dec', request.url))
+            // No user? Return a 404 rewrite so the page appears not to exist
+            // This prevents anyone from knowing the admin portal even exists at this path
+            const notFoundUrl = new URL('/404', request.url)
+            return NextResponse.rewrite(notFoundUrl)
         }
     }
 
