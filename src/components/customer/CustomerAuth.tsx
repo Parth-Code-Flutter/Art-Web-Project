@@ -53,53 +53,63 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
         setLoading(true);
         try {
             if (mode === 'register') {
-                // Custom DB Registration (as it was previously)
-                const { error: regError } = await supabase
-                    .from('customers')
-                    .insert([{
-                        full_name: fullName,
-                        email,
-                        password, // Storing password as plain text as per user's previous implementation
-                        mobile: mobile || null,
-                        country
-                    }]);
-
-                if (regError) {
-                    if (regError.message.includes('unique constraint')) {
-                        alert('Email already exists!');
-                    } else {
-                        throw regError;
+                // 1. Sign up with Supabase Auth (Creates user in auth.users)
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            name: fullName,
+                            phone: mobile,
+                        }
                     }
-                    return;
+                });
+
+                if (authError) throw authError;
+
+                // 2. Mirror to public.customers table for profile management
+                if (authData.user) {
+                    const { error: dbError } = await supabase
+                        .from('customers')
+                        .insert([{
+                            id: authData.user.id, // Link to Auth UID
+                            full_name: fullName,
+                            email,
+                            mobile: mobile || null,
+                            country
+                        }]);
+
+                    if (dbError) {
+                        console.error('Profile sync error:', dbError);
+                        // We don't throw here to avoid confusing the user since the auth account IS created
+                    }
                 }
 
-                alert('Account created successfully! Please sign in.');
+                alert('Account created! Please check your email for verification (if enabled) or sign in.');
                 setMode('login');
             } else {
-                // Custom DB Login (as it was previously)
-                // Note: The UI used 'email' state for login input in the previous version
-                const { data, error: loginError } = await supabase
-                    .from('customers')
-                    .select('*')
-                    .eq('email', email)
-                    .eq('password', password)
-                    .single();
+                // 1. Sign in with Supabase Auth
+                const { data, error: loginError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
 
-                if (loginError || !data) {
-                    alert('Invalid email or password.');
-                    return;
-                }
+                if (loginError) throw loginError;
 
-                // Store session locally since we aren't using Supabase Auth
-                localStorage.setItem('customer_user', JSON.stringify(data));
-                window.dispatchEvent(new Event('customerLogin'));
-
+                // Success
                 onClose();
-                router.push('/customer/dashboard');
+                // Use window.location.href for a full refresh to ensure middleware picks up the session
+                window.location.href = '/customer/dashboard';
             }
         } catch (err: any) {
-            console.error('Auth operation failed:', err);
-            alert(err.message || 'An error occurred during authentication');
+            console.error('Authentication error:', err.message || err);
+
+            let friendlyMessage = err.message || 'Authentication failed.';
+            if (err.message === 'Invalid login credentials') {
+                friendlyMessage = 'Invalid email or password. If you haven\'t registered since the security update, please click "Register now" below. Also, check if email verification is required in your Supabase settings.';
+            }
+
+            alert(friendlyMessage);
         } finally {
             setLoading(false);
         }

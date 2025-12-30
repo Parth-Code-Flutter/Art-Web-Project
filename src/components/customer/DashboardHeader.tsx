@@ -54,24 +54,19 @@ export default function DashboardHeader() {
     }, []);
 
     const fetchUser = async () => {
-        // 1. Check Supabase Auth
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Collector');
-            setUserProfileUrl(user.user_metadata?.profile_image_url || null);
-            return;
-        }
-
-        // 2. Fallback to Custom Local Session
-        if (typeof window !== 'undefined') {
-            const customUser = JSON.parse(localStorage.getItem('customer_user') || 'null');
-            if (customUser) {
-                setUserName(customUser.full_name || 'Collector');
-                setUserProfileUrl(customUser.profile_image_url || null);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Collector');
+                setUserProfileUrl(user.user_metadata?.profile_image_url || null);
             } else {
                 setUserName('Collector');
                 setUserProfileUrl(null);
             }
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            setUserName('Collector');
+            setUserProfileUrl(null);
         }
     };
 
@@ -120,7 +115,7 @@ export default function DashboardHeader() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         localStorage.removeItem('customer_user');
-        router.push('/login');
+        window.location.href = '/login';
     };
 
     const navLinks = [

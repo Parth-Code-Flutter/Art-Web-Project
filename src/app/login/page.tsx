@@ -22,15 +22,23 @@ export default function LoginPage() {
         e.preventDefault();
         setIsAdminLoading(true);
 
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-        const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
 
-        if (email === adminEmail && password === adminPass) {
-            router.push('/admin');
-        } else {
-            alert('Invalid Admin Credentials');
+            if (error) throw error;
+
+            // Success - Next.js Middleware will now allow access to /admin
+            // Use window.location.href to force a full refresh so middleware sees the cookies
+            window.location.href = '/admin';
+        } catch (err: any) {
+            console.error('Admin login error:', err.message || err);
+            alert(err.message || 'Invalid Admin Credentials');
+        } finally {
+            setIsAdminLoading(false);
         }
-        setIsAdminLoading(false);
     };
 
     return (

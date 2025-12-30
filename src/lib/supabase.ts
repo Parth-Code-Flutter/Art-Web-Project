@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -8,9 +8,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /**
- * Supabase Client
+ * Supabase Client (Browser)
  * 
  * Used for database queries and authentication across the application.
- * Ensure environment variables are set in .env.local.
+ * Using createBrowserClient from @supabase/ssr ensures that cookies
+ * are correctly handled for middleware compatibility.
  */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createBrowserClient(
+    supabaseUrl,
+    supabaseAnonKey
+);
