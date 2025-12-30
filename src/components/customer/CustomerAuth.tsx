@@ -67,25 +67,24 @@ export default function CustomerAuth({ isOpen, onClose }: CustomerAuthProps) {
 
                 if (authError) throw authError;
 
-                // 2. Mirror to public.customers table for profile management
+                // 2. Mirror to public.customers table (using UPSERT to handle legacy emails)
                 if (authData.user) {
                     const { error: dbError } = await supabase
                         .from('customers')
-                        .insert([{
-                            id: authData.user.id, // Link to Auth UID
+                        .upsert({
+                            id: authData.user.id,
                             full_name: fullName,
                             email,
                             mobile: mobile || null,
                             country
-                        }]);
+                        }, { onConflict: 'email' });
 
                     if (dbError) {
                         console.error('Profile sync error:', dbError);
-                        // We don't throw here to avoid confusing the user since the auth account IS created
                     }
                 }
 
-                alert('Account created! Please check your email for verification (if enabled) or sign in.');
+                alert('Account created! IMPORTANT: If you cannot login immediately, check your inbox for a verification email OR disable "Confirm Email" in your Supabase Auth Settings.');
                 setMode('login');
             } else {
                 // 1. Sign in with Supabase Auth
