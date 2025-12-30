@@ -40,13 +40,15 @@ export default function CustomerCategories() {
                     const { count } = await supabase
                         .from('products')
                         .select('*', { count: 'exact', head: true })
-                        .eq('category', category.name);
+                        .eq('category', category.name)
+                        .eq('status', 'approved');
 
                     // Get up to 4 sample product images
                     const { data: products } = await supabase
                         .from('products')
                         .select('images')
                         .eq('category', category.name)
+                        .eq('status', 'approved')
                         .limit(4);
 
                     // Extract first image from each product

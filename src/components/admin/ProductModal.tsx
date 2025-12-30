@@ -14,6 +14,7 @@ interface Product {
     quantity: number;
     category: string;
     images: string[];
+    status?: 'pending' | 'approved' | 'rejected';
 }
 
 interface Category {
@@ -41,7 +42,8 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
-    const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0); // Track featured image index (0-based across existing + new)
+    const [status, setStatus] = useState<'pending' | 'approved' | 'rejected'>('approved'); // Default to approved for admins
+    const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         if (isOpen) {
@@ -58,6 +60,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             setQuantity(productToEdit.quantity.toString());
             setDescription(productToEdit.description || '');
             setExistingImages(productToEdit.images || []);
+            setStatus(productToEdit.status || 'approved');
             setPreviews([]);
             setImages([]);
             setFeaturedImageIndex(0); // Reset to first
@@ -72,6 +75,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             setPreviews([]);
             setImages([]);
             setFeaturedImageIndex(0);
+            setStatus('approved'); // Default for new products by admins
         }
     }, [productToEdit, isOpen]);
 
@@ -151,7 +155,8 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                 discount_price: discountPrice ? parseFloat(discountPrice) : null,
                 quantity: parseInt(quantity) || 0,
                 description,
-                images: uploadedImageUrls
+                images: uploadedImageUrls,
+                status: status
             };
 
             if (productToEdit) {
@@ -301,6 +306,22 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                             disabled={isViewOnly}
                                             required
                                         />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                                            <Check size={12} /> Deployment Status
+                                        </label>
+                                        <select
+                                            className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold appearance-none cursor-pointer"
+                                            value={status}
+                                            onChange={(e) => setStatus(e.target.value as any)}
+                                            disabled={isViewOnly}
+                                            required
+                                        >
+                                            <option value="pending" className="bg-zinc-900">Pending Review</option>
+                                            <option value="approved" className="bg-zinc-900">Live (Approved)</option>
+                                            <option value="rejected" className="bg-zinc-900">Restricted (Rejected)</option>
+                                        </select>
                                     </div>
                                 </div>
 

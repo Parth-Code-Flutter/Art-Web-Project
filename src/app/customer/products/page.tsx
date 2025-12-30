@@ -51,6 +51,7 @@ export default function CustomerProducts() {
             const { data, error } = await supabase
                 .from('products')
                 .select('*')
+                .eq('status', 'approved')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

@@ -26,7 +26,8 @@ import {
     ShieldAlert,
     Menu,
     X,
-    Globe // Added Globe icon
+    Globe, // Added Globe icon
+    Phone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -44,6 +45,7 @@ interface Product {
     quantity: number;
     category: string;
     images: string[];
+    status?: 'pending' | 'approved' | 'rejected';
 }
 
 interface Category {
@@ -53,7 +55,7 @@ interface Category {
     created_at: string;
 }
 
-interface Applicant {
+interface Seller {
     id: string;
     full_name: string;
     email?: string;
@@ -61,16 +63,16 @@ interface Applicant {
     bio?: string;
     portfolio_url?: string;
     avatar_url?: string;
-    status: string;
+    status: 'pending' | 'approved' | 'rejected';
     created_at: string;
 }
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'applications' | 'settings'>('products');
+    const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'sellers' | 'settings'>('products');
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [applicants, setApplicants] = useState<Applicant[]>([]);
+    const [sellers, setSellers] = useState<Seller[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile Menu State
@@ -127,10 +129,9 @@ export default function AdminDashboard() {
                 const { data, error } = await supabase
                     .from('sellers')
                     .select('*')
-                    .eq('status', 'pending')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                setApplicants(data || []);
+                setSellers(data || []);
             }
         } catch (err: any) {
             console.error(`Error fetching ${activeTab}:`, err);
@@ -145,35 +146,40 @@ export default function AdminDashboard() {
         router.push('/login');
     };
 
-    // --- Applicant Actions ---
-    const handleApproveApplicant = async (id: string) => {
+
+
+    const handleApproveProduct = async (id: string) => {
         try {
             const { error } = await supabase
-                .from('sellers')
+                .from('products')
                 .update({ status: 'approved' })
                 .eq('id', id);
             if (error) throw error;
             fetchData();
         } catch (err: any) {
-            alert(err.message || 'Error approving applicant');
+            alert(err.message || 'Error approving product');
         }
     };
 
-    const handleRejectApplicant = async (id: string) => {
-        if (!confirm('Reject this applicant?')) return;
+    const handleRejectProduct = async (id: string) => {
+        if (!confirm('Reject this artwork?')) return;
         try {
             const { error } = await supabase
-                .from('sellers')
+                .from('products')
                 .update({ status: 'rejected' })
                 .eq('id', id);
             if (error) throw error;
             fetchData();
         } catch (err: any) {
-            alert(err.message || 'Error rejecting applicant');
+            alert(err.message || 'Error rejecting product');
         }
     };
 
-    // --- Category Actions ---
+    // --- Seller Actions ---
+    const handleViewSeller = (seller: Seller) => {
+        router.push(`/creovo-admin-dec/vault/sellers/${seller.id}`);
+    };
+
     const handleAddCategory = () => {
         setCategoryToEdit(null);
         setIsCategoryViewOnly(false);
@@ -237,8 +243,8 @@ export default function AdminDashboard() {
         ? products.filter(p => p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.category?.toLowerCase().includes(searchQuery.toLowerCase()))
         : activeTab === 'categories'
             ? categories.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-            : activeTab === 'applications'
-                ? applicants.filter(a => (a.full_name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (a.email || '').toLowerCase().includes(searchQuery.toLowerCase()))
+            : activeTab === 'sellers'
+                ? sellers.filter(a => (a.full_name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (a.email || '').toLowerCase().includes(searchQuery.toLowerCase()))
                 : []; // No filtering for shipping from here (handled in component)
 
     return (
@@ -292,13 +298,13 @@ export default function AdminDashboard() {
                     </button>
 
                     <button
-                        onClick={() => { setActiveTab('applications'); setMobileMenuOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'applications' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
+                        onClick={() => { setActiveTab('sellers'); setMobileMenuOpen(false); }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'sellers' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
-                        <div className={`p-2 rounded-lg transition-colors ${activeTab === 'applications' ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
+                        <div className={`p-2 rounded-lg transition-colors ${activeTab === 'sellers' ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
                             <ShieldCheck size={18} />
                         </div>
-                        <span className="font-medium">Applications</span>
+                        <span className="font-medium">Sellers</span>
                     </button>
 
                     <button
@@ -344,7 +350,7 @@ export default function AdminDashboard() {
                             {getHeaderText(activeTab)}
                             {activeTab !== 'settings' && (
                                 <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
-                                    {activeTab === 'products' ? products.length : activeTab === 'categories' ? categories.length : applicants.length} Total
+                                    {activeTab === 'products' ? products.length : activeTab === 'categories' ? categories.length : sellers.length} Total
                                 </span>
                             )}
                         </h1>
@@ -362,7 +368,7 @@ export default function AdminDashboard() {
                             />
                         </div>
 
-                        {activeTab !== 'applications' && activeTab !== 'settings' && (
+                        {activeTab !== 'sellers' && activeTab !== 'settings' && (
                             <button
                                 onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
                                 className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm whitespace-nowrap"
@@ -392,7 +398,7 @@ export default function AdminDashboard() {
                             </div>
                             <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Loading Data...</p>
                         </motion.div>
-                    ) : (filteredItems.length === 0 && activeTab !== 'applications' && activeTab !== 'settings') ? (
+                    ) : (filteredItems.length === 0 && activeTab !== 'sellers' && activeTab !== 'settings') ? (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -422,71 +428,115 @@ export default function AdminDashboard() {
                             animate={{ opacity: 1, y: 0 }}
                             className="space-y-4"
                         >
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className={`grid gap-4 ${activeTab === 'sellers' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' :
+                                activeTab === 'products' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6' :
+                                    'grid-cols-1'
+                                }`}>
                                 {activeTab === 'settings' ? (
                                     <ShippingManager />
                                 ) : activeTab === 'products' ? (
                                     (filteredItems as Product[]).map((product, index) => (
                                         <motion.div
                                             key={product.id}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-3xl p-4 flex flex-col md:flex-row items-start md:items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: index * 0.03 }}
+                                            className="group relative bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden backdrop-blur-sm transition-all duration-300 flex flex-col"
                                         >
-                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-2xl">
+                                            {/* Image & Status Overlay */}
+                                            <div className="relative aspect-square w-full bg-zinc-950 overflow-hidden">
                                                 <img
                                                     src={product.images?.[0] || '/placeholder-art.jpg'}
                                                     alt={product.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />
+
+                                                {/* Status Badge Overlays */}
+                                                <div className="absolute top-3 left-3">
+                                                    <div className={`px-2.5 py-1.5 rounded-xl flex items-center gap-2 backdrop-blur-md border shadow-2xl ${product.status === 'approved' ? 'bg-black/40 border-emerald-500/30' :
+                                                            product.status === 'rejected' ? 'bg-black/40 border-red-500/30' :
+                                                                'bg-black/40 border-blue-500/30'
+                                                        }`}>
+                                                        <div className={`w-2 h-2 rounded-full ${product.status === 'approved' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' :
+                                                                product.status === 'rejected' ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' :
+                                                                    'bg-blue-500 animate-pulse shadow-[0_0_10px_#3b82f6]'
+                                                            }`} />
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${product.status === 'approved' ? 'text-emerald-400' :
+                                                                product.status === 'rejected' ? 'text-red-400' :
+                                                                    'text-blue-400'
+                                                            }`}>
+                                                            {product.status || 'pending'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Hover Action Overlay (Desktop) */}
+                                                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2 hidden md:flex">
+                                                    {product.status !== 'approved' && (
+                                                        <button
+                                                            onClick={() => handleApproveProduct(product.id)}
+                                                            className="p-3 rounded-xl bg-emerald-500 text-white hover:scale-110 transition-transform"
+                                                            title="Approve"
+                                                        >
+                                                            <CheckCircle size={18} />
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => handleViewProduct(product)}
+                                                        className="p-3 rounded-xl bg-white text-black hover:scale-110 transition-transform"
+                                                        title="View"
+                                                    >
+                                                        <Eye size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleEditProduct(product)}
+                                                        className="p-3 rounded-xl bg-blue-500 text-white hover:scale-110 transition-transform"
+                                                        title="Edit"
+                                                    >
+                                                        <Pencil size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteProduct(product.id)}
+                                                        className="p-3 rounded-xl bg-red-500 text-white hover:scale-110 transition-transform"
+                                                        title="Delete"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
                                             </div>
 
-                                            <div className="flex-1 space-y-1 w-full">
-                                                <div className="flex items-center gap-3">
-                                                    <h3 className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight line-clamp-1">{product.name}</h3>
-                                                    <span className="px-2 py-0.5 rounded-lg bg-white/5 text-[10px] font-bold text-zinc-500 uppercase whitespace-nowrap">
-                                                        {product.category || 'Legacy'}
-                                                    </span>
+                                            {/* Content Area */}
+                                            <div className="p-4 space-y-3 flex-1 flex flex-col">
+                                                <div className="min-w-0">
+                                                    <h3 className="font-bold text-white text-xs uppercase tracking-tight line-clamp-1 group-hover:text-blue-400 transition-colors">
+                                                        {product.name}
+                                                    </h3>
+                                                    <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
+                                                        {product.category || 'Uncategorized'}
+                                                    </p>
                                                 </div>
-                                                <div className="flex flex-wrap items-center gap-6">
+
+                                                <div className="flex items-end justify-between mt-auto pt-2 border-t border-white/5">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Valuation</span>
-                                                        <span className="text-blue-400 font-black">₹{product.price.toLocaleString()}</span>
+                                                        <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Valuation</span>
+                                                        <span className="text-blue-400 font-black text-xs">₹{product.price.toLocaleString()}</span>
                                                     </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Inventory</span>
-                                                        <span className={`font-black ${product.quantity > 0 ? 'text-zinc-300' : 'text-red-500'}`}>
+                                                    <div className="text-right flex flex-col">
+                                                        <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter text-right">Stock</span>
+                                                        <span className={`text-[10px] font-black ${product.quantity > 0 ? 'text-zinc-400' : 'text-red-500'}`}>
                                                             {product.quantity.toString().padStart(2, '0')}
                                                         </span>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="flex md:hidden w-full gap-2 mt-4 pt-4 border-t border-white/5">
-                                                <button onClick={() => handleEditProduct(product)} className="flex-1 py-3 rounded-xl bg-blue-500/10 text-blue-400 font-bold text-sm">Edit</button>
-                                                <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm">Delete</button>
-                                            </div>
-
-                                            <div className="hidden md:flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button
-                                                    onClick={() => handleViewProduct(product)}
-                                                    className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
-                                                >
-                                                    <Eye size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditProduct(product)}
-                                                    className="p-3 rounded-xl bg-blue-500/10 text-blue-400 hover:text-white hover:bg-blue-500 transition-all"
-                                                >
-                                                    <Pencil size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteProduct(product.id)}
-                                                    className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
+                                                {/* Mobile Actions (Visible Only on Small Screens) */}
+                                                <div className="flex md:hidden gap-1 pt-2">
+                                                    {product.status !== 'approved' && (
+                                                        <button onClick={() => handleApproveProduct(product.id)} className="flex-1 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center"><CheckCircle size={14} /></button>
+                                                    )}
+                                                    <button onClick={() => handleEditProduct(product)} className="flex-1 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center"><Pencil size={14} /></button>
+                                                    <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center"><Trash2 size={14} /></button>
+                                                </div>
                                             </div>
                                         </motion.div>
                                     ))
@@ -537,90 +587,46 @@ export default function AdminDashboard() {
                                         </motion.div>
                                     ))
                                 ) : filteredItems.length > 0 ? (
-                                    (filteredItems as Applicant[]).map((app, index) => (
+                                    (filteredItems as Seller[]).map((app, index) => (
                                         <motion.div
                                             key={app.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
+                                            layout
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
                                             transition={{ delay: index * 0.05 }}
-                                            className="group relative bg-zinc-900/20 hover:bg-zinc-900/40 border border-white/5 hover:border-blue-500/20 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center gap-8 backdrop-blur-xl transition-all duration-500 overflow-hidden"
+                                            onClick={() => handleViewSeller(app)}
+                                            className="group relative bg-zinc-900/40 hover:bg-zinc-900/70 border border-white/5 rounded-2xl p-3 flex items-center gap-3 backdrop-blur-xl transition-all duration-300 cursor-pointer hover:border-blue-500/30"
                                         >
-                                            {/* Ambient Background Glow */}
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                                            {/* Avatar/Visual Profile */}
                                             <div className="relative shrink-0">
-                                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                                                <div className="relative w-24 h-24 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center">
+                                                <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/10 bg-zinc-950 flex items-center justify-center">
                                                     {app.avatar_url ? (
-                                                        <img src={app.avatar_url} alt={app.full_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                        <img src={app.avatar_url} alt={app.full_name} className="w-full h-full object-cover" />
                                                     ) : (
-                                                        <User size={32} className="text-zinc-700" />
+                                                        <User size={16} className="text-zinc-700" />
                                                     )}
                                                 </div>
                                             </div>
 
-                                            {/* Data Section */}
-                                            <div className="flex-1 space-y-4">
-                                                <div>
-                                                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                                                        <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">{app.full_name}</h3>
-                                                        <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
-                                                            Pending Review
-                                                        </span>
-                                                        {app.portfolio_url && (
-                                                            <a
-                                                                href={app.portfolio_url.startsWith('http') ? app.portfolio_url : `https://${app.portfolio_url}`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="flex items-center gap-1.5 text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[0.2em] transition-colors"
-                                                            >
-                                                                Portfolio <ExternalLink size={12} />
-                                                            </a>
-                                                        )}
-                                                    </div>
-
-                                                    <p className="text-zinc-500 leading-relaxed font-medium max-w-2xl line-clamp-2 italic">
-                                                        "{app.bio || 'This artist opted for a silent portfolio speak.'}"
-                                                    </p>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-1.5 mb-0.5">
+                                                    <h3 className="text-xs font-black text-white italic tracking-tighter uppercase truncate">{app.full_name}</h3>
+                                                    <div className={`w-1 h-1 rounded-full ${app.status === 'approved' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
+                                                        app.status === 'rejected' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' :
+                                                            'bg-blue-500 animate-pulse'
+                                                        }`} />
                                                 </div>
-
-                                                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
-                                                    <div className="flex items-center gap-2 text-zinc-600">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Email:</span>
-                                                        <span className="text-[10px] font-bold text-zinc-400">{app.email}</span>
-                                                    </div>
-                                                    {app.mobile && (
-                                                        <div className="flex items-center gap-2 text-zinc-600">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest">Mobile:</span>
-                                                            <span className="text-[10px] font-bold text-zinc-400">{app.mobile}</span>
-                                                        </div>
-                                                    )}
-                                                    <div className="flex items-center gap-2 text-zinc-600">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Submitted:</span>
-                                                        <span className="text-[10px] font-bold text-zinc-400">{new Date(app.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                                                    </div>
-                                                </div>
+                                                <p className="text-[9px] font-bold tracking-tight text-zinc-500 truncate">{app.mobile || 'No Mobile'}</p>
                                             </div>
 
-                                            {/* Action Buttons */}
-                                            <div className="flex items-center gap-3 shrink-0">
-                                                <button
-                                                    onClick={() => handleApproveApplicant(app.id)}
-                                                    className="px-8 py-4 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
-                                                >
-                                                    Approve
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRejectApplicant(app.id)}
-                                                    className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/5 transition-all active:scale-95"
-                                                >
-                                                    Reject
-                                                </button>
-                                            </div>
+                                            {/* Action Indicator for Pending Only */}
+                                            {app.status === 'pending' && (
+                                                <div className="absolute top-2 right-2 flex">
+                                                    <span className="relative flex h-2 w-2">
+                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                                    </span>
+                                                </div>
+                                            )}
                                         </motion.div>
                                     ))
                                 ) : (
@@ -628,9 +634,9 @@ export default function AdminDashboard() {
                                         <div className="w-20 h-20 bg-zinc-900/50 rounded-3xl mx-auto flex items-center justify-center mb-6 text-zinc-700">
                                             <ShieldAlert size={40} />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Pending Applications</h3>
+                                        <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Sellers Found</h3>
                                         <p className="text-zinc-500 max-w-sm mx-auto text-sm">
-                                            Everything is processed. New artist requests will appear here for your verification.
+                                            Everything is processed. New artist requests or active accounts will appear here.
                                         </p>
                                     </div>
                                 )}
@@ -664,7 +670,7 @@ function getHeaderText(tab: string) {
     switch (tab) {
         case 'products': return 'Artwork';
         case 'categories': return 'Categories';
-        case 'applications': return 'Artist Applications';
+        case 'sellers': return 'Artist Management';
         case 'settings': return 'Platform Settings';
         default: return 'Dashboard';
     }

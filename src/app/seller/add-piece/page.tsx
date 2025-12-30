@@ -32,7 +32,7 @@ export default function AddPiecePage() {
         description: '',
         price: '',
         discountPrice: '',
-        category: 'Digital Art',
+        category: '',
         quantity: '1',
         imageUrl: ''
     });
@@ -43,7 +43,11 @@ export default function AddPiecePage() {
 
     async function fetchCategories() {
         const { data } = await supabase.from('categories').select('id, name');
-        if (data) setCategories(data);
+        if (data && data.length > 0) {
+            setCategories(data);
+            // Only set default if not already set
+            setFormData(prev => ({ ...prev, category: data[0].name }));
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -64,7 +68,8 @@ export default function AddPiecePage() {
                     quantity: parseInt(formData.quantity),
                     category: formData.category,
                     images: [formData.imageUrl],
-                    seller_id: user.id
+                    seller_id: user.id,
+                    status: 'pending' // Initialize as pending
                 });
 
             if (error) throw error;
@@ -194,10 +199,10 @@ export default function AddPiecePage() {
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-5 focus:outline-none focus:border-violet-500/50 transition-all text-sm font-black appearance-none text-white cursor-pointer"
                                     >
+                                        <option value="" disabled className="bg-zinc-900 text-zinc-600 italic">Select Segment</option>
                                         {categories.map(cat => (
                                             <option key={cat.id} value={cat.name} className="bg-zinc-900">{cat.name}</option>
                                         ))}
-                                        {categories.length === 0 && <option value="Digital Art">Digital Art</option>}
                                     </select>
                                     <ArrowRight className="absolute right-6 top-1/2 -translate-y-1/2 text-zinc-600 rotate-90 pointer-events-none" size={16} />
                                 </div>

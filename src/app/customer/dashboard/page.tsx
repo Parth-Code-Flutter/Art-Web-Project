@@ -30,6 +30,7 @@ export default function CustomerDashboard() {
         const { data } = await supabase
             .from('products')
             .select('*')
+            .eq('status', 'approved')
             .order('created_at', { ascending: false })
             .limit(4);
 
@@ -51,7 +52,8 @@ export default function CustomerDashboard() {
                 const { count } = await supabase
                     .from('products')
                     .select('*', { count: 'exact', head: true })
-                    .eq('category', cat.name);
+                    .eq('category', cat.name)
+                    .eq('status', 'approved');
 
                 // Get one sample image if category image is missing or just to be safe
                 let image = cat.image;
@@ -60,6 +62,7 @@ export default function CustomerDashboard() {
                         .from('products')
                         .select('images')
                         .eq('category', cat.name)
+                        .eq('status', 'approved')
                         .limit(1)
                         .single();
                     image = products?.images?.[0] || 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1000&auto=format&fit=crop';

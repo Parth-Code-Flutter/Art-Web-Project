@@ -60,6 +60,7 @@ export default function CategoryDetailsPage() {
                 .from('products')
                 .select('*')
                 .eq('category', categoryName)
+                .eq('status', 'approved')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

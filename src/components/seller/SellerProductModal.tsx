@@ -150,7 +150,8 @@ export default function SellerProductModal({ isOpen, onClose, onSuccess, product
                 quantity: parseInt(quantity) || 0,
                 description,
                 images: uploadedImageUrls,
-                seller_id: user.id // Ensure seller_id is set
+                seller_id: user.id,
+                status: 'pending' // Flag for admin review
             };
 
             if (productToEdit) {
