@@ -41,6 +41,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
+    const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0); // Track featured image index (0-based across existing + new)
 
     useEffect(() => {
         if (isOpen) {
@@ -59,6 +60,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             setExistingImages(productToEdit.images || []);
             setPreviews([]);
             setImages([]);
+            setFeaturedImageIndex(0); // Reset to first
         } else {
             setName('');
             setCategory('');
@@ -69,6 +71,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             setExistingImages([]);
             setPreviews([]);
             setImages([]);
+            setFeaturedImageIndex(0);
         }
     }, [productToEdit, isOpen]);
 
@@ -133,6 +136,12 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                         .getPublicUrl(filePath);
                     uploadedImageUrls.push(publicUrl);
                 }
+            }
+
+            // Reorder images so featured one is first
+            if (featuredImageIndex >= 0 && featuredImageIndex < uploadedImageUrls.length) {
+                const featured = uploadedImageUrls.splice(featuredImageIndex, 1)[0];
+                uploadedImageUrls.unshift(featured);
             }
 
             const productData = {
@@ -317,19 +326,28 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
 
                                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
                                         {/* Existing & Previews */}
-                                        {[...existingImages.map((u, i) => ({ url: u, id: i, existing: true })),
-                                        ...previews.map((u, i) => ({ url: u, id: i, existing: false }))].map((img, idx) => (
+                                        {[...existingImages.map((u, i) => ({ url: u, id: i, existing: true, globalIndex: i })),
+                                        ...previews.map((u, i) => ({ url: u, id: i, existing: false, globalIndex: existingImages.length + i }))].map((img) => (
                                             <motion.div
                                                 layout
                                                 key={`${img.existing ? 'e' : 'p'}-${img.id}`}
-                                                className="group relative aspect-square rounded-2xl overflow-hidden border border-white/5 bg-zinc-950 shadow-inner"
+                                                className={`group relative aspect-square rounded-2xl overflow-hidden border ${featuredImageIndex === img.globalIndex ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-white/5'} bg-zinc-950 shadow-inner cursor-pointer`}
+                                                onClick={() => !isViewOnly && setFeaturedImageIndex(img.globalIndex)}
                                             >
                                                 <img src={img.url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+
+                                                {/* Featured Badge */}
+                                                {featuredImageIndex === img.globalIndex && (
+                                                    <div className="absolute top-2 left-2 px-2 py-1 bg-blue-500 text-white text-[8px] font-black uppercase tracking-widest rounded-md shadow-lg z-10">
+                                                        Featured
+                                                    </div>
+                                                )}
+
                                                 {!isViewOnly && (
                                                     <button
                                                         type="button"
-                                                        onClick={() => removeImage(img.id, img.existing)}
-                                                        className="absolute top-1 right-1 p-1.5 rounded-lg bg-red-500/80 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        onClick={(e) => { e.stopPropagation(); removeImage(img.id, img.existing); }}
+                                                        className="absolute top-1 right-1 p-1.5 rounded-lg bg-red-500/80 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-20"
                                                     >
                                                         <Trash2 size={12} />
                                                     </button>
