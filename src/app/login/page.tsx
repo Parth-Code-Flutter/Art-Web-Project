@@ -41,14 +41,30 @@ export default function LoginPage() {
 
                         <button
                             onClick={() => setIsCustomerAuthOpen(true)}
-                            className="w-full group p-8 rounded-[2rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 hover:border-blue-500/30 hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.3)] transition-all text-left flex items-center gap-8"
+                            className="w-full group p-8 rounded-[2rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 hover:border-blue-500/30 hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.3)] transition-all text-left flex items-center gap-6"
                         >
                             <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform duration-500">
                                 <ShoppingBag size={28} />
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">Explore Gallery</h3>
-                                <p className="text-sm text-zinc-500 mt-1">Access your curated collection and private bids.</p>
+                                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">Buyer / Collector</h3>
+                                <p className="text-sm text-zinc-500 mt-1">Browse art, place bids, and manage your collection.</p>
+                            </div>
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </button>
+
+                        <button
+                            onClick={() => setIsCustomerAuthOpen(true)}
+                            className="w-full group p-8 rounded-[2rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 hover:border-violet-500/30 hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.3)] transition-all text-left flex items-center gap-6"
+                        >
+                            <div className="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500 group-hover:scale-110 transition-transform duration-500">
+                                <Palette size={28} />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-xl font-bold text-white group-hover:text-violet-400 transition-colors uppercase tracking-tight">Artist / Creator</h3>
+                                <p className="text-sm text-zinc-500 mt-1">Manage your shop, upload artwork, and track sales.</p>
                             </div>
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -56,8 +72,8 @@ export default function LoginPage() {
                         </button>
 
                         <div className="pt-8 mt-8 border-t border-white/5">
-                            <p className="text-center text-xs text-zinc-600 font-medium">
-                                Technical support: <span className="text-zinc-400">support@artgallery.com</span>
+                            <p className="text-center text-xs text-zinc-600 font-medium tracking-wide">
+                                NEW TO THE GALLERY? <button onClick={() => setIsCustomerAuthOpen(true)} className="text-zinc-400 hover:text-white transition-colors">CREATE AN ACCOUNT</button>
                             </p>
                         </div>
                     </div>

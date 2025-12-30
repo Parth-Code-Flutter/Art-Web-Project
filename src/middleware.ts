@@ -103,6 +103,24 @@ export async function middleware(request: NextRequest) {
         }
     }
 
+    // 5. CRITICAL: Protect Seller Routes
+    if (url.pathname.startsWith('/seller')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+
+        // Check if user is an approved seller
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('role, status')
+            .eq('id', user.id)
+            .single()
+
+        if (!profile || profile.role !== 'seller' || profile.status !== 'approved') {
+            return NextResponse.redirect(new URL('/customer/become-artist', request.url))
+        }
+    }
+
     return response
 }
 
@@ -111,6 +129,7 @@ export const config = {
         '/creovo-admin-dec/:path*',
         '/admin/:path*',
         '/customer/:path*',
+        '/seller/:path*',
         '/login'
     ],
 }

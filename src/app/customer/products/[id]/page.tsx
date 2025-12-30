@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from 'react';
 import {
     ShoppingBag,
     ArrowLeft,
+    ArrowRight,
     Loader2,
     X,
     CreditCard,
@@ -58,15 +59,24 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
         try {
             const { data, error } = await supabase
                 .from('products')
-                .select('*')
+                .select(`
+                    *,
+                    profiles:seller_id (id, full_name)
+                `)
                 .eq('id', id)
                 .single();
 
             if (error) throw error;
             setProduct(data);
+
+            // Increment views
+            await supabase.rpc('increment_product_views', { product_id: id });
+            // Fallback if RPC doesn't exist:
+            // await supabase.from('products').update({ views: (data.views || 0) + 1 }).eq('id', id);
+
         } catch (error) {
             console.error('Error fetching product:', error);
-            router.push('/customer/products');
+            // Non-blocking view increment error
         } finally {
             setLoading(false);
         }
@@ -202,7 +212,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                             <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-2 leading-tight">
                                 {product.name}
                             </h1>
-                            <p className="text-zinc-400 text-lg">By Curated Artist</p>
+                            <button
+                                onClick={() => (product as any).profiles?.id && router.push(`/artists/${(product as any).profiles.id}`)}
+                                className="text-zinc-400 text-lg hover:text-blue-400 transition-colors flex items-center gap-2 group/artist"
+                            >
+                                By {(product as any).profiles?.full_name || 'Curated Artist'}
+                                <ArrowRight size={14} className="opacity-0 group-hover/artist:opacity-100 group-hover/artist:translate-x-1 transition-all" />
+                            </button>
                         </div>
 
                         {/* Price & Cart */}

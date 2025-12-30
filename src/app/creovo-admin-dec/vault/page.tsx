@@ -16,7 +16,10 @@ import {
     Search,
     Monitor,
     Zap,
-    Loader2
+    Loader2,
+    ShieldCheck,
+    ArrowRight,
+    User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -42,11 +45,21 @@ interface Category {
     created_at: string;
 }
 
+interface Applicant {
+    id: string;
+    full_name: string;
+    bio: string;
+    portfolio_url: string;
+    status: string;
+    created_at: string;
+}
+
 export default function AdminDashboard() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
+    const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'applications'>('products');
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -71,10 +84,18 @@ export default function AdminDashboard() {
                 const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 setProducts(data || []);
-            } else {
+            } else if (activeTab === 'categories') {
                 const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 setCategories(data || []);
+            } else {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                setApplicants(data || []);
             }
         } catch (err) {
             console.error(`Error fetching ${activeTab}:`, err);
@@ -85,6 +106,34 @@ export default function AdminDashboard() {
 
     const handleLogout = () => {
         router.push('/login');
+    };
+
+    // --- Applicant Actions ---
+    const handleApproveApplicant = async (id: string) => {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ status: 'approved' })
+                .eq('id', id);
+            if (error) throw error;
+            fetchData();
+        } catch (err: any) {
+            alert(err.message || 'Error approving applicant');
+        }
+    };
+
+    const handleRejectApplicant = async (id: string) => {
+        if (!confirm('Reject this applicant?')) return;
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ status: 'rejected' })
+                .eq('id', id);
+            if (error) throw error;
+            fetchData();
+        } catch (err: any) {
+            alert(err.message || 'Error rejecting applicant');
+        }
     };
 
     // --- Category Actions ---
@@ -149,7 +198,9 @@ export default function AdminDashboard() {
 
     const filteredItems = activeTab === 'products'
         ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category?.toLowerCase().includes(searchQuery.toLowerCase()))
-        : categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        : activeTab === 'categories'
+            ? categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            : applicants.filter(a => a.full_name?.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return (
         <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-blue-500/30">
@@ -175,7 +226,7 @@ export default function AdminDashboard() {
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'products' ? 'bg-blue-500/20 text-blue-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
                             <ShoppingBag size={18} />
                         </div>
-                        <span className="font-medium">Masterpieces</span>
+                        <span className="font-medium">Artwork</span>
                     </button>
 
                     <button
@@ -185,14 +236,24 @@ export default function AdminDashboard() {
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'categories' ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
                             <Layers size={18} />
                         </div>
-                        <span className="font-medium">Collections</span>
+                        <span className="font-medium">Categories</span>
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('applications')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'applications' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
+                    >
+                        <div className={`p-2 rounded-lg transition-colors ${activeTab === 'applications' ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
+                            <ShieldCheck size={18} />
+                        </div>
+                        <span className="font-medium">Applications</span>
                     </button>
 
                     <button className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-300 group">
                         <div className="p-2 rounded-lg bg-zinc-900 group-hover:bg-zinc-800 transition-colors">
                             <Settings size={18} />
                         </div>
-                        <span className="font-medium">Neural Config</span>
+                        <span className="font-medium">Settings</span>
                     </button>
                 </nav>
 
@@ -204,7 +265,7 @@ export default function AdminDashboard() {
                         <div className="p-2 rounded-lg bg-zinc-900 group-hover:bg-red-500/10 transition-colors">
                             <LogOut size={18} />
                         </div>
-                        <span className="font-medium text-sm">Terminate Session</span>
+                        <span className="font-medium text-sm">Logout</span>
                     </button>
                 </div>
             </aside>
@@ -220,14 +281,14 @@ export default function AdminDashboard() {
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
                     <div>
                         <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
-                            <span>Central Ops</span>
+                            <span>Admin Panel</span>
                             <ChevronRight size={12} />
                             <span className="text-blue-500">{activeTab}</span>
                         </div>
                         <h1 className="text-4xl font-black text-white tracking-tight flex items-center gap-4">
-                            {activeTab === 'products' ? 'Masterpieces' : 'Collections'}
+                            {activeTab === 'products' ? 'Artwork' : activeTab === 'categories' ? 'Categories' : 'Artist Applications'}
                             <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
-                                {activeTab === 'products' ? products.length : categories.length} Total
+                                {activeTab === 'products' ? products.length : activeTab === 'categories' ? categories.length : applicants.length} Total
                             </span>
                         </h1>
                     </div>
@@ -244,13 +305,15 @@ export default function AdminDashboard() {
                             />
                         </div>
 
-                        <button
-                            onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
-                            className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm"
-                        >
-                            <Plus size={18} />
-                            Initialize {activeTab === 'products' ? 'Piece' : 'Category'}
-                        </button>
+                        {activeTab !== 'applications' && (
+                            <button
+                                onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
+                                className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm"
+                            >
+                                <Plus size={18} />
+                                Add {activeTab === 'products' ? 'Artwork' : 'Category'}
+                            </button>
+                        )}
                     </div>
                 </header>
 
@@ -270,9 +333,9 @@ export default function AdminDashboard() {
                                     <Zap className="text-blue-500 animate-pulse" size={24} />
                                 </div>
                             </div>
-                            <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Syncing Database...</p>
+                            <p className="text-zinc-500 font-medium tracking-widest text-xs uppercase animate-pulse">Loading Data...</p>
                         </motion.div>
-                    ) : filteredItems.length === 0 ? (
+                    ) : (filteredItems.length === 0 && activeTab !== 'applications') ? (
                         <motion.div
                             key="empty"
                             initial={{ opacity: 0, scale: 0.95 }}
@@ -283,16 +346,16 @@ export default function AdminDashboard() {
                                 <div className="w-24 h-24 bg-zinc-800/50 rounded-3xl mx-auto flex items-center justify-center">
                                     <EmptyStateGraphic />
                                 </div>
-                                <h2 className="text-2xl font-bold text-white">Quantum Void Detected</h2>
+                                <h2 className="text-2xl font-bold text-white">No Items Found</h2>
                                 <p className="text-zinc-500 leading-relaxed text-sm">
-                                    It looks like your gallery is currently oscillating in a state of emptiness.
-                                    Bring your masterpieces into existence by initializing your first entry.
+                                    It looks like your gallery is currently empty.
+                                    Start by adding your first entry to the system.
                                 </p>
                                 <button
                                     onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
                                     className="px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all text-sm"
                                 >
-                                    Initialize First {activeTab === 'products' ? 'Masterpiece' : 'Collection'}
+                                    Add First {activeTab === 'products' ? 'Artwork' : 'Category'}
                                 </button>
                             </div>
                         </motion.div>
@@ -364,7 +427,7 @@ export default function AdminDashboard() {
                                             </div>
                                         </motion.div>
                                     ))
-                                ) : (
+                                ) : activeTab === 'categories' ? (
                                     categories.map((cat, index) => (
                                         <motion.div
                                             key={cat.id}
@@ -406,6 +469,53 @@ export default function AdminDashboard() {
                                                     className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
                                                 >
                                                     <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    applicants.map((app, index) => (
+                                        <motion.div
+                                            key={app.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-6 flex flex-col md:flex-row md:items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                        >
+                                            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/20">
+                                                <User size={28} />
+                                            </div>
+
+                                            <div className="flex-1 space-y-2">
+                                                <div className="flex items-center gap-3">
+                                                    <h3 className="font-bold text-white uppercase tracking-tight">{app.full_name}</h3>
+                                                    <a
+                                                        href={app.portfolio_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest bg-blue-400/10 px-2 py-0.5 rounded-lg border border-blue-400/20"
+                                                    >
+                                                        View Portfolio <ArrowRight size={10} />
+                                                    </a>
+                                                </div>
+                                                <p className="text-sm text-zinc-500 italic">"{app.bio}"</p>
+                                                <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
+                                                    Submitted: {new Date(app.created_at).toLocaleDateString()}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => handleApproveApplicant(app.id)}
+                                                    className="px-6 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRejectApplicant(app.id)}
+                                                    className="px-6 py-2.5 rounded-xl bg-red-500/10 text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
+                                                >
+                                                    Reject
                                                 </button>
                                             </div>
                                         </motion.div>
