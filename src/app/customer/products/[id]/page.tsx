@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import VirtualMockup from '@/components/customer/VirtualMockup';
+import ShareModal from '@/components/customer/ShareModal';
 
 interface Product {
     id: string;
@@ -43,6 +44,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     const [isZoomOpen, setIsZoomOpen] = useState(false);
     const [zoomScale, setZoomScale] = useState(1);
     const [isMockupOpen, setIsMockupOpen] = useState(false);
+    const [isShareOpen, setIsShareOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState(false);
     const [quantity, setQuantity] = useState(1);
 
@@ -96,6 +98,26 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             const newScale = type === 'in' ? prev + 0.5 : prev - 0.5;
             return Math.min(Math.max(newScale, 1), 4); // Range 1x to 4x
         });
+    };
+
+    const handleShare = async () => {
+        const shareData = {
+            title: product?.name || 'Art Gallery',
+            text: `Check out this masterpiece: ${product?.name}`,
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if ((err as Error).name !== 'AbortError') {
+                    setIsShareOpen(true);
+                }
+            }
+        } else {
+            setIsShareOpen(true);
+        }
     };
 
     const addToCart = () => {
@@ -201,7 +223,10 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                                     {product.category}
                                 </span>
                                 <div className="flex gap-3">
-                                    <button className="p-2 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                                    <button
+                                        onClick={handleShare}
+                                        className="p-2 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                                    >
                                         <Share2 size={18} />
                                     </button>
                                     <button className="p-2 rounded-full bg-zinc-900 text-zinc-400 hover:text-red-500 hover:bg-zinc-800 transition-colors">
@@ -408,6 +433,13 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 onClose={() => setIsMockupOpen(false)}
                 productImage={product.images[activeImage]}
                 productName={product.name}
+            />
+            {/* Share Modal */}
+            <ShareModal
+                isOpen={isShareOpen}
+                onClose={() => setIsShareOpen(false)}
+                productName={product.name}
+                productUrl={typeof window !== 'undefined' ? window.location.href : ''}
             />
         </main>
     );

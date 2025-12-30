@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, Eye, CheckCircle } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, Eye, CheckCircle, Share2 } from 'lucide-react';
+import ShareModal from '@/components/customer/ShareModal';
 import { supabase } from '@/lib/supabase';
 
 interface Product {
@@ -26,6 +27,7 @@ export default function CustomerProducts() {
     const [sortBy, setSortBy] = useState<SortOption>('discount');
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState<string | null>(null);
+    const [sharingProduct, setSharingProduct] = useState<Product | null>(null);
 
     // Close sort dropdown when clicking outside
     useEffect(() => {
@@ -110,6 +112,25 @@ export default function CustomerProducts() {
         // Success state feedback
         setAddingToCart(product.id);
         setTimeout(() => setAddingToCart(null), 2000);
+    };
+
+    const handleShare = (e: React.MouseEvent, product: Product) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const shareData = {
+            title: product.name,
+            text: `Check out this masterpiece: ${product.name}`,
+            url: `${window.location.origin}/customer/products/${product.id}`,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch((err) => {
+                if (err.name !== 'AbortError') setSharingProduct(product);
+            });
+        } else {
+            setSharingProduct(product);
+        }
     };
 
     return (
@@ -252,9 +273,9 @@ export default function CustomerProducts() {
                                             </div>
 
                                             {/* Action Bar */}
-                                            <div className="pt-2">
+                                            <div className="pt-2 flex gap-2">
                                                 <button
-                                                    className={`w-full h-9 rounded-xl flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all duration-500
+                                                    className={`h-9 rounded-xl flex-[3] flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all duration-500
                                                         ${addingToCart === product.id
                                                             ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
                                                             : 'bg-white/5 text-white border border-white/5 hover:bg-white/10'
@@ -272,6 +293,12 @@ export default function CustomerProducts() {
                                                         </>
                                                     )}
                                                 </button>
+                                                <button
+                                                    onClick={(e) => handleShare(e, product)}
+                                                    className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/5 text-zinc-400 hover:text-white border border-white/5 hover:bg-white/10 transition-all"
+                                                >
+                                                    <Share2 size={14} />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -287,6 +314,13 @@ export default function CustomerProducts() {
                     </div>
                 )}
             </div>
+
+            <ShareModal
+                isOpen={!!sharingProduct}
+                onClose={() => setSharingProduct(null)}
+                productName={sharingProduct?.name || ''}
+                productUrl={sharingProduct ? `${window.location.origin}/customer/products/${sharingProduct.id}` : ''}
+            />
         </main>
     );
 }
