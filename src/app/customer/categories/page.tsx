@@ -81,24 +81,7 @@ export default function CustomerCategories() {
                 </div>
             ) : categories.length > 0 ? (
                 <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-16"
-                    >
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
-                            <Sparkles size={14} />
-                            <span>Discover by Genre</span>
-                        </div>
-                        <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 tracking-tight">
-                            Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">Collections</span>
-                        </h1>
-                        <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-                            Explore the finest works across every medium and style, hand-picked for the modern collector.
-                        </p>
-                    </motion.div>
-
-                    <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
                         <AnimatePresence>
                             {categories.map((category, index) => (
                                 <motion.div
@@ -106,61 +89,41 @@ export default function CustomerCategories() {
                                     initial={{ opacity: 0, scale: 0.9, y: 50 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                                    className="break-inside-avoid"
                                 >
                                     <Link
                                         href={`/customer/categories/${encodeURIComponent(category.name)}`}
-                                        className="group block relative bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden hover:bg-zinc-900/60 hover:border-white/20 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 shadow-2xl"
+                                        className="group block relative bg-zinc-900/40 border border-white/5 rounded-2xl overflow-hidden hover:bg-zinc-900/60 hover:border-white/20 hover:scale-[1.02] transition-all duration-300 shadow-xl"
                                     >
-                                        {/* Category Image/Icon */}
-                                        <div className="relative aspect-[4/3] w-full bg-zinc-800/50 overflow-hidden">
-                                            {category.sample_images && category.sample_images.length > 0 ? (
-                                                <div className={`grid h-full w-full ${category.sample_images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-0.5 bg-black`}>
-                                                    {category.sample_images.map((img, idx) => (
-                                                        <div key={idx} className="relative overflow-hidden w-full h-full">
-                                                            <img
-                                                                src={img}
-                                                                alt={`${category.name} ${idx + 1}`}
-                                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : category.image ? (
+                                        {/* Category Image */}
+                                        <div className="relative aspect-square w-full bg-zinc-800/50 overflow-hidden">
+                                            {category.image ? (
                                                 <img
                                                     src={category.image}
                                                     alt={category.name}
-                                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            ) : category.sample_images && category.sample_images.length > 0 ? (
+                                                <img
+                                                    src={category.sample_images[0]}
+                                                    alt={category.name}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center w-full h-full text-zinc-700">
-                                                    <Package size={64} strokeWidth={1} />
+                                                    <Package size={32} strokeWidth={1.5} />
                                                 </div>
                                             )}
 
                                             {/* Gradient Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
                                             {/* Content Overlay */}
-                                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                                <div className="transform transition-transform duration-500 group-hover:translate-y-[-8px]">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <span className="text-white text-3xl font-heading font-bold">{category.name}</span>
-                                                        <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-bold text-white">
-                                                            {category.product_count} works
-                                                        </span>
-                                                    </div>
-                                                    {category.description && (
-                                                        <p className="text-zinc-300 text-sm line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                                                            {category.description}
-                                                        </p>
-                                                    )}
-                                                </div>
-
-                                                <div className="absolute bottom-8 right-8 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-                                                    <div className="p-3 rounded-full bg-white text-black hover:bg-zinc-200 transition-colors shadow-lg">
-                                                        <ArrowRight size={20} />
-                                                    </div>
+                                            <div className="absolute inset-0 p-4 flex flex-col justify-end">
+                                                <div className="flex items-end justify-between gap-2">
+                                                    <span className="text-white text-sm md:text-base font-heading font-bold leading-tight line-clamp-2">{category.name}</span>
+                                                    <span className="shrink-0 px-2 py-0.5 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white">
+                                                        {category.product_count}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
