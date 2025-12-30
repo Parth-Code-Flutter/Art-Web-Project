@@ -317,10 +317,10 @@ export default function BecomeArtistPage() {
                                             key={i}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, avatarUrl: url })}
-                                            className={`relative aspect - square rounded - xl overflow - hidden transition - all duration - 300 ${formData.avatarUrl === url
-                                                    ? 'ring-2 ring-blue-500 scale-110 shadow-lg shadow-blue-500/20'
-                                                    : 'opacity-40 hover:opacity-100 hover:scale-105 hover:shadow-lg'
-                                                } `}
+                                            className={`relative aspect-square rounded-xl overflow-hidden transition-all duration-300 ${formData.avatarUrl === url
+                                                ? 'ring-2 ring-blue-500 scale-110 shadow-lg shadow-blue-500/20'
+                                                : 'opacity-40 hover:opacity-100 hover:scale-105 hover:shadow-lg'
+                                                }`}
                                         >
                                             <img src={url} alt="Avatar" className="w-full h-full object-cover" />
                                         </button>

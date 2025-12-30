@@ -157,7 +157,7 @@ export default function CustomerAuth({ isOpen, onClose, initialType = 'customer'
                     if (seller.status === 'approved') {
                         window.location.href = '/seller/dashboard';
                     } else {
-                        window.location.href = '/customer/become-artist';
+                        window.location.href = '/seller/become-artist';
                     }
                 } else {
                     const { data: customer, error: customerError } = await supabase

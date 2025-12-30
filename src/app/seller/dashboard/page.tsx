@@ -61,7 +61,7 @@ export default function SellerDashboard() {
             .single();
 
         if (error || seller?.status !== 'approved') {
-            router.push('/customer/become-artist');
+            router.push('/seller/become-artist');
             return;
         }
 

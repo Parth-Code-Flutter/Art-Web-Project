@@ -111,7 +111,7 @@ export async function middleware(request: NextRequest) {
                 if (seller.status === 'approved') {
                     return NextResponse.redirect(new URL('/seller/dashboard', request.url))
                 }
-                return NextResponse.redirect(new URL('/customer/become-artist', request.url))
+                return NextResponse.redirect(new URL('/seller/become-artist', request.url))
             }
 
             // If not a seller, assume customer or check customer table if needed
@@ -133,7 +133,7 @@ export async function middleware(request: NextRequest) {
             .single()
 
         if (!seller || seller.status !== 'approved') {
-            return NextResponse.redirect(new URL('/customer/become-artist', request.url))
+            return NextResponse.redirect(new URL('/seller/become-artist', request.url))
         }
     }
 
