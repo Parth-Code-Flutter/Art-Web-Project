@@ -134,7 +134,7 @@ export default function BecomeArtistPage() {
                     </p>
                     <div className="flex flex-col gap-4">
                         <button
-                            onClick={() => router.push('/customer/dashboard')}
+                            onClick={() => router.push('/dashboard')}
                             className="w-full py-4 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 transition-all uppercase tracking-widest text-xs"
                         >
                             Return to Gallery
@@ -210,7 +210,7 @@ export default function BecomeArtistPage() {
                     </p>
                     <div className="flex flex-col gap-4 text-center">
                         <button
-                            onClick={() => router.push('/customer/dashboard')}
+                            onClick={() => router.push('/dashboard')}
                             className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-white font-black uppercase tracking-widest text-xs"
                         >
                             Return to Gallery

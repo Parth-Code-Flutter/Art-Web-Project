@@ -126,6 +126,11 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
 
+        // Allow access to the application page itself without approved status
+        if (url.pathname === '/seller/become-artist') {
+            return response
+        }
+
         const { data: seller } = await supabase
             .from('sellers')
             .select('status')
