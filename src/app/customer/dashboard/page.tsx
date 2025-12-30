@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, TrendingUp, Award, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, Star, TrendingUp, Award, Clock, Sparkles, LayoutGrid } from 'lucide-react';
 import BentoHero from '@/components/customer/BentoHero';
 import { supabase } from '@/lib/supabase';
 
@@ -175,6 +175,61 @@ export default function CustomerDashboard() {
                     <BentoHero />
                 </section>
 
+                {/* Shop by Category */}
+                <section>
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400">
+                                <LayoutGrid size={20} />
+                            </div>
+                            <h2 className="text-2xl font-heading font-bold">Curated Collections</h2>
+                        </div>
+                        <Link href="/customer/products" className="text-sm font-bold text-zinc-500 hover:text-white transition-colors">
+                            View All Categories
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {curatedCollections.map((cat, idx) => (
+                            <Link href={`/customer/categories/${encodeURIComponent(cat.name)}`} key={cat.id}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="group relative h-64 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900"
+                                >
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0 bg-zinc-800">
+                                        <img
+                                            src={cat.image}
+                                            alt={cat.name}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-40"
+                                        />
+                                    </div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+                                    {/* Content */}
+                                    <div className="absolute inset-x-0 bottom-0 p-8">
+                                        <div className="flex justify-between items-end">
+                                            <div>
+                                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-medium text-white mb-3">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                                                    {cat.count} Masterpieces
+                                                </div>
+                                                <h3 className="text-3xl font-heading font-bold text-white group-hover:text-blue-400 transition-colors">
+                                                    {cat.name}
+                                                </h3>
+                                            </div>
+                                            <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                                                <ArrowRight size={20} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
 
                 {/* Recent Drops / New Arrivals */}
                 <section>

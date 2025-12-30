@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import SellerProductModal from '@/components/seller/SellerProductModal';
 
 interface Product {
     id: string;
@@ -41,6 +42,11 @@ export default function SellerDashboard() {
         activePieces: 0,
         revenue: 0
     });
+
+    // Modal States
+    const [isArtModalOpen, setIsArtModalOpen] = useState(false);
+    const [artToEdit, setArtToEdit] = useState<any>(null);
+    const [isArtViewOnly, setIsArtViewOnly] = useState(false);
 
     useEffect(() => {
         checkUser();
@@ -99,6 +105,36 @@ export default function SellerDashboard() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push('/login');
+    };
+
+    // --- Piece Actions ---
+    const handleAddArt = () => {
+        setArtToEdit(null);
+        setIsArtViewOnly(false);
+        setIsArtModalOpen(true);
+    };
+
+    const handleEditArt = (art: any) => {
+        setArtToEdit(art);
+        setIsArtViewOnly(false);
+        setIsArtModalOpen(true);
+    };
+
+    const handleViewArt = (art: any) => {
+        setArtToEdit(art);
+        setIsArtViewOnly(true);
+        setIsArtModalOpen(true);
+    };
+
+    const handleDeleteArt = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this masterpiece from your collection?')) return;
+        try {
+            const { error } = await supabase.from('products').delete().eq('id', id);
+            if (error) throw error;
+            if (user?.id) fetchSellerData(user.id);
+        } catch (err: any) {
+            alert(err.message || 'Error deleting artwork');
+        }
     };
 
     if (loading) {
@@ -173,7 +209,7 @@ export default function SellerDashboard() {
                             </div>
                         )}
                         <button
-                            onClick={() => router.push('/seller/add-piece')}
+                            onClick={handleAddArt}
                             className="px-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center gap-3 uppercase tracking-widest text-xs active:scale-95"
                         >
                             <Plus size={20} /> Add New Artwork
@@ -236,26 +272,26 @@ export default function SellerDashboard() {
                                         <img src={art.images?.[0] || '/placeholder-art.jpg'} alt={art.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                     </div>
                                     <div className="flex-1 space-y-1">
-                                        <h3 className="font-bold text-white uppercase tracking-tight text-lg">{art.name}</h3>
+                                        <h3 className="font-bold text-white uppercase tracking-tight text-lg italic">{art.name}</h3>
                                         <div className="flex items-center gap-6">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Price</span>
+                                                <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Valuation</span>
                                                 <span className="text-blue-400 font-black">₹{art.price.toLocaleString()}</span>
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Status</span>
-                                                <span className="text-emerald-400 font-black uppercase text-xs tracking-widest">Active</span>
+                                                <span className="text-emerald-400 font-black uppercase text-xs tracking-widest">Synchronized</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Views</span>
+                                                <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Impressions</span>
                                                 <span className="text-zinc-400 font-black">{art.views || 0}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <button className="p-4 rounded-2xl bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><Pencil size={20} /></button>
-                                        <button className="p-4 rounded-2xl bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><Eye size={20} /></button>
-                                        <button className="p-4 rounded-2xl bg-white/5 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-all"><Trash2 size={20} /></button>
+                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => handleViewArt(art)} className="p-4 rounded-2xl bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><Eye size={20} /></button>
+                                        <button onClick={() => handleEditArt(art)} className="p-4 rounded-2xl bg-violet-500/10 text-violet-400 hover:text-white hover:bg-violet-500 transition-all"><Pencil size={20} /></button>
+                                        <button onClick={() => handleDeleteArt(art.id)} className="p-4 rounded-2xl bg-red-500/10 text-red-500 hover:text-white hover:bg-red-500 transition-all"><Trash2 size={20} /></button>
                                     </div>
                                 </motion.div>
                             ))
@@ -267,6 +303,15 @@ export default function SellerDashboard() {
             {/* Ambient Background Glows */}
             <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-blue-600/5 blur-[150px] rounded-full -mr-96 -mt-96 pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-[800px] h-[800px] bg-indigo-600/5 blur-[150px] rounded-full -ml-96 -mb-96 pointer-events-none" />
+
+            {/* Artwork Management Modal */}
+            <SellerProductModal
+                isOpen={isArtModalOpen}
+                onClose={() => setIsArtModalOpen(false)}
+                onSuccess={() => user?.id && fetchSellerData(user.id)}
+                productToEdit={artToEdit}
+                isViewOnly={isArtViewOnly}
+            />
         </div>
     );
 }
