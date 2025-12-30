@@ -273,9 +273,9 @@ export default function CustomerProducts() {
                                             </div>
 
                                             {/* Action Bar */}
-                                            <div className="pt-2 flex gap-1.5">
+                                            <div className="pt-2 flex gap-1">
                                                 <button
-                                                    className={`h-9 rounded-xl flex-1 flex items-center justify-center gap-1.5 px-3 text-[10px] font-black uppercase tracking-tight transition-all duration-500 whitespace-nowrap
+                                                    className={`h-8 rounded-xl flex-1 flex items-center justify-center gap-1 px-2 text-[10px] font-black uppercase tracking-tight transition-all duration-500 whitespace-nowrap
                                                         ${addingToCart === product.id
                                                             ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
                                                             : 'bg-white/5 text-white border border-white/5 hover:bg-white/10'
@@ -285,19 +285,19 @@ export default function CustomerProducts() {
                                                 >
                                                     {addingToCart === product.id ? (
                                                         <>
-                                                            <CheckCircle size={12} /> Added
+                                                            <CheckCircle size={10} /> Added
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Plus size={12} strokeWidth={3} /> Add to Cart
+                                                            <Plus size={10} strokeWidth={3} /> Add to Cart
                                                         </>
                                                     )}
                                                 </button>
                                                 <button
                                                     onClick={(e) => handleShare(e, product)}
-                                                    className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/5 text-zinc-400 hover:text-white border border-white/5 hover:bg-white/10 transition-all"
+                                                    className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/5 text-zinc-400 hover:text-white border border-white/5 hover:bg-white/10 transition-all"
                                                 >
-                                                    <Share2 size={14} />
+                                                    <Share2 size={12} />
                                                 </button>
                                             </div>
                                         </div>
