@@ -54,8 +54,10 @@ interface Applicant {
     id: string;
     full_name: string;
     email?: string;
+    mobile?: string;
     bio?: string;
     portfolio_url?: string;
+    avatar_url?: string;
     status: string;
     created_at: string;
 }
@@ -504,48 +506,83 @@ export default function AdminDashboard() {
                                     (filteredItems as Applicant[]).map((app, index) => (
                                         <motion.div
                                             key={app.id}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
-                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-6 flex flex-col md:flex-row md:items-center gap-6 backdrop-blur-sm transition-all duration-300"
+                                            className="group relative bg-zinc-900/20 hover:bg-zinc-900/40 border border-white/5 hover:border-blue-500/20 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center gap-8 backdrop-blur-xl transition-all duration-500 overflow-hidden"
                                         >
-                                            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/20">
-                                                <User size={28} />
-                                            </div>
+                                            {/* Ambient Background Glow */}
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                                            <div className="flex-1 space-y-2">
-                                                <div className="flex items-center gap-3">
-                                                    <h3 className="font-bold text-white uppercase tracking-tight">{app.full_name}</h3>
-                                                    <a
-                                                        href={app.portfolio_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest bg-blue-400/10 px-2 py-0.5 rounded-lg border border-blue-400/20"
-                                                    >
-                                                        View Portfolio <ArrowRight size={10} />
-                                                    </a>
-                                                </div>
-                                                <p className="text-sm text-zinc-500 italic">"{app.bio || 'No artist bio provided.'}"</p>
-                                                <div className="flex items-center gap-4">
-                                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
-                                                        Email: <span className="text-zinc-400">{app.email}</span>
-                                                    </p>
-                                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">
-                                                        Submitted: {new Date(app.created_at).toLocaleDateString()}
-                                                    </p>
+                                            {/* Avatar/Visual Profile */}
+                                            <div className="relative shrink-0">
+                                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                                                <div className="relative w-24 h-24 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center">
+                                                    {app.avatar_url ? (
+                                                        <img src={app.avatar_url} alt={app.full_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                    ) : (
+                                                        <User size={32} className="text-zinc-700" />
+                                                    )}
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-3">
+                                            {/* Data Section */}
+                                            <div className="flex-1 space-y-4">
+                                                <div>
+                                                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                                                        <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">{app.full_name}</h3>
+                                                        <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
+                                                            Pending Review
+                                                        </span>
+                                                        {app.portfolio_url && (
+                                                            <a
+                                                                href={app.portfolio_url.startsWith('http') ? app.portfolio_url : `https://${app.portfolio_url}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center gap-1.5 text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[0.2em] transition-colors"
+                                                            >
+                                                                Portfolio <ExternalLink size={12} />
+                                                            </a>
+                                                        )}
+                                                    </div>
+
+                                                    <p className="text-zinc-500 leading-relaxed font-medium max-w-2xl line-clamp-2 italic">
+                                                        "{app.bio || 'This artist opted for a silent portfolio speak.'}"
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                                                    <div className="flex items-center gap-2 text-zinc-600">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">Email:</span>
+                                                        <span className="text-[10px] font-bold text-zinc-400">{app.email}</span>
+                                                    </div>
+                                                    {app.mobile && (
+                                                        <div className="flex items-center gap-2 text-zinc-600">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">Mobile:</span>
+                                                            <span className="text-[10px] font-bold text-zinc-400">{app.mobile}</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-2 text-zinc-600">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">Submitted:</span>
+                                                        <span className="text-[10px] font-bold text-zinc-400">{new Date(app.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex items-center gap-3 shrink-0">
                                                 <button
                                                     onClick={() => handleApproveApplicant(app.id)}
-                                                    className="px-6 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10"
+                                                    className="px-8 py-4 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
                                                 >
                                                     Approve
                                                 </button>
                                                 <button
                                                     onClick={() => handleRejectApplicant(app.id)}
-                                                    className="px-6 py-2.5 rounded-xl bg-red-500/10 text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
+                                                    className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/5 transition-all active:scale-95"
                                                 >
                                                     Reject
                                                 </button>
