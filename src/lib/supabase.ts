@@ -7,13 +7,29 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('Supabase credentials are missing. Check your .env file.');
 }
 
-/**
- * Supabase Client (Browser)
- * 
- * Used for database queries and authentication across the application.
- * Using createBrowserClient from @supabase/ssr ensures that cookies
- * are correctly handled for middleware compatibility.
- */
+// Helper to clear corrupted session storage
+if (typeof window !== 'undefined') {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+        if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            const item = localStorage.getItem(key);
+            try {
+                if (item) {
+                    const parsed = JSON.parse(item);
+                    // If parsed is a string (double encoded), it's corrupt
+                    if (typeof parsed === 'string') {
+                        localStorage.removeItem(key);
+                        console.warn('Wiping corrupted Supabase session');
+                    }
+                }
+            } catch (e) {
+                // If it can't be parsed at all, it's corrupt
+                localStorage.removeItem(key);
+            }
+        }
+    });
+}
+
 export const supabase = createBrowserClient(
     supabaseUrl,
     supabaseAnonKey

@@ -138,7 +138,12 @@ export default function CustomerAuth({ isOpen, onClose, initialType = 'customer'
                     password
                 });
 
-                if (loginError) throw loginError;
+                if (loginError) {
+                    if (loginError.message === 'Invalid login credentials') {
+                        throw new Error('Invalid email or password. (If you just signed up, please check your email for a confirmation link)');
+                    }
+                    throw loginError;
+                }
 
                 // 2. Role-Based Table Check
                 if (type === 'seller') {
