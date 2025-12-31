@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { ToastProvider } from "@/components/ToastProvider";
+import GoogleAnalytics from "@/lib/analytics";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -35,6 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <ToastProvider>
           {children}
