@@ -121,9 +121,7 @@ export default function DashboardHeader() {
     const navLinks = [
         { name: 'Products', href: '/customer/products' },
         { name: 'Categories', href: '/customer/categories' },
-        { name: 'About Us', href: '#' },
-        { name: 'Artists', href: '#' },
-        { name: 'Exhibitions', href: '#' },
+        { name: 'About Us', href: '/customer/about' },
     ];
 
     return (
