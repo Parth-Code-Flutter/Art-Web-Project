@@ -10,8 +10,21 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://art-web-project.vercel.app'),
   title: "Art Gallery | Scalable Exhibition",
   description: "A premium, large-scale art gallery platform built with React and Next.js.",
+  openGraph: {
+    title: "Art Gallery | Scalable Exhibition",
+    description: "A premium, large-scale art gallery platform built with React and Next.js.",
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'Art Gallery',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Art Gallery | Scalable Exhibition",
+    description: "A premium, large-scale art gallery platform built with React and Next.js.",
+  },
 };
 
 export default function RootLayout({
