@@ -24,7 +24,7 @@ type SortOption = 'discount' | 'price-high' | 'price-low' | 'date-new' | 'date-o
 export default function CustomerProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sortBy, setSortBy] = useState<SortOption>('discount');
+    const [sortBy, setSortBy] = useState<SortOption>('date-new');
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState<string | null>(null);
     const [sharingProduct, setSharingProduct] = useState<Product | null>(null);

@@ -30,7 +30,7 @@ export default function CategoryDetailsPage() {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sortBy, setSortBy] = useState<SortOption>('discount');
+    const [sortBy, setSortBy] = useState<SortOption>('date-new');
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [addingToCart, setAddingToCart] = useState<string | null>(null);
     const [sharingProduct, setSharingProduct] = useState<Product | null>(null);
