@@ -428,9 +428,8 @@ export default function AdminDashboard() {
                             animate={{ opacity: 1, y: 0 }}
                             className="space-y-4"
                         >
-                            <div className={`grid gap-4 ${activeTab === 'sellers' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' :
-                                activeTab === 'products' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6' :
-                                    'grid-cols-1'
+                            <div className={`grid gap-4 md:gap-6 ${activeTab === 'sellers' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' :
+                                'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
                                 }`}>
                                 {activeTab === 'settings' ? (
                                     <ShippingManager />
@@ -454,16 +453,16 @@ export default function AdminDashboard() {
                                                 {/* Status Badge Overlays */}
                                                 <div className="absolute top-3 left-3">
                                                     <div className={`px-2.5 py-1.5 rounded-xl flex items-center gap-2 backdrop-blur-md border shadow-2xl ${product.status === 'approved' ? 'bg-black/40 border-emerald-500/30' :
-                                                            product.status === 'rejected' ? 'bg-black/40 border-red-500/30' :
-                                                                'bg-black/40 border-blue-500/30'
+                                                        product.status === 'rejected' ? 'bg-black/40 border-red-500/30' :
+                                                            'bg-black/40 border-blue-500/30'
                                                         }`}>
                                                         <div className={`w-2 h-2 rounded-full ${product.status === 'approved' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' :
-                                                                product.status === 'rejected' ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' :
-                                                                    'bg-blue-500 animate-pulse shadow-[0_0_10px_#3b82f6]'
+                                                            product.status === 'rejected' ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' :
+                                                                'bg-blue-500 animate-pulse shadow-[0_0_10px_#3b82f6]'
                                                             }`} />
                                                         <span className={`text-[10px] font-black uppercase tracking-widest ${product.status === 'approved' ? 'text-emerald-400' :
-                                                                product.status === 'rejected' ? 'text-red-400' :
-                                                                    'text-blue-400'
+                                                            product.status === 'rejected' ? 'text-red-400' :
+                                                                'text-blue-400'
                                                             }`}>
                                                             {product.status || 'pending'}
                                                         </span>
@@ -541,51 +540,51 @@ export default function AdminDashboard() {
                                         </motion.div>
                                     ))
                                 ) : activeTab === 'categories' ? (
-                                    (filteredItems as Category[]).map((cat, index) => (
-                                        <motion.div
-                                            key={cat.id}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] p-4 flex items-center gap-6 backdrop-blur-sm transition-all duration-300"
-                                        >
-                                            <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
-                                                <img
-                                                    src={cat.image_url || '/placeholder-category.jpg'}
-                                                    alt={cat.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                />
-                                            </div>
+                                    (filteredItems as Category[]).map((cat, index) => {
+                                        const count = products.filter(p => p.category === cat.name).length;
 
-                                            <div className="flex-1">
-                                                <h3 className="font-bold text-white group-hover:text-violet-400 transition-colors uppercase tracking-tight">{cat.name}</h3>
-                                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-                                                    Initialized: {new Date(cat.created_at).toLocaleDateString()}
-                                                </p>
-                                            </div>
+                                        return (
+                                            <motion.div
+                                                key={cat.id}
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: index * 0.03 }}
+                                                className="group relative bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden backdrop-blur-sm transition-all duration-300 flex flex-col"
+                                            >
+                                                <div className="relative aspect-square w-full bg-zinc-950 overflow-hidden">
+                                                    <img
+                                                        src={cat.image_url || '/placeholder-category.jpg'}
+                                                        alt={cat.name}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                    />
 
-                                            <div className="flex items-center gap-2 pr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                <button
-                                                    onClick={() => handleViewCategory(cat)}
-                                                    className="p-3 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
-                                                >
-                                                    <Eye size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditCategory(cat)}
-                                                    className="p-3 rounded-xl bg-violet-500/10 text-violet-400 hover:text-white hover:bg-violet-500 transition-all"
-                                                >
-                                                    <Pencil size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteCategory(cat.id)}
-                                                    className="p-3 rounded-xl bg-red-500/10 text-red-400 hover:text-white hover:bg-red-500 transition-all"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </div>
-                                        </motion.div>
-                                    ))
+                                                    <div className="absolute top-3 right-3">
+                                                        <div className="px-2.5 py-1.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                                            <span className="text-[9px] font-black text-white uppercase tracking-widest">{count.toString().padStart(2, '0')} Units</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2 hidden md:flex">
+                                                        <button onClick={() => handleViewCategory(cat)} className="p-3 rounded-xl bg-white text-black hover:scale-110 transition-transform"><Eye size={18} /></button>
+                                                        <button onClick={() => handleEditCategory(cat)} className="p-3 rounded-xl bg-blue-500 text-white hover:scale-110 transition-transform"><Pencil size={18} /></button>
+                                                        <button onClick={() => handleDeleteCategory(cat.id)} className="p-3 rounded-xl bg-red-500 text-white hover:scale-110 transition-transform"><Trash2 size={18} /></button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="p-4 space-y-1">
+                                                    <h3 className="font-bold text-white text-[10px] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">{cat.name}</h3>
+                                                    <p className="text-[8px] font-black text-zinc-600 uppercase tracking-widest italic truncate">Sector Synchronized</p>
+
+                                                    {/* Mobile Actions */}
+                                                    <div className="flex md:hidden gap-1 pt-2">
+                                                        <button onClick={() => handleEditCategory(cat)} className="flex-1 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center"><Pencil size={14} /></button>
+                                                        <button onClick={() => handleDeleteCategory(cat.id)} className="flex-1 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center"><Trash2 size={14} /></button>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })
                                 ) : filteredItems.length > 0 ? (
                                     (filteredItems as Seller[]).map((app, index) => (
                                         <motion.div
@@ -668,10 +667,10 @@ export default function AdminDashboard() {
 
 function getHeaderText(tab: string) {
     switch (tab) {
-        case 'products': return 'Artwork';
-        case 'categories': return 'Categories';
-        case 'sellers': return 'Artist Management';
-        case 'settings': return 'Platform Settings';
+        case 'products': return 'Artwork Matrix';
+        case 'categories': return 'Taxonomy Sectors';
+        case 'sellers': return 'Authorization Hub';
+        case 'settings': return 'Logistics Matrix';
         default: return 'Dashboard';
     }
 }
