@@ -16,9 +16,11 @@ import {
     Menu,
     X,
     ArrowRight,
-    ShoppingCart
+    ShoppingCart,
+    Search
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import SearchBar from './SearchBar';
 
 export default function DashboardHeader() {
     const router = useRouter();
@@ -26,6 +28,7 @@ export default function DashboardHeader() {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -132,22 +135,23 @@ export default function DashboardHeader() {
                 ${lastScrollY > 20 ? 'bg-background/80 backdrop-blur-md border-white/10 shadow-lg' : 'bg-transparent'}
             `}
             >
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 lg:px-6 h-20 flex items-center justify-between gap-4">
                     {/* Logo */}
                     <div
-                        className="flex items-center gap-3 cursor-pointer group"
+                        className="flex items-center gap-2 lg:gap-3 cursor-pointer group shrink-0"
                         onClick={() => router.push('/customer/dashboard')}
                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
-                            <Palette size={20} />
+                        <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
+                            <Palette size={18} className="lg:hidden" />
+                            <Palette size={20} className="hidden lg:block" />
                         </div>
-                        <span className="text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                        <span className="text-lg lg:text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 hidden sm:block">
                             ArtGallery
                         </span>
                     </div>
 
-                    {/* Main Navigation */}
-                    <nav className="hidden md:flex items-center gap-8">
+                    {/* Main Navigation - Desktop */}
+                    <nav className="hidden lg:flex items-center gap-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
@@ -164,11 +168,25 @@ export default function DashboardHeader() {
                         ))}
                     </nav>
 
+                    {/* Search Bar - Desktop */}
+                    <div className="hidden md:block flex-1 max-w-md">
+                        <SearchBar />
+                    </div>
+
                     {/* Right Section */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 lg:gap-4">
+                        {/* Mobile Search Button */}
+                        <button
+                            onClick={() => setIsMobileSearchOpen(true)}
+                            className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+                        >
+                            <Search size={20} />
+                        </button>
+
                         {/* Cart Icon */}
                         <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
-                            <ShoppingCart size={22} strokeWidth={1.5} />
+                            <ShoppingCart size={20} strokeWidth={1.5} className="lg:hidden" />
+                            <ShoppingCart size={22} strokeWidth={1.5} className="hidden lg:block" />
                             {cartCount > 0 && (
                                 <span className="absolute top-0 right-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
                                     {cartCount}
@@ -178,7 +196,7 @@ export default function DashboardHeader() {
 
                         <div className="hidden md:block w-px h-8 bg-zinc-800" />
 
-                        {/* Profile Section */}
+                        {/* Profile Section - Desktop */}
                         <div className="relative hidden md:block" ref={dropdownRef}>
                             <button
                                 className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-800 border-zinc-700' : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700'}`}
@@ -248,11 +266,36 @@ export default function DashboardHeader() {
                             className="md:hidden p-2 text-zinc-400 hover:text-white"
                             onClick={() => setIsMobileMenuOpen(true)}
                         >
-                            <Menu size={24} />
+                            <Menu size={22} />
                         </button>
                     </div>
                 </div>
             </header>
+
+            {/* Mobile Search Modal */}
+            <AnimatePresence>
+                {isMobileSearchOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[1002] md:hidden"
+                    >
+                        <div className="p-4 pt-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-white">Search Artworks</h2>
+                                <button
+                                    onClick={() => setIsMobileSearchOpen(false)}
+                                    className="p-2 text-zinc-400 hover:text-white transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+                            <SearchBar onClose={() => setIsMobileSearchOpen(false)} isMobile />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Mobile Navigation Overlay */}
             <div
