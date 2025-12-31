@@ -35,6 +35,7 @@ import EmptyStateGraphic from '@/components/admin/EmptyStateGraphic';
 import CategoryModal from '@/components/admin/CategoryModal';
 import ProductModal from '@/components/admin/ProductModal';
 import ShippingManager from '@/components/admin/ShippingManager';
+import SellerDetailView from '@/components/admin/SellerDetailView';
 
 interface Product {
     id: string;
@@ -85,6 +86,7 @@ export default function AdminDashboard() {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [productToEdit, setProductToEdit] = useState<Product | null>(null);
     const [isProductViewOnly, setIsProductViewOnly] = useState(false);
+    const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
 
     useEffect(() => {
         checkAdmin();
@@ -177,7 +179,7 @@ export default function AdminDashboard() {
 
     // --- Seller Actions ---
     const handleViewSeller = (seller: Seller) => {
-        router.push(`/creovo-admin-dec/vault/sellers/${seller.id}`);
+        setSelectedSellerId(seller.id);
     };
 
     const handleAddCategory = () => {
@@ -278,7 +280,7 @@ export default function AdminDashboard() {
 
                 <nav className="flex-1 px-4 space-y-2 mt-4">
                     <button
-                        onClick={() => { setActiveTab('products'); setMobileMenuOpen(false); }}
+                        onClick={() => { setActiveTab('products'); setMobileMenuOpen(false); setSelectedSellerId(null); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'products' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'products' ? 'bg-blue-500/20 text-blue-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
@@ -288,7 +290,7 @@ export default function AdminDashboard() {
                     </button>
 
                     <button
-                        onClick={() => { setActiveTab('categories'); setMobileMenuOpen(false); }}
+                        onClick={() => { setActiveTab('categories'); setMobileMenuOpen(false); setSelectedSellerId(null); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'categories' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'categories' ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
@@ -298,7 +300,7 @@ export default function AdminDashboard() {
                     </button>
 
                     <button
-                        onClick={() => { setActiveTab('sellers'); setMobileMenuOpen(false); }}
+                        onClick={() => { setActiveTab('sellers'); setMobileMenuOpen(false); setSelectedSellerId(null); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'sellers' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'sellers' ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
@@ -308,7 +310,7 @@ export default function AdminDashboard() {
                     </button>
 
                     <button
-                        onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}
+                        onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); setSelectedSellerId(null); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${activeTab === 'settings' ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'}`}
                     >
                         <div className={`p-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-900 group-hover:bg-zinc-800'}`}>
@@ -316,7 +318,6 @@ export default function AdminDashboard() {
                         </div>
                         <span className="font-medium">Settings</span>
                     </button>
-
                 </nav>
 
                 <div className="p-4 border-t border-white/5">
@@ -339,50 +340,68 @@ export default function AdminDashboard() {
                 <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
                 <div className="fixed bottom-0 left-64 w-[500px] h-[500px] bg-violet-600/5 blur-[120px] rounded-full -ml-32 -mb-32 pointer-events-none" />
 
-                <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-12 relative z-10">
-                    <div>
-                        <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
-                            <span>Admin Panel</span>
-                            <ChevronRight size={12} />
-                            <span className="text-blue-500">{activeTab}</span>
+                {!selectedSellerId && (
+                    <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-12 relative z-10">
+                        <div>
+                            <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
+                                <span>Admin Panel</span>
+                                <ChevronRight size={12} />
+                                <span className="text-blue-500">{activeTab}</span>
+                            </div>
+                            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex flex-wrap items-center gap-4">
+                                {getHeaderText(activeTab)}
+                                {activeTab !== 'settings' && (
+                                    <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
+                                        {activeTab === 'products' ? products.length : activeTab === 'categories' ? categories.length : sellers.length} Total
+                                    </span>
+                                )}
+                            </h1>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex flex-wrap items-center gap-4">
-                            {getHeaderText(activeTab)}
-                            {activeTab !== 'settings' && (
-                                <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
-                                    {activeTab === 'products' ? products.length : activeTab === 'categories' ? categories.length : sellers.length} Total
-                                </span>
+
+                        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+                            <div className="relative group w-full md:w-auto">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-blue-500 transition-colors" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder={`Scan ${activeTab}...`}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className={`bg-zinc-900/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 w-full md:w-[300px] focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-600 text-sm ${activeTab === 'settings' ? 'opacity-0 pointer-events-none' : ''}`}
+                                />
+                            </div>
+
+                            {activeTab !== 'sellers' && activeTab !== 'settings' && (
+                                <button
+                                    onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
+                                    className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm whitespace-nowrap"
+                                >
+                                    <Plus size={18} />
+                                    Add {activeTab === 'products' ? 'Artwork' : 'Category'}
+                                </button>
                             )}
-                        </h1>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
-                        <div className="relative group w-full md:w-auto">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-blue-500 transition-colors" size={18} />
-                            <input
-                                type="text"
-                                placeholder={`Scan ${activeTab}...`}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className={`bg-zinc-900/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 w-full md:w-[300px] focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-600 text-sm ${activeTab === 'settings' ? 'opacity-0 pointer-events-none' : ''}`}
-                            />
                         </div>
-
-                        {activeTab !== 'sellers' && activeTab !== 'settings' && (
-                            <button
-                                onClick={activeTab === 'products' ? handleAddProduct : handleAddCategory}
-                                className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 shadow-lg shadow-white/5 active:scale-95 transition-all text-sm whitespace-nowrap"
-                            >
-                                <Plus size={18} />
-                                Add {activeTab === 'products' ? 'Artwork' : 'Category'}
-                            </button>
-                        )}
-                    </div>
-                </header>
+                    </header>
+                )}
 
                 {/* Content Section */}
                 <AnimatePresence mode="wait">
-                    {loading ? (
+                    {selectedSellerId ? (
+                        <motion.div
+                            key="seller-detail"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="relative z-10"
+                        >
+                            <SellerDetailView
+                                sellerId={selectedSellerId}
+                                onBack={() => {
+                                    setSelectedSellerId(null);
+                                    fetchData();
+                                }}
+                            />
+                        </motion.div>
+                    ) : loading ? (
                         <motion.div
                             key="loading"
                             initial={{ opacity: 0 }}
