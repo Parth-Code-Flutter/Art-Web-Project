@@ -15,9 +15,10 @@ module.exports = {
         'glass-border': 'var(--glass-border)',
       },
       fontFamily: {
-        main: ['var(--font-main)', 'sans-serif'],
-        heading: ['var(--font-heading)', 'sans-serif'],
-        admin: ['var(--font-admin)', 'sans-serif'],
+        sans: ['var(--font-jakarta)', 'sans-serif'],
+        main: ['var(--font-jakarta)', 'sans-serif'],
+        heading: ['var(--font-jakarta)', 'sans-serif'],
+        admin: ['var(--font-jakarta)', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',

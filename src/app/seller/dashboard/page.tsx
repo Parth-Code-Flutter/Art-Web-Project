@@ -464,7 +464,7 @@ export default function SellerDashboard() {
                                                     <div className="p-8 space-y-4 flex-1 flex flex-col">
                                                         <div>
                                                             <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest italic mb-1">{art.category}</p>
-                                                            <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none group-hover:text-blue-400 transition-colors truncate">{art.name}</h3>
+                                                            <h3 className="font-semibold text-white text-base group-hover:text-blue-400 transition-colors line-clamp-1">{art.name}</h3>
                                                         </div>
                                                         <div className="grid grid-cols-2 gap-6 pt-4 border-t border-white/5 mt-auto">
                                                             <div className="space-y-1">

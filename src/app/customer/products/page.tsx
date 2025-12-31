@@ -45,10 +45,6 @@ export default function CustomerProducts() {
         fetchProducts();
     }, []);
 
-    useEffect(() => {
-        sortProducts();
-    }, [sortBy]);
-
     const fetchProducts = async () => {
         try {
             const { data, error } = await supabase
@@ -66,8 +62,8 @@ export default function CustomerProducts() {
         }
     };
 
-    const sortProducts = () => {
-        const sorted = [...products].sort((a, b) => {
+    const sortedProducts = React.useMemo(() => {
+        return [...products].sort((a, b) => {
             const priceA = a.discount_price || a.price;
             const priceB = b.discount_price || b.price;
 
@@ -88,8 +84,7 @@ export default function CustomerProducts() {
                     return 0;
             }
         });
-        setProducts(sorted);
-    };
+    }, [products, sortBy]);
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -199,10 +194,10 @@ export default function CustomerProducts() {
                         <Loader2 className="animate-spin mb-6 text-blue-500" size={48} />
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Curating The Grid...</p>
                     </div>
-                ) : products.length > 0 ? (
+                ) : sortedProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                         <AnimatePresence mode="popLayout">
-                            {products.map((product, index) => (
+                            {sortedProducts.map((product, index) => (
                                 <motion.div
                                     key={product.id}
                                     layout
@@ -241,7 +236,7 @@ export default function CustomerProducts() {
                                         <div className="p-4 space-y-3 flex-1 flex flex-col">
                                             <div className="min-w-0">
                                                 <Link href={`/customer/products/${product.id}`}>
-                                                    <h3 className="font-bold text-white text-xs uppercase tracking-tight line-clamp-1 group-hover:text-blue-400 transition-colors">
+                                                    <h3 className="font-semibold text-white text-base group-hover:text-blue-400 transition-colors line-clamp-1">
                                                         {product.name}
                                                     </h3>
                                                 </Link>
