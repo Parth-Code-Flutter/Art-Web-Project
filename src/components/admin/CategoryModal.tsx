@@ -138,7 +138,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                 <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
                                     <Sparkles size={24} />
                                 </div>
-                                <h2 className="text-3xl font-black text-white tracking-tight uppercase">
+                                <h2 className="text-3xl font-bold text-white tracking-tight uppercase">
                                     {isViewOnly ? 'Quantum Archive' : categoryToEdit ? 'Data Reconfiguration' : 'New Collection'}
                                 </h2>
                                 <p className="text-zinc-500 text-sm mt-2 font-medium tracking-wide">

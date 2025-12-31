@@ -151,7 +151,7 @@ export default function SellerDetailPage() {
         return (
             <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center space-y-4">
                 <ShieldAlert size={64} className="text-zinc-700" />
-                <h1 className="text-2xl font-bold text-white uppercase italic">Artist Not Found</h1>
+                <h1 className="text-2xl font-bold text-white uppercase">Artist Not Found</h1>
                 <button
                     onClick={() => router.back()}
                     className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors"
@@ -163,7 +163,7 @@ export default function SellerDetailPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#050505] text-zinc-300 py-24 px-6 md:px-12 relative overflow-hidden">
+        <main className="min-h-screen bg-[#050505] text-zinc-300 py-24 px-6 md:px-12 relative overflow-hidden font-admin">
             {/* Background Glows */}
             <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-blue-600/5 blur-[150px] rounded-full -mr-96 -mt-96 pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-[800px] h-[800px] bg-violet-600/5 blur-[150px] rounded-full -ml-96 -mb-96 pointer-events-none" />
@@ -178,7 +178,7 @@ export default function SellerDetailPage() {
                         <div className="p-3 rounded-2xl bg-white/5 border border-white/5 group-hover:bg-white/10 transition-all">
                             <ArrowLeft size={20} />
                         </div>
-                        <span className="font-bold uppercase tracking-widest text-xs italic">Artist Grid</span>
+                        <span className="font-bold uppercase tracking-widest text-xs">Artist Grid</span>
                     </button>
 
                     <div className="flex items-center gap-4">
@@ -227,10 +227,10 @@ export default function SellerDetailPage() {
                                 </div>
 
                                 <div className="text-center space-y-4">
-                                    <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none break-words">
+                                    <h1 className="text-4xl font-bold text-white tracking-tight uppercase leading-none break-words">
                                         {seller.full_name}
                                     </h1>
-                                    <p className="text-zinc-400 font-medium italic leading-relaxed text-sm px-4">
+                                    <p className="text-zinc-400 font-medium leading-relaxed text-sm px-4">
                                         "{seller.bio || 'This artist keeps their story shared through their masterpiece creations.'}"
                                     </p>
                                 </div>
@@ -271,7 +271,7 @@ export default function SellerDetailPage() {
                                                     Visual Portfolio <ArrowRight size={14} />
                                                 </a>
                                             ) : (
-                                                <p className="text-zinc-600 font-bold text-sm italic">Unlinked</p>
+                                                <p className="text-zinc-600 font-bold text-sm">Unlinked</p>
                                             )}
                                         </div>
                                     </div>
@@ -297,7 +297,7 @@ export default function SellerDetailPage() {
                         <section className="flex-1 bg-zinc-900/30 border border-white/5 rounded-[3rem] p-8 md:p-12 backdrop-blur-xl">
                             <div className="flex items-center justify-between mb-12">
                                 <div className="space-y-1">
-                                    <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase flex items-center gap-3">
+                                    <h2 className="text-3xl font-bold text-white tracking-tight uppercase flex items-center gap-3">
                                         <Palette className="text-blue-500" /> Collection Grid
                                     </h2>
                                     <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.2em]">{products.length} Masterpieces Uploaded</p>
@@ -324,7 +324,7 @@ export default function SellerDetailPage() {
                                                 </div>
                                                 <div className="flex-1 min-w-0 space-y-2 py-1">
                                                     <div className="flex items-center gap-2">
-                                                        <h3 className="font-bold text-white uppercase italic truncate text-lg tracking-tight">{product.name}</h3>
+                                                        <h3 className="font-bold text-white uppercase truncate text-lg tracking-tight">{product.name}</h3>
                                                     </div>
                                                     <div className="flex flex-wrap gap-2">
                                                         <span className="px-2 py-0.5 rounded-md bg-white/5 text-[9px] font-black text-zinc-400 uppercase tracking-widest">
@@ -368,7 +368,7 @@ export default function SellerDetailPage() {
                                 ) : (
                                     <div className="col-span-full py-20 text-center rounded-3xl border border-dashed border-white/5 bg-zinc-950/30">
                                         <Package size={40} className="mx-auto text-zinc-800 mb-4" strokeWidth={1} />
-                                        <p className="text-zinc-600 font-medium italic">"The artist has not initialized any data entries yet."</p>
+                                        <p className="text-zinc-600 font-medium font-bold">"The artist has not initialized any data entries yet."</p>
                                     </div>
                                 )}
                             </div>

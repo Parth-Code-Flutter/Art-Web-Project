@@ -77,7 +77,7 @@ export default function SellerModal({ isOpen, onClose, seller, onApprove, onReje
 
                                 <div className="flex-1 text-center md:text-left pt-2">
                                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-3">
-                                        <h2 className="text-3xl md:text-4xl font-black text-white italic tracking-tighter uppercase leading-none">{seller.full_name}</h2>
+                                        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight uppercase leading-none">{seller.full_name}</h2>
                                         <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-current transition-all ${seller.status === 'approved'
                                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-400/20'
                                             : seller.status === 'rejected'
@@ -87,7 +87,7 @@ export default function SellerModal({ isOpen, onClose, seller, onApprove, onReje
                                             {seller.status === 'approved' ? 'Verified Artist' : seller.status === 'rejected' ? 'Access Revoked' : 'Pending Verification'}
                                         </span>
                                     </div>
-                                    <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-lg leading-relaxed italic">
+                                    <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-lg leading-relaxed">
                                         "{seller.bio || 'The artist chose to let their work speak for itself.'}"
                                     </p>
                                 </div>

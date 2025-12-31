@@ -47,7 +47,7 @@ export default function CreovoAdminLoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-6 font-sans">
+        <main className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-6 font-admin">
             {/* Background elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,#3b82f622_0%,transparent_50%)] pointer-events-none" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
@@ -58,7 +58,7 @@ export default function CreovoAdminLoginPage() {
                     <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-2xl mb-4 group hover:scale-105 transition-transform duration-500">
                         <Palette size={32} />
                     </div>
-                    <h1 className="text-3xl font-heading font-black text-white tracking-widest uppercase">Creovo</h1>
+                    <h1 className="text-3xl font-heading font-bold text-white tracking-widest uppercase">Creovo</h1>
                     <div className="h-px w-12 bg-blue-500 mt-2" />
                 </div>
 

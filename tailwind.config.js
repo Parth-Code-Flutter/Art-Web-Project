@@ -17,6 +17,7 @@ module.exports = {
       fontFamily: {
         main: ['var(--font-main)', 'sans-serif'],
         heading: ['var(--font-heading)', 'sans-serif'],
+        admin: ['var(--font-admin)', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',

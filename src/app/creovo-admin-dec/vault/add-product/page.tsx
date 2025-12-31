@@ -113,7 +113,7 @@ export default function AddProductPage() {
     };
 
     return (
-        <main className="min-h-screen bg-[#050505] text-zinc-300 py-24 px-6 md:px-12 relative overflow-hidden">
+        <main className="min-h-screen bg-[#050505] text-zinc-300 py-24 px-6 md:px-12 relative overflow-hidden font-admin">
             {/* Background Accents */}
             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-violet-600/5 blur-[120px] rounded-full -ml-32 -mb-32 pointer-events-none" />

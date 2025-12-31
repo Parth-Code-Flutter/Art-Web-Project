@@ -248,7 +248,7 @@ export default function AdminDashboard() {
                 : []; // No filtering for shipping from here (handled in component)
 
     return (
-        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-blue-500/30">
+        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-admin selection:bg-blue-500/30">
 
             {/* Mobile Header Toggle */}
             <div className="md:hidden fixed top-6 right-6 z-50">
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
                             <ChevronRight size={12} />
                             <span className="text-blue-500">{activeTab}</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight flex flex-wrap items-center gap-4">
+                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex flex-wrap items-center gap-4">
                             {getHeaderText(activeTab)}
                             {activeTab !== 'settings' && (
                                 <span className="px-3 py-1 rounded-full bg-zinc-900 text-xs font-bold border border-white/5">
@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                                             {/* Content Area */}
                                             <div className="p-4 space-y-3 flex-1 flex flex-col">
                                                 <div className="min-w-0">
-                                                    <h3 className="font-bold text-white text-xs uppercase tracking-tight line-clamp-1 group-hover:text-blue-400 transition-colors">
+                                                    <h3 className="font-semibold text-white text-base group-hover:text-blue-400 transition-colors line-clamp-1">
                                                         {product.name}
                                                     </h3>
                                                     <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
@@ -551,19 +551,12 @@ export default function AdminDashboard() {
                                                 transition={{ delay: index * 0.03 }}
                                                 className="group relative bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden backdrop-blur-sm transition-all duration-300 flex flex-col"
                                             >
-                                                <div className="relative aspect-square w-full bg-zinc-950 overflow-hidden">
+                                                <div className="relative h-32 w-full bg-zinc-950 overflow-hidden">
                                                     <img
                                                         src={cat.image_url || '/placeholder-category.jpg'}
                                                         alt={cat.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
-
-                                                    <div className="absolute top-3 right-3">
-                                                        <div className="px-2.5 py-1.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                                                            <span className="text-[9px] font-black text-white uppercase tracking-widest">{count.toString().padStart(2, '0')} Units</span>
-                                                        </div>
-                                                    </div>
 
                                                     <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2 hidden md:flex">
                                                         <button onClick={() => handleViewCategory(cat)} className="p-3 rounded-xl bg-white text-black hover:scale-110 transition-transform"><Eye size={18} /></button>
@@ -572,9 +565,15 @@ export default function AdminDashboard() {
                                                     </div>
                                                 </div>
 
-                                                <div className="p-4 space-y-1">
-                                                    <h3 className="font-bold text-white text-[10px] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">{cat.name}</h3>
-                                                    <p className="text-[8px] font-black text-zinc-600 uppercase tracking-widest italic truncate">Sector Synchronized</p>
+                                                <div className="p-4">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <h3 className="font-semibold text-white text-base group-hover:text-blue-400 transition-colors truncate">
+                                                            {cat.name}
+                                                        </h3>
+                                                        <span className="shrink-0 text-[10px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">
+                                                            {count.toString().padStart(2, '0')} Units
+                                                        </span>
+                                                    </div>
 
                                                     {/* Mobile Actions */}
                                                     <div className="flex md:hidden gap-1 pt-2">
@@ -608,7 +607,7 @@ export default function AdminDashboard() {
 
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-1.5 mb-0.5">
-                                                    <h3 className="text-xs font-black text-white italic tracking-tighter uppercase truncate">{app.full_name}</h3>
+                                                    <h3 className="text-xs font-bold text-white tracking-tight uppercase truncate">{app.full_name}</h3>
                                                     <div className={`w-1 h-1 rounded-full ${app.status === 'approved' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
                                                         app.status === 'rejected' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' :
                                                             'bg-blue-500 animate-pulse'
@@ -633,7 +632,7 @@ export default function AdminDashboard() {
                                         <div className="w-20 h-20 bg-zinc-900/50 rounded-3xl mx-auto flex items-center justify-center mb-6 text-zinc-700">
                                             <ShieldAlert size={40} />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tighter">No Sellers Found</h3>
+                                        <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tight">No Sellers Found</h3>
                                         <p className="text-zinc-500 max-w-sm mx-auto text-sm">
                                             Everything is processed. New artist requests or active accounts will appear here.
                                         </p>
