@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, Eye, CheckCircle, Share2 } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, Eye, CheckCircle, Share2, Search, X } from 'lucide-react';
 import ShareModal from '@/components/customer/ShareModal';
 import { supabase } from '@/lib/supabase';
 
@@ -22,6 +23,9 @@ interface Product {
 type SortOption = 'discount' | 'price-high' | 'price-low' | 'date-new' | 'date-old';
 
 export default function CustomerProducts() {
+    const searchParams = useSearchParams();
+    const searchQuery = searchParams.get('search') || '';
+
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState<SortOption>('date-new');
@@ -50,8 +54,7 @@ export default function CustomerProducts() {
             const { data, error } = await supabase
                 .from('products')
                 .select('*')
-                .eq('status', 'approved')
-                .order('created_at', { ascending: false });
+                .eq('status', 'approved');
 
             if (error) throw error;
             setProducts(data || []);
@@ -62,29 +65,41 @@ export default function CustomerProducts() {
         }
     };
 
-    const sortedProducts = React.useMemo(() => {
-        return [...products].sort((a, b) => {
-            const priceA = a.discount_price || a.price;
-            const priceB = b.discount_price || b.price;
+    // Filter products based on search query
+    const filteredProducts = useMemo(() => {
+        if (!searchQuery.trim()) return products;
 
-            switch (sortBy) {
-                case 'discount':
-                    const discountA = ((a.price - (a.discount_price || a.price)) / a.price);
-                    const discountB = ((b.price - (b.discount_price || b.price)) / b.price);
+        const query = searchQuery.toLowerCase();
+        return products.filter(product =>
+            product.name.toLowerCase().includes(query) ||
+            product.category.toLowerCase().includes(query) ||
+            product.description?.toLowerCase().includes(query)
+        );
+    }, [products, searchQuery]);
+
+    // Sort the filtered products
+    const sortedProducts = useMemo(() => {
+        const productsToSort = [...filteredProducts];
+
+        switch (sortBy) {
+            case 'discount':
+                return productsToSort.sort((a, b) => {
+                    const discountA = a.discount_price ? ((a.price - a.discount_price) / a.price) * 100 : 0;
+                    const discountB = b.discount_price ? ((b.price - b.discount_price) / b.price) * 100 : 0;
                     return discountB - discountA;
-                case 'price-high':
-                    return priceB - priceA;
-                case 'price-low':
-                    return priceA - priceB;
-                case 'date-new':
-                    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-                case 'date-old':
-                    return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
-                default:
-                    return 0;
-            }
-        });
-    }, [products, sortBy]);
+                });
+            case 'price-high':
+                return productsToSort.sort((a, b) => (b.discount_price || b.price) - (a.discount_price || a.price));
+            case 'price-low':
+                return productsToSort.sort((a, b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+            case 'date-new':
+                return productsToSort.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+            case 'date-old':
+                return productsToSort.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+            default:
+                return productsToSort;
+        }
+    }, [filteredProducts, sortBy]);
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -131,6 +146,34 @@ export default function CustomerProducts() {
     return (
         <main className="min-h-screen bg-black pt-20 pb-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
+                {/* Search Results Banner */}
+                {searchQuery && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-6 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between gap-4"
+                    >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Search className="text-blue-400 shrink-0" size={20} />
+                            <div className="min-w-0">
+                                <p className="text-sm font-semibold text-white">
+                                    Search results for: <span className="text-blue-400">"{searchQuery}"</span>
+                                </p>
+                                <p className="text-xs text-zinc-500 mt-0.5">
+                                    {filteredProducts.length} {filteredProducts.length === 1 ? 'artwork' : 'artworks'} found
+                                </p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/customer/products"
+                            className="shrink-0 p-2 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
+                            title="Clear search"
+                        >
+                            <X size={18} />
+                        </Link>
+                    </motion.div>
+                )}
+
                 {/* Compact Top Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
                     <div className="flex items-center gap-3">
@@ -138,8 +181,12 @@ export default function CustomerProducts() {
                             <Filter size={20} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-white uppercase italic tracking-tighter leading-none">The Gallery</h2>
-                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">{products.length} Masterpieces Found</p>
+                            <h2 className="text-xl font-black text-white uppercase italic tracking-tighter leading-none">
+                                {searchQuery ? 'Search Results' : 'The Gallery'}
+                            </h2>
+                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                                {sortedProducts.length} {sortedProducts.length === 1 ? 'Masterpiece' : 'Masterpieces'} Found
+                            </p>
                         </div>
                     </div>
 
