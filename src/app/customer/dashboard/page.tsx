@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import WishlistButton from '@/components/customer/WishlistButton';
+import Skeleton, { ProductCardSkeleton } from '@/components/ui/Skeleton';
 
 interface Product {
     id: string;
@@ -361,7 +362,7 @@ export default function CustomerDashboard() {
                     {loading ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
-                                <div key={i} className="h-96 rounded-3xl bg-zinc-900/50 border border-white/5 animate-pulse" />
+                                <ProductCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : (

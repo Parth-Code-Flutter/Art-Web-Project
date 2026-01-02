@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Layers, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, ChevronLeft, Eye, CheckCircle, Share2 } from 'lucide-react';
 import ShareModal from '@/components/customer/ShareModal';
 import WishlistButton from '@/components/customer/WishlistButton';
+import Skeleton, { ProductCardSkeleton } from '@/components/ui/Skeleton';
 import { supabase } from '@/lib/supabase';
 
 interface Product {
@@ -209,9 +210,10 @@ export default function CategoryDetailsPage() {
                 </div>
 
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-40 text-zinc-500">
-                        <Loader2 className="animate-spin mb-6 text-blue-500" size={48} />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Curating The collection...</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                        {[...Array(12)].map((_, i) => (
+                            <ProductCardSkeleton key={i} />
+                        ))}
                     </div>
                 ) : sortedProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">

@@ -21,9 +21,11 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { useWishlist } from '@/contexts/WishlistContext';
 import VirtualMockup from '@/components/customer/VirtualMockup';
 import ShareModal from '@/components/customer/ShareModal';
 import WishlistButton from '@/components/customer/WishlistButton';
+import Skeleton, { ProductCardSkeleton } from '@/components/ui/Skeleton';
 
 interface Product {
     id: string;
@@ -137,10 +139,51 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center text-zinc-400">
-                <Loader2 className="animate-spin mb-4 text-blue-500" size={48} />
-                <p className="font-medium tracking-wide">Preparing masterpiece details...</p>
-            </div>
+            <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                        {/* Media Skeleton */}
+                        <div className="space-y-6">
+                            <Skeleton className="aspect-[4/5] w-full rounded-2xl" />
+                            <div className="flex gap-4">
+                                {[...Array(3)].map((_, i) => (
+                                    <Skeleton key={i} className="w-24 h-24 rounded-lg" />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Info Skeleton */}
+                        <div className="flex flex-col h-full space-y-8">
+                            <div className="space-y-4">
+                                <Skeleton className="h-8 w-24 rounded-full" />
+                                <Skeleton className="h-16 w-3/4" />
+                                <Skeleton className="h-6 w-1/2" />
+                            </div>
+
+                            <div className="p-6 rounded-2xl bg-zinc-900/40 border border-white/5 space-y-6">
+                                <Skeleton className="h-12 w-1/3" />
+                                <div className="flex gap-4">
+                                    <Skeleton className="h-14 w-32 rounded-xl" />
+                                    <Skeleton className="h-14 flex-1 rounded-xl" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Skeleton className="h-14 rounded-xl" />
+                                    <Skeleton className="h-14 rounded-xl" />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <Skeleton className="h-8 w-1/3" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         );
     }
 

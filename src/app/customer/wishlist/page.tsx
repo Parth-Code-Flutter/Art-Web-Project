@@ -15,7 +15,11 @@ import {
     Plus,
     CheckCircle
 } from 'lucide-react';
+import VirtualMockup from '@/components/customer/VirtualMockup';
+import ShareModal from '@/components/customer/ShareModal';
+import WishlistButton from '@/components/customer/WishlistButton';
 import { useWishlist } from '@/contexts/WishlistContext';
+import Skeleton, { ProductCardSkeleton } from '@/components/ui/Skeleton';
 
 export default function WishlistPage() {
     const { wishlistProducts, removeFromWishlist, loading, wishlistCount } = useWishlist();
@@ -51,10 +55,27 @@ export default function WishlistPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center text-zinc-500">
-                <Loader2 className="animate-spin mb-4 text-blue-500" size={48} />
-                <p className="font-black uppercase tracking-[0.3em] animate-pulse text-xs">Accessing Your Collection...</p>
-            </div>
+            <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                        <div className="space-y-4">
+                            <Skeleton className="h-4 w-24" />
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="w-12 h-12 rounded-2xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-8 w-48" />
+                                    <Skeleton className="h-3 w-32" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {[...Array(8)].map((_, i) => (
+                            <ProductCardSkeleton key={i} />
+                        ))}
+                    </div>
+                </div>
+            </main>
         );
     }
 
