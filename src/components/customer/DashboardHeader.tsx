@@ -17,10 +17,12 @@ import {
     X,
     ArrowRight,
     ShoppingCart,
-    Search
+    Search,
+    Heart
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import SearchBar from './SearchBar';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 export default function DashboardHeader() {
     const router = useRouter();
@@ -34,6 +36,7 @@ export default function DashboardHeader() {
     const [cartCount, setCartCount] = useState(0);
     const [userName, setUserName] = useState<string>('Collector');
     const [userProfileUrl, setUserProfileUrl] = useState<string | null>(null);
+    const { wishlistCount } = useWishlist();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch and load initial cart count
@@ -183,11 +186,22 @@ export default function DashboardHeader() {
                             <Search size={20} />
                         </button>
 
+                        {/* Wishlist Icon */}
+                        <Link href="/customer/wishlist" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
+                            <Heart size={20} strokeWidth={1.5} className="lg:hidden" />
+                            <Heart size={22} strokeWidth={1.5} className="hidden lg:block" />
+                            {mounted && wishlistCount > 0 && (
+                                <span className="absolute top-0 right-0 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
+                                    {wishlistCount}
+                                </span>
+                            )}
+                        </Link>
+
                         {/* Cart Icon */}
                         <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
                             <ShoppingCart size={20} strokeWidth={1.5} className="lg:hidden" />
                             <ShoppingCart size={22} strokeWidth={1.5} className="hidden lg:block" />
-                            {cartCount > 0 && (
+                            {mounted && cartCount > 0 && (
                                 <span className="absolute top-0 right-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
                                     {cartCount}
                                 </span>
@@ -354,6 +368,14 @@ export default function DashboardHeader() {
                                 {link.name}
                             </Link>
                         ))}
+                        <Link
+                            href="/customer/wishlist"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex justify-between items-center"
+                        >
+                            My Wishlist
+                            {wishlistCount > 0 && <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">{wishlistCount}</span>}
+                        </Link>
                         <Link
                             href="/customer/cart"
                             onClick={() => setIsMobileMenuOpen(false)}
