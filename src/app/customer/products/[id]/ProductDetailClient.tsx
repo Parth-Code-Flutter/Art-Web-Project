@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import VirtualMockup from '@/components/customer/VirtualMockup';
 import ShareModal from '@/components/customer/ShareModal';
+import WishlistButton from '@/components/customer/WishlistButton';
 
 interface Product {
     id: string;
@@ -219,9 +220,10 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                     >
                                         <Share2 size={18} />
                                     </button>
-                                    <button className="p-2 rounded-full bg-zinc-900 text-zinc-400 hover:text-red-500 hover:bg-zinc-800 transition-colors">
-                                        <Heart size={18} />
-                                    </button>
+                                    <WishlistButton
+                                        productId={product.id}
+                                        size="md"
+                                    />
                                 </div>
                             </div>
 
@@ -306,9 +308,13 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                         </div>
                                         <span className="truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-white font-black uppercase tracking-tight">View In Room</span>
                                     </button>
-                                    <button className="flex-1 py-4 px-2 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-white text-sm md:text-base truncate">
-                                        Make an Offer
-                                    </button>
+                                    <WishlistButton
+                                        productId={product.id}
+                                        variant="button"
+                                        showText
+                                        size="md"
+                                        className="flex-1 py-4 h-[57.5px]"
+                                    />
                                 </div>
                             </div>
                             <p className="text-center text-xs text-zinc-500 mt-4">
