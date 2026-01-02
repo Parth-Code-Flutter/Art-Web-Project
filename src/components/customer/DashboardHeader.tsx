@@ -255,6 +255,13 @@ export default function DashboardHeader() {
                                                 Settings
                                             </button>
                                             <button
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left"
+                                                onClick={() => { setIsProfileOpen(false); router.push('/customer/orders'); }}
+                                            >
+                                                <ShoppingBag size={16} />
+                                                My Orders
+                                            </button>
+                                            <button
                                                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
                                                 onClick={handleLogout}
                                             >
@@ -383,6 +390,14 @@ export default function DashboardHeader() {
                         >
                             My Cart
                             {cartCount > 0 && <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
+                        </Link>
+                        <Link
+                            href="/customer/orders"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex items-center gap-3"
+                        >
+                            <ShoppingBag size={18} className="text-zinc-500" />
+                            My Orders
                         </Link>
                         <Link
                             href="/customer/settings"

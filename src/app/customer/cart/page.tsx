@@ -333,11 +333,14 @@ export default function CartPage() {
                                         </div>
                                     </div>
 
-                                    <button className="w-full py-3.5 lg:py-4 rounded-xl bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg shadow-white/10 group mb-3 lg:mb-4 text-sm lg:text-base">
+                                    <Link
+                                        href="/customer/checkout"
+                                        className="w-full py-3.5 lg:py-4 rounded-xl bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg shadow-white/10 group mb-3 lg:mb-4 text-sm lg:text-base"
+                                    >
                                         Proceed to Checkout
                                         <ArrowRight size={18} className="lg:hidden group-hover:translate-x-1 transition-transform" />
                                         <ArrowRight size={20} className="hidden lg:block group-hover:translate-x-1 transition-transform" />
-                                    </button>
+                                    </Link>
 
                                     <div className="flex items-center justify-center gap-2 text-[10px] lg:text-xs text-zinc-500">
                                         <ShieldCheck size={12} className="lg:hidden text-emerald-500" />
