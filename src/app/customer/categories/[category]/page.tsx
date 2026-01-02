@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Layers, Loader2, Image as ImageIcon, SlidersHorizontal, TrendingUp, TrendingDown, Calendar, ShoppingCart, Plus, Check, Filter, ChevronLeft, Eye, CheckCircle, Share2 } from 'lucide-react';
 import ShareModal from '@/components/customer/ShareModal';
+import WishlistButton from '@/components/customer/WishlistButton';
 import { supabase } from '@/lib/supabase';
 
 interface Product {
@@ -244,6 +245,11 @@ export default function CategoryDetailsPage() {
                                                         <span className="text-[8px] font-black uppercase tracking-widest opacity-50">Empty Visual</span>
                                                     </div>
                                                 )}
+
+                                                {/* Wishlist Button */}
+                                                <div className="absolute top-3 right-3 z-30">
+                                                    <WishlistButton productId={product.id} size="sm" />
+                                                </div>
 
                                                 {/* Hover Glow */}
                                                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
