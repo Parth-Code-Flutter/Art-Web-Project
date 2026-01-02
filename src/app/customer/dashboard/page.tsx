@@ -19,6 +19,7 @@ import {
     Clock
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import WishlistButton from '@/components/customer/WishlistButton';
 
 interface Product {
     id: string;
@@ -396,6 +397,11 @@ export default function CustomerDashboard() {
                                             <div className="absolute top-4 left-4 px-3 py-1.5 bg-blue-500/90 backdrop-blur-sm text-white rounded-full text-xs font-black flex items-center gap-1.5">
                                                 <Sparkles size={12} />
                                                 NEW
+                                            </div>
+
+                                            {/* Wishlist Button */}
+                                            <div className="absolute bottom-4 left-4 z-20">
+                                                <WishlistButton productId={product.id} size="md" />
                                             </div>
 
                                             {/* Hover Overlay */}
