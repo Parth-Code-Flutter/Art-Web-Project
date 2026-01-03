@@ -134,26 +134,25 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                 <X size={20} />
                             </button>
 
-                            <header className="mb-10 text-center">
-                                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
-                                    <Sparkles size={24} />
+                            <header className="mb-8 md:mb-10 text-center">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
+                                    <Sparkles size={20} className="md:w-6 md:h-6" />
                                 </div>
-                                <h2 className="text-3xl font-bold text-white tracking-tight uppercase">
-                                    {isViewOnly ? 'Quantum Archive' : categoryToEdit ? 'Data Reconfiguration' : 'New Collection'}
+                                <h2 className="text-xl md:text-3xl font-black text-white tracking-tight uppercase italic">
+                                    {isViewOnly ? 'View Category' : categoryToEdit ? 'Edit Category' : 'Add Category'}
                                 </h2>
-                                <p className="text-zinc-500 text-sm mt-2 font-medium tracking-wide">
+                                <p className="text-zinc-500 text-[10px] md:text-sm mt-2 font-bold uppercase tracking-widest opacity-60">
                                     {isViewOnly
-                                        ? 'Accessing historical collection records.'
-                                        : 'Synchronizing new category parameters into the grid.'}
+                                        ? 'Detailed information for the selected category'
+                                        : 'Update category details and visual representation'}
                                 </p>
                             </header>
-
                             <form onSubmit={handleSave} className="space-y-8">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Collection Identity</label>
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Category Name</label>
                                     <input
                                         type="text"
-                                        placeholder="Enter collection name..."
+                                        placeholder="Enter category name..."
                                         className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-zinc-700 font-bold"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -163,7 +162,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Visual Signature</label>
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Category Image</label>
                                     <div
                                         className={`group relative aspect-video rounded-[2rem] bg-zinc-950/50 border-2 border-dashed border-white/5 overflow-hidden flex flex-col items-center justify-center gap-4 transition-all duration-300 ${!isViewOnly ? 'hover:border-blue-500/50 cursor-pointer' : ''}`}
                                         onClick={() => !isViewOnly && document.getElementById('catImageInput')?.click()}
@@ -183,7 +182,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                                 {!isViewOnly && (
                                                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
                                                         <Upload className="text-white" size={32} />
-                                                        <span className="text-white text-xs font-black uppercase tracking-widest">Update Essence</span>
+                                                        <span className="text-white text-xs font-black uppercase tracking-widest">Update Image</span>
                                                     </div>
                                                 )}
                                             </>
@@ -194,7 +193,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                                 </div>
                                                 <div className="text-center">
                                                     <p className="text-xs font-black text-zinc-500 uppercase tracking-widest">
-                                                        {isViewOnly ? 'Empty Signature' : 'Inject Visual Data'}
+                                                        {isViewOnly ? 'No Image' : 'Click to Upload Image'}
                                                     </p>
                                                     {!isViewOnly && <p className="text-[10px] text-zinc-700 mt-1 uppercase font-bold tracking-tighter">Recommended: 1280x720px</p>}
                                                 </div>
@@ -203,23 +202,23 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
                                     </div>
                                 </div>
 
-                                <div className="pt-4">
+                                <div className="pt-6 md:pt-4">
                                     {!isViewOnly ? (
                                         <button
                                             type="submit"
                                             disabled={loading || !name}
-                                            className="w-full h-16 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 shadow-xl shadow-white/5 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-sm"
+                                            className="w-full h-14 md:h-16 bg-white text-black font-black rounded-xl md:rounded-2xl hover:bg-zinc-200 shadow-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-xs md:text-sm"
                                         >
                                             {loading ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} strokeWidth={3} />}
-                                            {categoryToEdit ? 'Commit Changes' : 'Initialize Collection'}
+                                            {categoryToEdit ? 'Save Changes' : 'Add Category'}
                                         </button>
                                     ) : (
                                         <button
                                             type="button"
                                             onClick={onClose}
-                                            className="w-full h-16 bg-zinc-800 text-white font-black rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-sm"
+                                            className="w-full h-14 md:h-16 bg-zinc-800 text-white font-black rounded-xl md:rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-xs md:text-sm"
                                         >
-                                            Exit Archive
+                                            Close View
                                         </button>
                                     )}
                                 </div>

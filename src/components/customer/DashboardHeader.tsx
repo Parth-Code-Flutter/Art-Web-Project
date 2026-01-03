@@ -23,6 +23,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import SearchBar from './SearchBar';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 export default function DashboardHeader() {
     const router = useRouter();
@@ -148,7 +149,7 @@ export default function DashboardHeader() {
                             <Palette size={18} className="lg:hidden" />
                             <Palette size={20} className="hidden lg:block" />
                         </div>
-                        <span className="text-lg lg:text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 hidden sm:block">
+                        <span className="text-lg lg:text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-500 dark:from-white dark:to-white/70 hidden sm:block">
                             ArtGallery
                         </span>
                     </div>
@@ -159,10 +160,10 @@ export default function DashboardHeader() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className={`text-sm font-medium tracking-wide transition-colors duration-200 hover:text-white
+                                className={`text-sm font-medium tracking-wide transition-colors duration-200 hover:text-primary
                                     ${mounted && (pathname === link.href || (link.href !== '#' && pathname.startsWith(link.href)))
-                                        ? 'text-white'
-                                        : 'text-zinc-400'
+                                        ? 'text-primary'
+                                        : 'text-secondary'
                                     }
                                 `}
                             >
@@ -197,6 +198,9 @@ export default function DashboardHeader() {
                             )}
                         </Link>
 
+                        {/* Theme Toggle */}
+                        <ThemeToggle />
+
                         {/* Cart Icon */}
                         <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
                             <ShoppingCart size={20} strokeWidth={1.5} className="lg:hidden" />
@@ -208,22 +212,22 @@ export default function DashboardHeader() {
                             )}
                         </Link>
 
-                        <div className="hidden md:block w-px h-8 bg-zinc-800" />
+                        <div className="hidden md:block w-px h-8 bg-zinc-200 dark:bg-zinc-800" />
 
                         {/* Profile Section - Desktop */}
                         <div className="relative hidden md:block" ref={dropdownRef}>
                             <button
-                                className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-800 border-zinc-700' : 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700'}`}
+                                className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700' : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm'}`}
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                             >
-                                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 overflow-hidden">
+                                <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 overflow-hidden">
                                     {mounted && userProfileUrl ? (
                                         <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
                                         <User size={14} />
                                     )}
                                 </div>
-                                <span className="text-xs font-semibold text-zinc-300">
+                                <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                                     {mounted ? userName : '...'}
                                 </span>
                                 <ChevronDown
@@ -240,22 +244,22 @@ export default function DashboardHeader() {
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute top-full right-0 mt-3 w-64 p-2 rounded-2xl bg-[#0a0a0a] border border-zinc-800 shadow-2xl overflow-hidden"
+                                        className="absolute top-full right-0 mt-3 w-64 p-2 rounded-2xl bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden"
                                     >
-                                        <div className="px-4 py-3 mb-2 border-b border-zinc-800/50">
-                                            <div className="text-sm font-semibold text-white">My Account</div>
-                                            <div className="text-xs text-zinc-500 mt-1">Manage your details</div>
+                                        <div className="px-4 py-3 mb-2 border-b border-zinc-100 dark:border-zinc-800/50">
+                                            <div className="text-sm font-semibold text-foreground">My Account</div>
+                                            <div className="text-xs text-secondary mt-1">Manage your details</div>
                                         </div>
                                         <div className="flex flex-col gap-1">
                                             <button
-                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left"
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-secondary hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors text-left"
                                                 onClick={() => { setIsProfileOpen(false); router.push('/customer/settings'); }}
                                             >
                                                 <Settings size={16} />
                                                 Settings
                                             </button>
                                             <button
-                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors text-left"
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-secondary hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors text-left"
                                                 onClick={() => { setIsProfileOpen(false); router.push('/customer/orders'); }}
                                             >
                                                 <ShoppingBag size={16} />
@@ -276,7 +280,7 @@ export default function DashboardHeader() {
 
                         {/* CTA Button */}
                         <button
-                            className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black text-sm font-semibold hover:bg-zinc-200 transition-colors shadow-lg shadow-white/5"
+                            className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-background text-sm font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/10"
                             onClick={() => router.push('/customer/products')}
                         >
                             Get Started
@@ -327,7 +331,7 @@ export default function DashboardHeader() {
             />
 
             {/* Mobile Navigation Drawer */}
-            <div className={`fixed inset-y-0 right-0 w-[80%] max-w-sm bg-[#0a0a0a] border-l border-zinc-800 z-[1001] transform transition-transform duration-300 md:hidden
+            <div className={`fixed inset-y-0 right-0 w-[80%] max-w-sm bg-background dark:bg-[#0a0a0a] border-l border-zinc-200 dark:border-zinc-800 z-[1001] transform transition-transform duration-300 md:hidden
                 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
             `}>
                 <div className="p-6 h-full flex flex-col">
@@ -336,9 +340,9 @@ export default function DashboardHeader() {
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white">
                                 <Palette size={16} />
                             </div>
-                            <span className="text-lg font-heading font-bold text-white">ArtGallery</span>
+                            <span className="text-lg font-heading font-bold">ArtGallery</span>
                         </div>
-                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-zinc-400 hover:text-white">
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-secondary hover:text-primary transition-colors">
                             <X size={20} />
                         </button>
                     </div>
@@ -346,8 +350,8 @@ export default function DashboardHeader() {
                     <div className="flex flex-col gap-2 flex-1">
                         {/* Profile Summary in Mobile */}
                         {mounted && (userName || userProfileUrl) && (
-                            <div className="px-4 py-4 mb-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 overflow-hidden shrink-0">
+                            <div className="px-4 py-4 mb-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/50 flex items-center gap-4 transition-colors">
+                                <div className="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-secondary overflow-hidden shrink-0">
                                     {userProfileUrl ? (
                                         <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
@@ -355,8 +359,8 @@ export default function DashboardHeader() {
                                     )}
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                    <span className="text-sm font-bold text-white truncate">{userName || 'Collector'}</span>
-                                    <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-0.5">Active Session</span>
+                                    <span className="text-sm font-bold truncate">{userName || 'Collector'}</span>
+                                    <span className="text-[10px] text-secondary uppercase font-bold tracking-widest mt-0.5">Active Session</span>
                                 </div>
                             </div>
                         )}
@@ -368,8 +372,8 @@ export default function DashboardHeader() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`px-4 py-3 rounded-xl text-base font-medium transition-colors
                                     ${pathname === link.href
-                                        ? 'bg-zinc-900 text-white'
-                                        : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'}
+                                        ? 'bg-zinc-100 dark:bg-zinc-900 text-primary'
+                                        : 'text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50'}
                                 `}
                             >
                                 {link.name}
@@ -378,7 +382,7 @@ export default function DashboardHeader() {
                         <Link
                             href="/customer/wishlist"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex justify-between items-center"
+                            className="px-4 py-3 rounded-xl text-base font-medium text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 flex justify-between items-center"
                         >
                             My Wishlist
                             {wishlistCount > 0 && <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">{wishlistCount}</span>}
@@ -386,7 +390,7 @@ export default function DashboardHeader() {
                         <Link
                             href="/customer/cart"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex justify-between items-center"
+                            className="px-4 py-3 rounded-xl text-base font-medium text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 flex justify-between items-center"
                         >
                             My Cart
                             {cartCount > 0 && <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
@@ -394,9 +398,9 @@ export default function DashboardHeader() {
                         <Link
                             href="/customer/orders"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="px-4 py-3 rounded-xl text-base font-medium text-zinc-400 hover:text-white hover:bg-zinc-900/50 flex items-center gap-3"
+                            className="px-4 py-3 rounded-xl text-base font-medium text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 flex items-center gap-3 transition-colors"
                         >
-                            <ShoppingBag size={18} className="text-zinc-500" />
+                            <ShoppingBag size={18} className="text-secondary" />
                             My Orders
                         </Link>
                         <Link
@@ -404,24 +408,24 @@ export default function DashboardHeader() {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`px-4 py-3 rounded-xl text-base font-medium transition-colors flex items-center gap-3
                                 ${pathname === '/customer/settings'
-                                    ? 'bg-zinc-900 text-white'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'}
+                                    ? 'bg-zinc-100 dark:bg-zinc-900 text-primary'
+                                    : 'text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50'}
                             `}
                         >
-                            <Settings size={18} className="text-zinc-500" />
+                            <Settings size={18} className="text-secondary" />
                             Profile Settings
                         </Link>
                     </div>
 
                     <div className="mt-8 flex flex-col gap-3">
                         <button
-                            className="w-full py-4 rounded-2xl bg-white text-black font-bold hover:bg-zinc-200 shadow-xl shadow-white/5 transition-all active:scale-[0.98]"
+                            className="w-full py-4 rounded-2xl bg-primary text-background font-bold hover:opacity-90 shadow-xl shadow-primary/5 transition-all active:scale-[0.98]"
                             onClick={() => { setIsMobileMenuOpen(false); router.push('/customer/products'); }}
                         >
                             Get Started
                         </button>
                         <button
-                            className="w-full py-4 rounded-2xl border border-zinc-800 text-red-400 font-bold hover:bg-red-500/5 hover:border-red-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                            className="w-full py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-red-500 font-bold hover:bg-red-500/5 hover:border-red-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
                             onClick={handleLogout}
                         >
                             <LogOut size={18} /> Logout

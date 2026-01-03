@@ -101,46 +101,46 @@ export default function MyOrdersPage() {
             case 'cancelled':
                 return { label: 'Cancelled', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: Receipt };
             default:
-                return { label: status, color: 'text-zinc-500', bg: 'bg-white/5', border: 'border-white/10', icon: Package };
+                return { label: status, color: 'text-zinc-500', bg: 'bg-zinc-500/10', border: 'border-zinc-500/20', icon: Package };
         }
     };
 
     if (loading) return (
-        <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
-                <div className="w-10 h-10 border-2 border-white/10 border-t-white rounded-full animate-spin" />
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Accessing Orders</span>
+                <div className="w-10 h-10 border-2 border-primary/10 border-t-primary rounded-full animate-spin" />
+                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Accessing Orders</span>
             </div>
         </div>
     );
 
     return (
-        <main className="min-h-screen bg-[#020202] text-zinc-400 font-sans selection:bg-white/10">
+        <main className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/10 transition-colors duration-300">
             {/* Header Section */}
             <div className="pt-32 pb-12 px-6">
                 <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div className="space-y-2">
-                        <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">Orders</h1>
-                        <p className="text-sm text-zinc-500">View and manage your recent acquisitions.</p>
+                        <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">Orders</h1>
+                        <p className="text-sm text-secondary">View and manage your recent acquisitions.</p>
                     </div>
                 </div>
             </div>
 
             <div className="max-w-5xl mx-auto px-6 pb-32">
                 {/* Compact Order List */}
-                <div className="bg-[#080808] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-                    <div className="overflow-x-auto">
+                <div className="bg-background dark:bg-[#080808] border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden shadow-2xl transition-colors">
+                    <div className="overflow-x-auto text-foreground">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-white/[0.03] bg-white/[0.01]">
-                                    <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Order ID</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Date</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Status</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-widest text-right">Total</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-widest text-center">Action</th>
+                                <tr className="border-b border-zinc-200 dark:border-white/[0.03] bg-zinc-50 dark:bg-white/[0.01]">
+                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Order ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Date</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest text-right">Total</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/[0.02]">
+                            <tbody className="divide-y divide-zinc-100 dark:divide-white/[0.02]">
                                 {orders.map((order) => {
                                     const status = getStatusInfo(order.status);
                                     const StatusIcon = status.icon;
@@ -148,18 +148,18 @@ export default function MyOrdersPage() {
                                         <motion.tr
                                             key={order.id}
                                             onClick={() => setSelectedOrder(order)}
-                                            className="group hover:bg-white/[0.02] cursor-pointer transition-colors"
+                                            className="group hover:bg-zinc-50 dark:hover:bg-white/[0.02] cursor-pointer transition-colors"
                                         >
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs font-mono text-white font-bold tracking-wider">{order.id.slice(0, 8)}</span>
-                                                    <div className="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => copyId(order.id, e)}>
-                                                        {copiedId === order.id ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} className="text-zinc-500" />}
+                                                    <span className="text-xs font-mono font-bold tracking-wider">{order.id.slice(0, 8)}</span>
+                                                    <div className="w-6 h-6 rounded-md bg-zinc-200 dark:bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => copyId(order.id, e)}>
+                                                        {copiedId === order.id ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} className="text-secondary" />}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-xs font-bold text-zinc-400 capitalize whitespace-nowrap">
+                                                <span className="text-xs font-bold text-secondary capitalize whitespace-nowrap">
                                                     {new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                 </span>
                                             </td>
@@ -170,10 +170,10 @@ export default function MyOrdersPage() {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <span className="text-sm font-black text-white italic">₹{order.total_amount.toLocaleString()}</span>
+                                                <span className="text-sm font-black italic">₹{order.total_amount.toLocaleString()}</span>
                                             </td>
                                             <td className="px-8 py-6 text-center">
-                                                <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 group-hover:bg-white group-hover:text-black transition-all flex items-center justify-center mx-auto shadow-xl">
+                                                <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-white/[0.03] border border-zinc-300 dark:border-white/5 group-hover:bg-primary group-hover:text-background transition-all flex items-center justify-center mx-auto shadow-xl">
                                                     <ChevronRight size={14} />
                                                 </div>
                                             </td>
@@ -184,9 +184,9 @@ export default function MyOrdersPage() {
                         </table>
                         {orders.length === 0 && (
                             <div className="py-20 text-center">
-                                <ShoppingBag className="mx-auto text-zinc-800 mb-4" size={40} />
-                                <p className="text-zinc-600 text-sm font-medium uppercase tracking-widest">No orders found</p>
-                                <Link href="/customer/products" className="text-white text-xs font-black underline mt-4 block uppercase tracking-widest">Start Shopping</Link>
+                                <ShoppingBag className="mx-auto text-secondary mb-4 opacity-50" size={40} />
+                                <p className="text-secondary text-sm font-medium uppercase tracking-widest">No orders found</p>
+                                <Link href="/customer/products" className="text-primary text-xs font-black underline mt-4 block uppercase tracking-widest">Start Shopping</Link>
                             </div>
                         )}
                     </div>
@@ -202,27 +202,27 @@ export default function MyOrdersPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedOrder(null)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="relative w-full max-w-2xl h-full bg-[#050505] border-l border-white/5 shadow-2xl flex flex-col"
+                            className="relative w-full max-w-2xl h-full bg-background dark:bg-[#050505] border-l border-zinc-200 dark:border-white/5 shadow-2xl flex flex-col transition-colors duration-300"
                         >
                             {/* Detail Header */}
-                            <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                            <div className="p-8 border-b border-zinc-200 dark:border-white/5 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <button
                                         onClick={() => setSelectedOrder(null)}
-                                        className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center text-white"
+                                        className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors flex items-center justify-center"
                                     >
                                         <ArrowLeft size={20} />
                                     </button>
                                     <div>
-                                        <h2 className="text-xl font-bold text-white tracking-tight">Order Details</h2>
-                                        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mt-0.5">#{selectedOrder.id.slice(0, 16)}</p>
+                                        <h2 className="text-xl font-bold tracking-tight">Order Details</h2>
+                                        <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mt-0.5">#{selectedOrder.id.slice(0, 16)}</p>
                                     </div>
                                 </div>
                                 <div className={`px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 ${getStatusInfo(selectedOrder.status).bg} ${getStatusInfo(selectedOrder.status).color} ${getStatusInfo(selectedOrder.status).border}`}>
@@ -232,15 +232,15 @@ export default function MyOrdersPage() {
 
                             {/* Detail Content (Scrollable) */}
                             <div className="flex-1 overflow-y-auto p-8 space-y-12 scrollbar-hide">
-                                {/* Success Message / Status Intelligence */}
+                                {/* Status Alert */}
                                 {selectedOrder.status === 'pending_payment' && (
-                                    <div className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 flex gap-4">
+                                    <div className="p-6 rounded-3xl bg-amber-500/5 dark:bg-amber-500/5 border border-amber-500/10 flex gap-4">
                                         <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
                                             <Clock size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-white">Verification Pending</p>
-                                            <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">Our curation team needs to verify payment to finalize this acquisition. Please initiate the sync below.</p>
+                                            <p className="text-xs font-bold">Verification Pending</p>
+                                            <p className="text-[11px] text-secondary mt-1 leading-relaxed">Our curation team needs to verify payment to finalize this acquisition. Please initiate the sync below.</p>
                                         </div>
                                     </div>
                                 )}
@@ -248,32 +248,32 @@ export default function MyOrdersPage() {
                                 {/* Delivery Core */}
                                 <section className="space-y-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Logistics Intelligence</h3>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                                        <h3 className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Logistics Intelligence</h3>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/[0.02] border border-white/5 rounded-3xl p-6 shadow-xl">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-3xl p-6 shadow-xl transition-colors">
                                         <div className="space-y-4">
                                             <div className="flex gap-3">
-                                                <User size={16} className="text-zinc-700" />
+                                                <User size={16} className="text-secondary" />
                                                 <div className="min-w-0">
-                                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Recipient</p>
-                                                    <p className="text-xs font-bold text-white mt-1 truncate">{selectedOrder.full_name}</p>
+                                                    <p className="text-[9px] font-black text-secondary/60 uppercase tracking-widest">Recipient</p>
+                                                    <p className="text-xs font-bold mt-1 truncate">{selectedOrder.full_name}</p>
                                                 </div>
                                             </div>
                                             <div className="flex gap-3">
-                                                <Phone size={16} className="text-zinc-700" />
+                                                <Phone size={16} className="text-secondary" />
                                                 <div className="min-w-0">
-                                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Contact</p>
-                                                    <p className="text-xs font-bold text-white mt-1">{selectedOrder.mobile}</p>
+                                                    <p className="text-[9px] font-black text-secondary/60 uppercase tracking-widest">Contact</p>
+                                                    <p className="text-xs font-bold mt-1">{selectedOrder.mobile}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="space-y-4">
                                             <div className="flex gap-3">
-                                                <MapPin size={16} className="text-zinc-700" />
+                                                <MapPin size={16} className="text-secondary" />
                                                 <div className="min-w-0">
-                                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Destination</p>
-                                                    <p className="text-xs font-bold text-white mt-1 leading-relaxed">
+                                                    <p className="text-[9px] font-black text-secondary/60 uppercase tracking-widest">Destination</p>
+                                                    <p className="text-xs font-bold mt-1 leading-relaxed">
                                                         {selectedOrder.address}, {selectedOrder.city}, {selectedOrder.zip_code}
                                                     </p>
                                                 </div>
@@ -285,20 +285,20 @@ export default function MyOrdersPage() {
                                 {/* Asset Registry */}
                                 <section className="space-y-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Asset Inventory</h3>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                                        <h3 className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Asset Inventory</h3>
                                     </div>
                                     <div className="space-y-4">
                                         {selectedOrder.order_items.map((item, idx) => (
-                                            <div key={idx} className="flex items-center gap-5 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.04] transition-colors">
-                                                <div className="w-16 h-16 rounded-xl bg-zinc-900 overflow-hidden shrink-0 border border-white/5">
-                                                    <img src={item.image_url} className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+                                            <div key={idx} className="flex items-center gap-5 p-4 bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-2xl hover:bg-zinc-100 dark:hover:bg-white/[0.04] transition-colors">
+                                                <div className="w-16 h-16 rounded-xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden shrink-0 border border-zinc-200 dark:border-white/5">
+                                                    <img src={item.image_url} className="w-full h-full object-cover grayscale opacity-50 dark:opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="text-xs font-bold text-white truncate">{item.product_name}</h4>
+                                                    <h4 className="text-xs font-bold truncate">{item.product_name}</h4>
                                                     <div className="flex items-center gap-3 mt-1.5">
-                                                        <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">Qty: {item.quantity}</span>
-                                                        <span className="text-sm font-black text-blue-500 italic">₹{item.price.toLocaleString()}</span>
+                                                        <span className="text-[10px] font-black text-secondary uppercase tracking-widest bg-zinc-200 dark:bg-white/5 px-2 py-0.5 rounded-md">Qty: {item.quantity}</span>
+                                                        <span className="text-sm font-black italic text-accent">₹{item.price.toLocaleString()}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -307,8 +307,8 @@ export default function MyOrdersPage() {
                                 </section>
 
                                 {/* Final Valuations */}
-                                <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4 shadow-2xl">
-                                    <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">
+                                <div className="p-8 rounded-3xl bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 space-y-4 shadow-2xl transition-colors">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-secondary uppercase tracking-[0.3em]">
                                         <span>Inventory Value</span>
                                         <span>₹{selectedOrder.total_amount.toLocaleString()}</span>
                                     </div>
@@ -316,29 +316,29 @@ export default function MyOrdersPage() {
                                         <span>Shipping Protocol</span>
                                         <span>Secured / Free</span>
                                     </div>
-                                    <div className="pt-4 border-t border-white/5 flex justify-between items-end">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Total Acquisition</p>
-                                        <p className="text-3xl font-black text-white italic tracking-tighter">₹{selectedOrder.total_amount.toLocaleString()}</p>
+                                    <div className="pt-4 border-t border-zinc-200 dark:border-white/5 flex justify-between items-end">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Total Acquisition</p>
+                                        <p className="text-3xl font-black italic tracking-tighter">₹{selectedOrder.total_amount.toLocaleString()}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Sticky Detail Footer Actions */}
-                            <div className="p-8 border-t border-white/5 flex flex-col gap-4 bg-[#050505]">
+                            <div className="p-8 border-t border-zinc-200 dark:border-white/5 flex flex-col gap-4 bg-background dark:bg-[#050505] transition-colors">
                                 {selectedOrder.status === 'pending_payment' && (
                                     <Link
                                         href={`https://wa.me/919999999999?text=Hello! I want to confirm payment for Order ID: ${selectedOrder.id}`}
                                         target="_blank"
-                                        className="w-full h-16 bg-white text-black font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all shadow-xl shadow-white/5 active:scale-95"
+                                        className="w-full h-16 bg-primary text-background font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl active:scale-95"
                                     >
                                         <MessageCircle size={18} /> Initiate WhatsApp Sync
                                     </Link>
                                 )}
                                 <div className="flex gap-4">
-                                    <button className="flex-1 h-14 bg-white/5 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                                    <button className="flex-1 h-14 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 transition-all">
                                         <Receipt size={14} /> Download Invoice
                                     </button>
-                                    <button className="flex-1 h-14 bg-white/5 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                                    <button className="flex-1 h-14 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 transition-all">
                                         <ExternalLink size={14} /> Track Logistics
                                     </button>
                                 </div>

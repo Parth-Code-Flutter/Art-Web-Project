@@ -22,25 +22,47 @@ export default function CreovoAdminLoginPage() {
 
             if (error) throw error;
 
-            // NEW: Verify if this user is actually an admin
-            const { data: isAdmin, error: roleError } = await supabase
+            // PROTOCOL VERIFICATION
+            const isCommander = email.trim().toLowerCase() === 'creovo.creations@gmail.com';
+
+            // Attempt to fetch admin profile
+            let { data: isAdmin, error: roleError } = await supabase
                 .from('admins')
-                .select('id')
+                .select('id, role')
                 .eq('id', data.user.id)
                 .single();
 
-            if (roleError || !isAdmin) {
-                // If not an admin, sign them out immediately
-                await supabase.auth.signOut();
-                throw new Error('Access Denied: Unrecognized Protocol');
+            // COMMANDER OVERRIDE: 
+            // If it's the owner, we grant access even if the DB record or table is missing.
+            if (isCommander) {
+                console.log('CRITICAL: Commander Identity Authenticated. Initializing Absolute Bypass.');
+
+                // Try to create the record in the background just in case
+                if (roleError || !isAdmin) {
+                    await supabase.from('admins').insert([{
+                        id: data.user.id,
+                        email: email.trim().toLowerCase(),
+                        full_name: 'Creovo Commander',
+                        role: 'super_admin'
+                    }]);
+                }
+
+                // Force access for the owner
+                isAdmin = isAdmin || { id: data.user.id, role: 'super_admin' };
             }
 
-            console.log('Admin login successful');
-            // Full reload to ensure middleware picks up the new session cookies
+            if (!isAdmin) {
+                await supabase.auth.signOut();
+                throw new Error('SEC_ERR: Identity not recognized by Admin Protocol. Access Denied.');
+            }
+
+            console.log('Admin login successful: Protocol Verified');
+            // Redirect to the SECURE Vault
             window.location.href = '/creovo-admin-dec/vault';
         } catch (err: any) {
             console.error('Admin login error:', err.message || err);
-            alert(err.message || 'Invalid Admin Credentials');
+            const errorMessage = err.message || 'Invalid Admin Credentials';
+            alert(errorMessage);
         } finally {
             setIsLoading(false);
         }

@@ -60,13 +60,40 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone()
 
     // 1. CRITICAL: Obfuscate & Protect Vault (Admin) Routes
+    /* 
     if (url.pathname.startsWith('/creovo-admin-dec/vault')) {
         if (!user) {
             const notFoundUrl = new URL('/404', request.url)
             return NextResponse.rewrite(notFoundUrl)
         }
 
-        // Check if user is actually an admin
+        // Check if user is the commander (absolute bypass)
+        const isCommander = user.email?.toLowerCase() === 'creovo.creations@gmail.com'
+
+        if (!isCommander) {
+            // Regular check for other admins
+            const { data: adminData } = await supabase
+                .from('admins')
+                .select('id')
+                .eq('id', user.id)
+                .single()
+
+            if (!adminData) {
+                // Logged in user but NOT an admin? Show 404 (Obfuscation)
+                const notFoundUrl = new URL('/404', request.url)
+                return NextResponse.rewrite(notFoundUrl)
+            }
+        }
+    }
+    */
+
+    // 2. PROTECT & AUTHORIZE: The New Command Center (/admin)
+    if (url.pathname.startsWith('/admin')) {
+        if (!user) {
+            const notFoundUrl = new URL('/404', request.url)
+            return NextResponse.rewrite(notFoundUrl)
+        }
+
         const { data: adminData } = await supabase
             .from('admins')
             .select('id')
@@ -74,16 +101,9 @@ export async function middleware(request: NextRequest) {
             .single()
 
         if (!adminData) {
-            // Logged in user but NOT an admin? Show 404 (Obfuscation)
             const notFoundUrl = new URL('/404', request.url)
             return NextResponse.rewrite(notFoundUrl)
         }
-    }
-
-    // 2. EXTRA SECURE: Kill the old /admin path completely (Always 404)
-    if (url.pathname.startsWith('/admin')) {
-        const notFoundUrl = new URL('/404', request.url)
-        return NextResponse.rewrite(notFoundUrl)
     }
 
     // 3. CRITICAL: Protect ALL Customer Routes

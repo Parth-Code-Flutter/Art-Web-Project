@@ -84,28 +84,24 @@ export default function CheckoutPage() {
         setLoading(true);
 
         try {
-            // 1. Create the Main Order
-            const { data: order, error: orderError } = await supabase
-                .from('orders')
-                .insert([{
-                    customer_id: user.id,
-                    full_name: formData.fullName,
-                    email: formData.email,
-                    mobile: formData.mobile,
-                    address: formData.address,
-                    city: formData.city,
-                    zip_code: formData.zipCode,
-                    total_amount: subtotal,
-                    status: 'pending_payment'
-                }])
-                .select()
-                .single();
+            // 1. Prepare Order Data
+            const newOrderId = crypto.randomUUID();
 
-            if (orderError) throw orderError;
+            const orderData = {
+                id: newOrderId,
+                customer_id: user.id,
+                full_name: formData.fullName,
+                email: formData.email,
+                mobile: formData.mobile,
+                address: formData.address,
+                city: formData.city,
+                zip_code: formData.zipCode,
+                total_amount: subtotal,
+                status: 'pending_payment'
+            };
 
-            // 2. Create Order Items
-            const itemsToInsert = cartItems.map(item => ({
-                order_id: order.id,
+            const itemsData = cartItems.map(item => ({
+                order_id: newOrderId,
                 product_id: item.id,
                 product_name: item.name,
                 price: item.discount_price || item.price,
@@ -113,18 +109,28 @@ export default function CheckoutPage() {
                 image_url: item.images[0]
             }));
 
-            const { error: itemsError } = await supabase
-                .from('order_items')
-                .insert(itemsToInsert);
+            // 2. Transmit to Secure Server Endpoint (Bypassing RLS Recursion)
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    order: orderData,
+                    items: itemsData
+                })
+            });
 
-            if (itemsError) throw itemsError;
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Server Protocol Failed');
+            }
 
             // 3. Clear Cart
             localStorage.removeItem('cart');
             window.dispatchEvent(new Event('cartUpdated'));
 
-            // 4. Redirect to Success Page with Order ID
-            router.push(`/customer/checkout/success?id=${order.id}`);
+            // 4. Redirect to Success Page
+            router.push(`/customer/checkout/success?id=${newOrderId}`);
 
         } catch (error: any) {
             console.error('Order Failure:', error);

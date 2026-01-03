@@ -200,21 +200,21 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                         initial={{ opacity: 0, scale: 0.95, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 40 }}
-                        className="relative w-full max-w-3xl bg-zinc-900 border border-white/5 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+                        className="relative w-full max-w-3xl bg-zinc-900 border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="p-8 md:p-10 border-b border-white/5 flex items-center justify-between shrink-0">
+                        <div className="p-6 md:p-10 border-b border-white/5 flex items-center justify-between shrink-0">
                             <div>
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                                        <Sparkles size={20} />
+                                <div className="flex items-center gap-3 mb-1 sm:mb-2">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                        <Sparkles size={18} className="sm:w-5 sm:h-5" />
                                     </div>
-                                    <h2 className="text-2xl font-black text-white tracking-tight uppercase">
-                                        {isViewOnly ? 'Entity Analysis' : productToEdit ? 'Masterpiece Revision' : 'New Creation'}
+                                    <h2 className="text-lg sm:text-2xl font-black text-white tracking-tight uppercase">
+                                        {isViewOnly ? 'View Product' : productToEdit ? 'Edit Product' : 'Add Product'}
                                     </h2>
                                 </div>
-                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest pl-1">
-                                    {isViewOnly ? 'Viewing secure object metadata' : 'Synchronizing visual data into the grid'}
+                                <p className="text-zinc-500 text-[9px] sm:text-xs font-bold uppercase tracking-widest pl-1">
+                                    {isViewOnly ? 'Detailed information for the selected artwork' : 'Fill in the details to manage the product in the gallery'}
                                 </p>
                             </div>
                             <button
@@ -226,14 +226,14 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                         </div>
 
                         {/* Form Body */}
-                        <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 scrollbar-hide">
-                            <form id="productForm" onSubmit={handleSave} className="space-y-8">
+                        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6 md:space-y-8 scrollbar-hide">
+                            <form id="productForm" onSubmit={handleSave} className="space-y-6 md:space-y-8">
 
                                 {/* Identity Block */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                            <Tag size={12} /> Masterpiece Identity
+                                            <Tag size={12} /> Product Name
                                         </label>
                                         <input
                                             type="text"
@@ -247,7 +247,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                     </div>
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                            <Layers size={12} /> Collection Segment
+                                            <Layers size={12} /> Category
                                         </label>
                                         <select
                                             className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold appearance-none cursor-pointer"
@@ -295,7 +295,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                     </div>
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                            <Box size={12} /> Grid Stock
+                                            <Box size={12} /> Inventory Stock
                                         </label>
                                         <input
                                             type="number"
@@ -309,7 +309,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                     </div>
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                            <Check size={12} /> Deployment Status
+                                            <Check size={12} /> Status
                                         </label>
                                         <select
                                             className="w-full bg-zinc-950/50 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-bold appearance-none cursor-pointer"
@@ -328,7 +328,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                 {/* Description Block */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                        <AlignLeft size={12} /> Masterpiece Codex
+                                        <AlignLeft size={12} /> Description
                                     </label>
                                     <textarea
                                         placeholder="Describe the essence of this artwork..."
@@ -342,7 +342,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                 {/* Visual Data Block */}
                                 <div className="space-y-4">
                                     <label className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-                                        <ImageIcon size={12} /> Visual Signature Array
+                                        <ImageIcon size={12} /> Product Images
                                     </label>
 
                                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -384,7 +384,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                                             >
                                                 <input id="prodImageInput" type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
                                                 <Upload className="text-zinc-700 group-hover:text-blue-500 transition-colors" size={24} strokeWidth={1.5} />
-                                                <span className="text-[8px] font-black uppercase text-zinc-600 group-hover:text-blue-400 tracking-widest">Inject Data</span>
+                                                <span className="text-[8px] font-black uppercase text-zinc-600 group-hover:text-blue-400 tracking-widest">Add Images</span>
                                             </div>
                                         )}
                                     </div>
@@ -393,23 +393,23 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
                         </div>
 
                         {/* Footer */}
-                        <div className="p-8 md:p-10 border-t border-white/5 bg-zinc-900/50 backdrop-blur-xl shrink-0">
+                        <div className="p-6 md:p-10 border-t border-white/5 bg-zinc-900/50 backdrop-blur-xl shrink-0">
                             {!isViewOnly ? (
                                 <button
                                     form="productForm"
                                     type="submit"
                                     disabled={loading || !name}
-                                    className="w-full h-16 bg-white text-black font-black rounded-2xl hover:bg-zinc-200 shadow-2xl shadow-blue-500/10 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-sm"
+                                    className="w-full h-14 sm:h-16 bg-white text-black font-black rounded-xl sm:rounded-2xl hover:bg-zinc-200 shadow-2xl shadow-blue-500/10 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-xs sm:text-sm"
                                 >
                                     {loading ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} strokeWidth={3} />}
-                                    {productToEdit ? 'Commit Revision' : 'Initialize Masterpiece'}
+                                    {productToEdit ? 'Save Changes' : 'Add Product'}
                                 </button>
                             ) : (
                                 <button
                                     onClick={onClose}
-                                    className="w-full h-16 bg-zinc-800 text-white font-black rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-sm"
+                                    className="w-full h-14 sm:h-16 bg-zinc-800 text-white font-black rounded-xl sm:rounded-2xl hover:bg-zinc-700 transition-all uppercase tracking-widest text-xs sm:text-sm"
                                 >
-                                    Exit Analysis
+                                    Close View
                                 </button>
                             )}
                         </div>
