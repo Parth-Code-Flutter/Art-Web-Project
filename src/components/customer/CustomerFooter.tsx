@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
     Facebook,
@@ -11,8 +13,28 @@ import {
     MapPin,
     ArrowRight
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function CustomerFooter() {
+    const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const { data } = await supabase
+                .from('categories')
+                .select('id, name')
+                .order('name')
+                .limit(5);
+            if (data) setCategories(data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
     return (
         <footer className="bg-[#050505] border-t border-white/5 pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-6">
@@ -42,11 +64,20 @@ export default function CustomerFooter() {
                         <div>
                             <h3 className="text-white font-semibold mb-6">Collections</h3>
                             <ul className="space-y-4">
-                                <li><Link href="/customer/categories/abstract" className="text-zinc-400 hover:text-blue-400 transition-colors">Abstract Art</Link></li>
-                                <li><Link href="/customer/categories/digital" className="text-zinc-400 hover:text-blue-400 transition-colors">Digital Art</Link></li>
-                                <li><Link href="/customer/categories/oil" className="text-zinc-400 hover:text-blue-400 transition-colors">Oil Painting</Link></li>
-                                <li><Link href="/customer/categories/photography" className="text-zinc-400 hover:text-blue-400 transition-colors">Photography</Link></li>
-                                <li><Link href="/customer/categories/sculpture" className="text-zinc-400 hover:text-blue-400 transition-colors">Sculpture</Link></li>
+                                {categories.length > 0 ? (
+                                    categories.map((cat) => (
+                                        <li key={cat.id}>
+                                            <Link
+                                                href={`/customer/categories/${encodeURIComponent(cat.name)}`}
+                                                className="text-zinc-400 hover:text-blue-400 transition-colors"
+                                            >
+                                                {cat.name}
+                                            </Link>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="text-zinc-600 text-sm">Loading...</li>
+                                )}
                             </ul>
                         </div>
                         <div>

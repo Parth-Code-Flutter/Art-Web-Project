@@ -34,7 +34,8 @@ export default function DashboardHeader() {
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
-    const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+    const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [isProductsHovered, setIsProductsHovered] = useState(false);
     const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -72,11 +73,13 @@ export default function DashboardHeader() {
         try {
             const { data } = await supabase
                 .from('categories')
-                .select('id, name, slug')
+                .select('id, name')
                 .order('name');
             if (data) setCategories(data);
         } catch (error) {
             console.error('Error fetching categories:', error);
+        } finally {
+            setIsLoadingCategories(false);
         }
     };
 
@@ -214,12 +217,14 @@ export default function DashboardHeader() {
 
                                             <div className="h-px bg-zinc-100 dark:bg-white/10 my-1" />
 
-                                            {categories.length > 0 ? (
+                                            {isLoadingCategories ? (
+                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading categories...</div>
+                                            ) : categories.length > 0 ? (
                                                 <div className="flex flex-col gap-0.5 max-h-[300px] overflow-y-auto custom-scrollbar">
                                                     {categories.map((cat) => (
                                                         <Link
                                                             key={cat.id}
-                                                            href={`/customer/categories/${cat.slug}`} // Assuming slug exists, or link by name if slug not available? Using name for now in slug form
+                                                            href={`/customer/categories/${encodeURIComponent(cat.name)}`}
                                                             className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors"
                                                         >
                                                             {cat.name}
@@ -227,7 +232,7 @@ export default function DashboardHeader() {
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading categories...</div>
+                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">No categories found</div>
                                             )}
                                         </div>
                                     </motion.div>
@@ -477,16 +482,22 @@ export default function DashboardHeader() {
                                                 Browse All
                                                 <ArrowRight size={14} className="text-zinc-400" />
                                             </Link>
-                                            {categories.map((cat) => (
-                                                <Link
-                                                    key={cat.id}
-                                                    href={`/customer/categories/${cat.slug}`}
-                                                    onClick={() => setIsMobileMenuOpen(false)}
-                                                    className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors"
-                                                >
-                                                    {cat.name}
-                                                </Link>
-                                            ))}
+                                            {isLoadingCategories ? (
+                                                <div className="px-4 py-2 text-xs text-zinc-500">Loading...</div>
+                                            ) : categories.length > 0 ? (
+                                                categories.map((cat) => (
+                                                    <Link
+                                                        key={cat.id}
+                                                        href={`/customer/categories/${encodeURIComponent(cat.name)}`}
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                        className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors"
+                                                    >
+                                                        {cat.name}
+                                                    </Link>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-2 text-xs text-zinc-500">No categories found</div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
