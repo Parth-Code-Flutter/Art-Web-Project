@@ -136,7 +136,7 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
             {/* Search Input */}
             <form onSubmit={handleSearch} className="relative">
                 <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={20} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={20} />
                     <input
                         ref={inputRef}
                         type="text"
@@ -147,7 +147,7 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                         }}
                         onFocus={() => setIsOpen(true)}
                         placeholder="Search artworks, artists, categories..."
-                        className="w-full h-11 lg:h-12 pl-12 pr-12 rounded-xl lg:rounded-2xl bg-zinc-900/50 border border-white/10 text-white placeholder:text-zinc-500 focus:outline-none focus:border-blue-500/50 focus:bg-zinc-900 transition-all"
+                        className="w-full h-11 lg:h-12 pl-12 pr-12 rounded-xl lg:rounded-2xl bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-blue-500/20 transition-all"
                     />
                     {query && (
                         <button
@@ -157,7 +157,7 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                                 setResults([]);
                                 inputRef.current?.focus();
                             }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                         >
                             <X size={18} />
                         </button>
@@ -173,13 +173,13 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] overflow-y-auto"
+                        className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] overflow-y-auto"
                     >
                         {/* Loading State */}
                         {isLoading && (
                             <div className="p-8 text-center">
                                 <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                                <p className="text-sm text-zinc-500 mt-3">Searching...</p>
+                                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-3">Searching...</p>
                             </div>
                         )}
 
@@ -188,16 +188,16 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                             <>
                                 {results.length > 0 ? (
                                     <div className="p-2">
-                                        <p className="px-3 py-2 text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                                        <p className="px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                             Results
                                         </p>
                                         {results.map((product) => (
                                             <button
                                                 key={product.id}
                                                 onClick={() => handleResultClick(product)}
-                                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left group"
+                                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors text-left group"
                                             >
-                                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800 shrink-0">
+                                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-200 dark:bg-zinc-800 shrink-0">
                                                     <img
                                                         src={product.images[0]}
                                                         alt={product.name}
@@ -205,27 +205,27 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                                                     />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition-colors">
+                                                    <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                         {product.name}
                                                     </p>
-                                                    <p className="text-xs text-zinc-500 truncate">{product.category}</p>
+                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{product.category}</p>
                                                 </div>
                                                 <div className="text-right shrink-0">
-                                                    <p className="text-sm font-bold text-white">
+                                                    <p className="text-sm font-bold text-zinc-900 dark:text-white">
                                                         {formatPrice(product.discount_price || product.price)}
                                                     </p>
                                                     {product.discount_price && (
-                                                        <p className="text-xs text-zinc-600 line-through">
+                                                        <p className="text-xs text-zinc-400 dark:text-zinc-600 line-through">
                                                             {formatPrice(product.price)}
                                                         </p>
                                                     )}
                                                 </div>
-                                                <ArrowRight size={16} className="text-zinc-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+                                                <ArrowRight size={16} className="text-zinc-400 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
                                             </button>
                                         ))}
                                         <button
                                             onClick={handleSearch}
-                                            className="w-full mt-2 p-3 rounded-xl bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
+                                            className="w-full mt-2 p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
                                         >
                                             View all results for "{query}"
                                             <ArrowRight size={16} />
@@ -233,8 +233,8 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                                     </div>
                                 ) : (
                                     <div className="p-8 text-center">
-                                        <p className="text-zinc-400">No results found for "{query}"</p>
-                                        <p className="text-xs text-zinc-600 mt-2">Try different keywords</p>
+                                        <p className="text-zinc-600 dark:text-zinc-400">No results found for "{query}"</p>
+                                        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-2">Try different keywords</p>
                                     </div>
                                 )}
                             </>
@@ -244,13 +244,13 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                         {!isLoading && query.length < 2 && recentSearches.length > 0 && (
                             <div className="p-2">
                                 <div className="flex items-center justify-between px-3 py-2">
-                                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+                                    <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-2">
                                         <Clock size={12} />
                                         Recent Searches
                                     </p>
                                     <button
                                         onClick={clearRecentSearches}
-                                        className="text-xs text-zinc-600 hover:text-white transition-colors"
+                                        className="text-xs text-zinc-500 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors"
                                     >
                                         Clear
                                     </button>
@@ -259,13 +259,13 @@ export default function SearchBar({ onClose, isMobile = false }: SearchBarProps)
                                     <button
                                         key={index}
                                         onClick={() => handleRecentClick(term)}
-                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left group"
+                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors text-left group"
                                     >
-                                        <Clock size={16} className="text-zinc-600" />
-                                        <span className="text-sm text-zinc-300 group-hover:text-white transition-colors flex-1">
+                                        <Clock size={16} className="text-zinc-400 dark:text-zinc-600" />
+                                        <span className="text-sm text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors flex-1">
                                             {term}
                                         </span>
-                                        <TrendingUp size={14} className="text-zinc-700 group-hover:text-blue-400 transition-colors" />
+                                        <TrendingUp size={14} className="text-zinc-400 dark:text-zinc-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                                     </button>
                                 ))}
                             </div>

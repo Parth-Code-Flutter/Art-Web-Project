@@ -118,11 +118,11 @@ export default function SettingsPage() {
     );
 
     return (
-        <main className="min-h-screen bg-[#080808] text-zinc-400 font-sans selection:bg-white/10 pt-24 pb-20">
+        <main className="min-h-screen bg-zinc-50 dark:bg-[#080808] text-zinc-500 dark:text-zinc-400 font-sans selection:bg-blue-500/20 dark:selection:bg-white/10 pt-24 pb-20 transition-colors duration-300">
             {/* Global Background Elements */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 dark:bg-white/5 blur-[120px] rounded-full" />
             </div>
 
             <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -132,18 +132,18 @@ export default function SettingsPage() {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => router.back()}
-                            className="p-2 mr-2 rounded-full bg-zinc-900 border border-white/5 text-zinc-500 hover:text-white transition-all shadow-inner"
+                            className="p-2 mr-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm dark:shadow-inner"
                         >
                             <ArrowLeft size={16} />
                         </button>
                         <div>
-                            <h1 className="text-2xl font-black tracking-tighter text-white uppercase italic">Account Hub</h1>
+                            <h1 className="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">Account Hub</h1>
                             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">System Preferences</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/50 border border-white/5">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 shadow-sm dark:shadow-none">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Live Services</span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Live Services</span>
                     </div>
                 </header>
 
@@ -151,7 +151,7 @@ export default function SettingsPage() {
 
                     {/* Navigation Sidebar (Vertical Tabs) */}
                     <div className="lg:col-span-4 space-y-6">
-                        <nav className="p-2 bg-black/40 border border-white/5 rounded-3xl backdrop-blur-xl">
+                        <nav className="p-2 bg-white/50 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-3xl backdrop-blur-xl shadow-sm dark:shadow-none">
                             <ul className="space-y-1">
                                 {[
                                     { id: 'profile', label: 'Identity', icon: User },
@@ -162,8 +162,8 @@ export default function SettingsPage() {
                                         <button
                                             onClick={() => setActiveTab(tab.id as any)}
                                             className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 group ${activeTab === tab.id
-                                                ? 'bg-zinc-800 text-white shadow-lg'
-                                                : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-300'
+                                                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm dark:shadow-lg'
+                                                : 'text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:text-zinc-700 dark:hover:text-zinc-300'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-4">
@@ -180,18 +180,18 @@ export default function SettingsPage() {
                         </nav>
 
                         {/* Quick Actions Card */}
-                        <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-3xl space-y-4">
-                            <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-600">Shortcuts</h4>
+                        <div className="p-6 bg-white dark:bg-zinc-900/20 border border-zinc-200 dark:border-white/5 rounded-3xl space-y-4 shadow-sm dark:shadow-none">
+                            <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-600">Shortcuts</h4>
                             <div className="flex flex-col gap-2">
                                 <button
                                     onClick={() => router.push(formData.role === 'seller' ? '/seller/dashboard' : '/customer/dashboard')}
-                                    className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors p-2"
+                                    className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors p-2"
                                 >
                                     <LayoutGrid size={14} /> Dashboard
                                 </button>
                                 <button
                                     onClick={async () => { await supabase.auth.signOut(); router.push('/login'); }}
-                                    className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-red-500/60 hover:text-red-400 transition-colors p-2"
+                                    className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-red-500/80 dark:text-red-500/60 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2"
                                 >
                                     <LogOut size={14} /> Kill Session
                                 </button>
@@ -208,7 +208,7 @@ export default function SettingsPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -10 }}
                                 transition={{ duration: 0.2 }}
-                                className="bg-zinc-900/10 border border-white/5 rounded-[2.5rem] p-8 md:p-10 backdrop-blur-3xl overflow-hidden relative"
+                                className="bg-white dark:bg-zinc-900/10 border border-zinc-200 dark:border-white/5 rounded-[2.5rem] p-8 md:p-10 backdrop-blur-3xl overflow-hidden relative shadow-xl dark:shadow-none"
                             >
                                 {/* Static Background Decoration */}
                                 <div className="absolute top-0 right-0 p-12 opacity-[0.02] rotate-12 pointer-events-none">
@@ -221,10 +221,10 @@ export default function SettingsPage() {
                                         {/* Avatar Refinement */}
                                         <div className="flex items-center gap-8">
                                             <div className="relative group flex-shrink-0">
-                                                <div className="w-24 h-24 rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl transition-transform duration-500 group-hover:scale-105">
+                                                <div className="w-24 h-24 rounded-3xl overflow-hidden ring-1 ring-zinc-200 dark:ring-white/10 shadow-2xl transition-transform duration-500 group-hover:scale-105">
                                                     <img src={formData.avatarUrl} alt="User" className="w-full h-full object-cover" />
                                                 </div>
-                                                <div className="absolute -bottom-2 -right-2 bg-blue-600 rounded-xl p-2 shadow-xl border-2 border-[#080808]">
+                                                <div className="absolute -bottom-2 -right-2 bg-blue-600 rounded-xl p-2 shadow-xl border-2 border-white dark:border-[#080808]">
                                                     <CameraIcon size={14} className="text-white" />
                                                 </div>
                                             </div>
@@ -248,14 +248,14 @@ export default function SettingsPage() {
                                         {/* Form Fields - Sleek Grid */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div className="space-y-1">
-                                                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Legal Designation</label>
+                                                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-600 ml-1">Legal Designation</label>
                                                 <div className="relative group">
-                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-700" size={14} />
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-700" size={14} />
                                                     <input
                                                         type="text"
                                                         value={formData.fullName}
                                                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                                        className="w-full bg-black/40 border border-white/5 rounded-2xl px-12 py-3.5 text-xs text-zinc-300 focus:outline-none focus:border-blue-500/40 transition-all font-medium"
+                                                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-2xl px-12 py-3.5 text-xs text-zinc-900 dark:text-zinc-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:border-blue-500/40 transition-all font-medium"
                                                     />
                                                 </div>
                                             </div>
@@ -303,12 +303,12 @@ export default function SettingsPage() {
                                         </div>
 
                                         {/* Bottom Control Bar */}
-                                        <div className="flex items-center justify-between pt-8 border-t border-white/5 mt-4">
-                                            <p className="text-[9px] font-medium text-zinc-600 max-w-[180px]">All data is encrypted before synchronization with the main node.</p>
+                                        <div className="flex items-center justify-between pt-8 border-t border-zinc-200 dark:border-white/5 mt-4">
+                                            <p className="text-[9px] font-medium text-zinc-500 dark:text-zinc-600 max-w-[180px]">All data is encrypted before synchronization with the main node.</p>
                                             <button
                                                 onClick={handleSave}
                                                 disabled={saving}
-                                                className="px-8 py-3.5 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-200 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
+                                                className="px-8 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 shadow-lg shadow-zinc-900/10 dark:shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
                                             >
                                                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                                                 Save Identity
@@ -323,20 +323,20 @@ export default function SettingsPage() {
                                             <CreditCard size={28} className="text-blue-500" />
                                         </div>
                                         <div>
-                                            <h3 className="text-white text-xl font-black tracking-tight uppercase italic mb-2">Fiscal Assets</h3>
+                                            <h3 className="text-zinc-900 dark:text-white text-xl font-black tracking-tight uppercase italic mb-2">Fiscal Assets</h3>
                                             <p className="text-xs text-zinc-500 max-w-xs mx-auto mb-10">Manage your connected wallets and transaction history log.</p>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                                            <div className="p-4 bg-zinc-900 border border-white/5 rounded-2xl">
+                                            <div className="p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl">
                                                 <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Spent</p>
-                                                <p className="text-lg font-black text-white italic">$0.00</p>
+                                                <p className="text-lg font-black text-zinc-900 dark:text-white italic">$0.00</p>
                                             </div>
-                                            <div className="p-4 bg-zinc-900 border border-white/5 rounded-2xl">
+                                            <div className="p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl">
                                                 <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Items</p>
-                                                <p className="text-lg font-black text-white italic">0</p>
+                                                <p className="text-lg font-black text-zinc-900 dark:text-white italic">0</p>
                                             </div>
                                         </div>
-                                        <button className="px-8 py-3.5 border border-white/10 text-white font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-white hover:text-black transition-all">
+                                        <button className="px-8 py-3.5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all">
                                             Setup Billing
                                         </button>
                                     </div>
@@ -348,14 +348,14 @@ export default function SettingsPage() {
                                             <Shield size={28} className="text-red-500" />
                                         </div>
                                         <div>
-                                            <h3 className="text-white text-xl font-black tracking-tight uppercase italic mb-2">Vault Access</h3>
+                                            <h3 className="text-zinc-900 dark:text-white text-xl font-black tracking-tight uppercase italic mb-2">Vault Access</h3>
                                             <p className="text-xs text-zinc-500 max-w-xs mx-auto mb-10">System encryption and session authentication controls.</p>
                                         </div>
                                         <div className="space-y-4 max-w-xs mx-auto">
-                                            <button className="w-full px-8 py-3.5 bg-white text-black font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-zinc-200 transition-all">
+                                            <button className="w-full px-8 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-lg shadow-zinc-900/10 dark:shadow-none">
                                                 Update Auth Key
                                             </button>
-                                            <button className="w-full px-8 py-3.5 border border-white/10 text-zinc-500 font-black uppercase tracking-widest text-[9px] rounded-2xl hover:text-white transition-all">
+                                            <button className="w-full px-8 py-3.5 border border-zinc-200 dark:border-white/10 text-zinc-500 font-black uppercase tracking-widest text-[9px] rounded-2xl hover:text-zinc-900 dark:hover:text-white hover:border-zinc-400 dark:hover:border-white/30 transition-all">
                                                 Audit History
                                             </button>
                                         </div>
@@ -376,8 +376,8 @@ export default function SettingsPage() {
                         exit={{ opacity: 0, y: 30 }}
                         className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[100]"
                     >
-                        <div className="bg-white text-black px-6 py-3 rounded-full flex items-center gap-3 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-                            <CheckCircle2 size={16} className="text-green-600" />
+                        <div className="bg-zinc-900 dark:bg-white text-white dark:text-black px-6 py-3 rounded-full flex items-center gap-3 shadow-xl shadow-zinc-900/10 dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                            <CheckCircle2 size={16} className="text-green-500 dark:text-green-600" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Profile Synchronized</span>
                         </div>
                     </motion.div>
