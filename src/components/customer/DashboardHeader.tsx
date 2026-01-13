@@ -34,17 +34,25 @@ export default function DashboardHeader() {
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [mounted, setMounted] = useState(false);
+    const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+    const [isProductsHovered, setIsProductsHovered] = useState(false);
+    const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [userName, setUserName] = useState<string>('Collector');
     const [userProfileUrl, setUserProfileUrl] = useState<string | null>(null);
     const { wishlistCount } = useWishlist();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+
+    // Check if we are on a category page to highlight 'Products'
+    const isCategoryPage = pathname.startsWith('/customer/categories');
+
     // Prevent hydration mismatch and load initial cart count
     useEffect(() => {
         setMounted(true);
         updateCartCount();
         fetchUser();
+        fetchCategories();
 
         const handleCartUpdate = () => updateCartCount();
         const handleLoginUpdate = () => fetchUser();
@@ -59,6 +67,18 @@ export default function DashboardHeader() {
             window.removeEventListener('customerLogin', handleLoginUpdate);
         };
     }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const { data } = await supabase
+                .from('categories')
+                .select('id, name, slug')
+                .order('name');
+            if (data) setCategories(data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
 
     const fetchUser = async () => {
         try {
@@ -97,6 +117,7 @@ export default function DashboardHeader() {
             else if (currentScrollY > lastScrollY) {
                 setIsHeaderVisible(false);
                 setIsProfileOpen(false); // Close profile when scrolling down
+                setIsProductsHovered(false); // Close mega menu
             } else {
                 setIsHeaderVisible(true);
             }
@@ -126,8 +147,6 @@ export default function DashboardHeader() {
     };
 
     const navLinks = [
-        { name: 'Products', href: '/customer/products' },
-        { name: 'Categories', href: '/customer/categories' },
         { name: 'About Us', href: '/customer/about' },
     ];
 
@@ -156,12 +175,73 @@ export default function DashboardHeader() {
 
                     {/* Main Navigation - Desktop */}
                     <nav className="hidden lg:flex items-center gap-8">
+                        {/* Products Mega Menu */}
+                        <div
+                            className="relative"
+                            onMouseEnter={() => setIsProductsHovered(true)}
+                            onMouseLeave={() => setIsProductsHovered(false)}
+                        >
+                            <Link
+                                href="/customer/products"
+                                className={`flex items-center gap-1 text-sm font-medium tracking-wide transition-colors duration-200 py-4
+                                    ${mounted && (pathname.startsWith('/customer/products') || isCategoryPage)
+                                        ? 'text-primary'
+                                        : 'text-secondary hover:text-primary'
+                                    }
+                                `}
+                            >
+                                Products
+                                <ChevronDown size={14} className={`transition-transform duration-300 ${isProductsHovered ? 'rotate-180' : ''}`} />
+                            </Link>
+
+                            <AnimatePresence>
+                                {isProductsHovered && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-64 p-2 rounded-2xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden z-50"
+                                    >
+                                        <div className="flex flex-col gap-1 p-1">
+                                            <Link
+                                                href="/customer/products"
+                                                className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors group"
+                                            >
+                                                <span className="text-sm font-semibold text-zinc-900 dark:text-white">Browse All</span>
+                                                <ArrowRight size={14} className="text-zinc-400 group-hover:text-primary transition-colors" />
+                                            </Link>
+
+                                            <div className="h-px bg-zinc-100 dark:bg-white/10 my-1" />
+
+                                            {categories.length > 0 ? (
+                                                <div className="flex flex-col gap-0.5 max-h-[300px] overflow-y-auto custom-scrollbar">
+                                                    {categories.map((cat) => (
+                                                        <Link
+                                                            key={cat.id}
+                                                            href={`/customer/categories/${cat.slug}`} // Assuming slug exists, or link by name if slug not available? Using name for now in slug form
+                                                            className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors"
+                                                        >
+                                                            {cat.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading categories...</div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Static Links */}
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 href={link.href}
                                 className={`text-sm font-medium tracking-wide transition-colors duration-200 hover:text-primary
-                                    ${mounted && (pathname === link.href || (link.href !== '#' && pathname.startsWith(link.href)))
+                                    ${mounted && (pathname === link.href)
                                         ? 'text-primary'
                                         : 'text-secondary'
                                     }
@@ -364,6 +444,54 @@ export default function DashboardHeader() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Mobile Products Accordion */}
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => setIsMobileProductsOpen(!isMobileProductsOpen)}
+                                className={`px-4 py-3 rounded-xl text-base font-medium transition-colors flex items-center justify-between
+                                    ${isMobileProductsOpen || pathname.startsWith('/customer/products') || isCategoryPage
+                                        ? 'bg-zinc-100 dark:bg-zinc-900 text-primary'
+                                        : 'text-secondary hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50'}
+                                `}
+                            >
+                                Products
+                                <ChevronDown size={18} className={`transition-transform duration-300 ${isMobileProductsOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isMobileProductsOpen && (
+                                    <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <div className="pl-4 pr-2 py-2 flex flex-col gap-1 border-l-2 border-zinc-100 dark:border-zinc-800 ml-4 mt-1">
+                                            <Link
+                                                href="/customer/products"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="px-4 py-2.5 rounded-lg text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors flex items-center justify-between"
+                                            >
+                                                Browse All
+                                                <ArrowRight size={14} className="text-zinc-400" />
+                                            </Link>
+                                            {categories.map((cat) => (
+                                                <Link
+                                                    key={cat.id}
+                                                    href={`/customer/categories/${cat.slug}`}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors"
+                                                >
+                                                    {cat.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
 
                         {navLinks.map((link) => (
                             <Link
