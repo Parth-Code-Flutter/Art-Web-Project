@@ -116,7 +116,7 @@ export default function CartPage() {
                             >
                                 <Link
                                     href="/customer/products"
-                                    className="inline-flex items-center text-zinc-500 hover:text-white transition-colors group text-xs lg:text-sm font-medium"
+                                    className="inline-flex items-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors group text-xs lg:text-sm font-medium"
                                 >
                                     <ChevronLeft size={16} className="mr-1 group-hover:-translate-x-1 transition-transform" />
                                     Continue Shopping
@@ -124,7 +124,7 @@ export default function CartPage() {
 
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
-                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
+                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
                                             Your Collection
                                         </h1>
                                         <p className="text-zinc-500 mt-1 text-xs lg:text-sm">
@@ -157,7 +157,7 @@ export default function CartPage() {
                                                 delay: index * 0.05,
                                                 layout: { duration: 0.3 }
                                             }}
-                                            className="group relative bg-zinc-900/40 border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 hover:bg-zinc-900/60 transition-all"
+                                            className="group relative bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden hover:border-zinc-300 dark:hover:border-white/10 hover:shadow-xl dark:hover:bg-zinc-900/60 transition-all"
                                         >
                                             {/* Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-500/5 group-hover:via-purple-500/5 group-hover:to-pink-500/5 transition-all duration-500 pointer-events-none" />
@@ -166,7 +166,7 @@ export default function CartPage() {
                                                 {/* Product Image */}
                                                 <Link
                                                     href={`/customer/products/${item.id}`}
-                                                    className="relative shrink-0 w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl overflow-hidden bg-zinc-800 group/img"
+                                                    className="relative shrink-0 w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 group/img"
                                                 >
                                                     <img
                                                         src={item.images[0]}
@@ -189,7 +189,7 @@ export default function CartPage() {
                                                                     {item.category}
                                                                 </p>
                                                                 <Link href={`/customer/products/${item.id}`}>
-                                                                    <h3 className="font-semibold text-white hover:text-blue-400 transition-colors line-clamp-2 text-sm sm:text-base leading-tight">
+                                                                    <h3 className="font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 text-sm sm:text-base leading-tight">
                                                                         {item.name}
                                                                     </h3>
                                                                 </Link>
@@ -207,7 +207,7 @@ export default function CartPage() {
 
                                                         {/* Price */}
                                                         <div className="flex items-baseline gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
-                                                            <span className="text-base sm:text-lg font-bold text-white">
+                                                            <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
                                                                 {formatPrice(item.discount_price || item.price)}
                                                             </span>
                                                             {item.discount_price && (
@@ -220,21 +220,21 @@ export default function CartPage() {
 
                                                     {/* Quantity Controls & Subtotal */}
                                                     <div className="flex items-center justify-between mt-2 sm:mt-3 gap-2">
-                                                        <div className="flex items-center gap-1.5 sm:gap-2 bg-black/40 rounded-lg p-0.5 sm:p-1 border border-white/5">
+                                                        <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-100 dark:bg-black/40 rounded-lg p-0.5 sm:p-1 border border-zinc-200 dark:border-white/5">
                                                             <button
                                                                 onClick={() => updateQuantity(item.id, -1)}
                                                                 disabled={item.quantity <= 1}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                                             >
                                                                 <Minus size={12} className="sm:hidden" />
                                                                 <Minus size={14} className="hidden sm:block" />
                                                             </button>
-                                                            <span className="text-xs sm:text-sm font-bold w-6 sm:w-8 text-center">
+                                                            <span className="text-xs sm:text-sm font-bold w-6 sm:w-8 text-center text-zinc-900 dark:text-white">
                                                                 {item.quantity}
                                                             </span>
                                                             <button
                                                                 onClick={() => updateQuantity(item.id, 1)}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                                                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors"
                                                             >
                                                                 <Plus size={12} className="sm:hidden" />
                                                                 <Plus size={14} className="hidden sm:block" />
@@ -244,8 +244,8 @@ export default function CartPage() {
                                                         {/* Item Total */}
                                                         <div className="flex items-center gap-2">
                                                             <div className="text-right">
-                                                                <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-wider hidden sm:block">Subtotal</p>
-                                                                <p className="text-sm sm:text-base font-bold text-white">
+                                                                <p className="text-[9px] text-zinc-500 dark:text-zinc-600 uppercase font-bold tracking-wider hidden sm:block">Subtotal</p>
+                                                                <p className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
                                                                     {formatPrice((item.discount_price || item.price) * item.quantity)}
                                                                 </p>
                                                             </div>
@@ -285,16 +285,16 @@ export default function CartPage() {
                         >
                             <div className="lg:sticky lg:top-24 space-y-4">
                                 {/* Summary Card */}
-                                <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-2xl">
+                                <div className="bg-white dark:bg-gradient-to-br dark:from-zinc-900/80 dark:to-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-center gap-2 mb-4 lg:mb-6">
                                         <Package className="text-blue-400" size={18} />
-                                        <h2 className="text-lg lg:text-xl font-bold text-white">Order Summary</h2>
+                                        <h2 className="text-lg lg:text-xl font-bold text-zinc-900 dark:text-white">Order Summary</h2>
                                     </div>
 
                                     <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
                                         <div className="flex justify-between text-xs sm:text-sm">
                                             <span className="text-zinc-400">Subtotal ({totalItems} items)</span>
-                                            <span className="text-white font-semibold">{formatPrice(subtotal)}</span>
+                                            <span className="text-zinc-900 dark:text-white font-semibold">{formatPrice(subtotal)}</span>
                                         </div>
 
                                         {totalSavings > 0 && (
@@ -319,9 +319,9 @@ export default function CartPage() {
 
                                     <div className="border-t border-white/10 pt-3 lg:pt-4 mb-4 lg:mb-6">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-sm lg:text-base font-medium text-white">Total</span>
+                                            <span className="text-sm lg:text-base font-medium text-zinc-900 dark:text-white">Total</span>
                                             <div className="text-right">
-                                                <p className="text-xl lg:text-2xl font-bold text-white">
+                                                <p className="text-xl lg:text-2xl font-bold text-zinc-900 dark:text-white">
                                                     {formatPrice(subtotal)}
                                                 </p>
                                                 {totalSavings > 0 && (
@@ -335,7 +335,7 @@ export default function CartPage() {
 
                                     <Link
                                         href="/customer/checkout"
-                                        className="w-full py-3.5 lg:py-4 rounded-xl bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg shadow-white/10 group mb-3 lg:mb-4 text-sm lg:text-base"
+                                        className="w-full py-3.5 lg:py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg group mb-3 lg:mb-4 text-sm lg:text-base"
                                     >
                                         Proceed to Checkout
                                         <ArrowRight size={18} className="lg:hidden group-hover:translate-x-1 transition-transform" />
@@ -350,8 +350,8 @@ export default function CartPage() {
                                 </div>
 
                                 {/* Benefits Card - Hidden on mobile to save space */}
-                                <div className="hidden lg:block bg-zinc-900/40 border border-white/5 rounded-2xl p-5 space-y-3">
-                                    <h3 className="text-sm font-bold text-white mb-3">Why Buy From Us?</h3>
+                                <div className="hidden lg:block bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 space-y-3 shadow-sm dark:shadow-none">
+                                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-3">Why Buy From Us?</h3>
                                     {[
                                         { icon: ShieldCheck, text: 'Authenticity Guaranteed', color: 'text-emerald-400' },
                                         { icon: Package, text: 'Insured Global Shipping', color: 'text-blue-400' },
@@ -359,7 +359,7 @@ export default function CartPage() {
                                     ].map((benefit, i) => (
                                         <div key={i} className="flex items-center gap-3 text-sm">
                                             <benefit.icon size={16} className={benefit.color} />
-                                            <span className="text-zinc-300">{benefit.text}</span>
+                                            <span className="text-zinc-600 dark:text-zinc-300">{benefit.text}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -373,7 +373,7 @@ export default function CartPage() {
                         className="flex flex-col items-center justify-center py-16 lg:py-20 min-h-[70vh] text-center px-4"
                     >
                         <div className="relative mb-6 lg:mb-8">
-                            <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-center justify-center border border-white/5">
+                            <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-zinc-100 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-white/5">
                                 <ShoppingBasket size={48} className="lg:hidden text-zinc-600" />
                                 <ShoppingBasket size={64} className="hidden lg:block text-zinc-600" />
                             </div>
