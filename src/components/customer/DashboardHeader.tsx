@@ -18,7 +18,8 @@ import {
     ArrowRight,
     ShoppingCart,
     Search,
-    Heart
+    Heart,
+    Layers
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import SearchBar from './SearchBar';
@@ -200,40 +201,84 @@ export default function DashboardHeader() {
                             <AnimatePresence>
                                 {isProductsHovered && (
                                     <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-64 p-2 rounded-2xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden z-50"
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        transition={{ duration: 0.2, ease: "easeOut" }}
+                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[420px] rounded-3xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/40 overflow-hidden z-50"
                                     >
-                                        <div className="flex flex-col gap-1 p-1">
+                                        {/* Header with gradient */}
+                                        <div className="relative px-6 py-4 border-b border-zinc-100 dark:border-white/5">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-500/10 dark:to-pink-500/10" />
+                                            <h3 className="relative text-sm font-bold text-zinc-900 dark:text-white tracking-wide uppercase">
+                                                Explore Collections
+                                            </h3>
+                                        </div>
+
+                                        <div className="p-3">
+                                            {/* Browse All - Featured */}
                                             <Link
                                                 href="/customer/products"
-                                                className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors group"
+                                                className="group relative flex items-center gap-4 px-4 py-4 mb-2 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 overflow-hidden"
                                             >
-                                                <span className="text-sm font-semibold text-zinc-900 dark:text-white">Browse All</span>
-                                                <ArrowRight size={14} className="text-zinc-400 group-hover:text-primary transition-colors" />
+                                                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300" />
+                                                <div className="relative w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                                    <LayoutGrid size={20} className="text-white" />
+                                                </div>
+                                                <div className="relative flex-1">
+                                                    <span className="block text-base font-bold text-white">Browse All Artworks</span>
+                                                    <span className="block text-xs text-white/80 mt-0.5">Explore our entire collection</span>
+                                                </div>
+                                                <ArrowRight size={18} className="relative text-white/80 group-hover:translate-x-1 transition-transform duration-300" />
                                             </Link>
 
-                                            <div className="h-px bg-zinc-100 dark:bg-white/10 my-1" />
-
+                                            {/* Categories Grid */}
                                             {isLoadingCategories ? (
-                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading categories...</div>
+                                                <div className="px-4 py-8 text-center">
+                                                    <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2" />
+                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading collections...</p>
+                                                </div>
                                             ) : categories.length > 0 ? (
-                                                <div className="flex flex-col gap-0.5 max-h-[300px] overflow-y-auto custom-scrollbar">
-                                                    {categories.map((cat) => (
-                                                        <Link
+                                                <div className="space-y-1 max-h-[320px] overflow-y-auto custom-scrollbar pr-1">
+                                                    {categories.map((cat, index) => (
+                                                        <motion.div
                                                             key={cat.id}
-                                                            href={`/customer/categories/${encodeURIComponent(cat.name)}`}
-                                                            className="px-4 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:text-primary hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors"
+                                                            initial={{ opacity: 0, x: -10 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: index * 0.05, duration: 0.2 }}
                                                         >
-                                                            {cat.name}
-                                                        </Link>
+                                                            <Link
+                                                                href={`/customer/categories/${encodeURIComponent(cat.name)}`}
+                                                                className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-all duration-200"
+                                                            >
+                                                                <div className="w-2 h-2 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                                                                <span className="flex-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                                                                    {cat.name}
+                                                                </span>
+                                                                <ArrowRight size={14} className="text-zinc-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                                                            </Link>
+                                                        </motion.div>
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="px-4 py-3 text-xs text-zinc-500 text-center">No categories found</div>
+                                                <div className="px-4 py-8 text-center">
+                                                    <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-3">
+                                                        <Layers size={20} className="text-zinc-400" />
+                                                    </div>
+                                                    <p className="text-sm text-zinc-500 dark:text-zinc-400">No categories yet</p>
+                                                </div>
                                             )}
+                                        </div>
+
+                                        {/* Footer CTA */}
+                                        <div className="px-6 py-3 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-white/5">
+                                            <Link
+                                                href="/customer/categories"
+                                                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1"
+                                            >
+                                                View all categories
+                                                <ArrowRight size={12} />
+                                            </Link>
                                         </div>
                                     </motion.div>
                                 )}
