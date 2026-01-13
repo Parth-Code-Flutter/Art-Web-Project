@@ -112,7 +112,7 @@ export default function SettingsPage() {
     };
 
     if (loading) return (
-        <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-50 dark:bg-black flex items-center justify-center transition-colors duration-300">
             <div className="w-6 h-6 border-b-2 border-white rounded-full animate-spin" />
         </div>
     );
@@ -162,8 +162,8 @@ export default function SettingsPage() {
                                         <button
                                             onClick={() => setActiveTab(tab.id as any)}
                                             className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 group ${activeTab === tab.id
-                                                    ? 'bg-zinc-800 text-white shadow-lg'
-                                                    : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-300'
+                                                ? 'bg-zinc-800 text-white shadow-lg'
+                                                : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-300'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-4">

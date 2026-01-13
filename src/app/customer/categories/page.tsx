@@ -74,7 +74,7 @@ export default function CustomerCategories() {
     };
 
     return (
-        <main className="min-h-screen bg-black text-white pt-20 pb-20 px-6 md:px-12">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-6 md:px-12 transition-colors duration-300">
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">
@@ -94,10 +94,10 @@ export default function CustomerCategories() {
                                 >
                                     <Link
                                         href={`/customer/categories/${encodeURIComponent(category.name)}`}
-                                        className="group block relative bg-zinc-900/40 border border-white/5 rounded-2xl overflow-hidden hover:bg-zinc-900/60 hover:border-white/20 hover:scale-[1.02] transition-all duration-300 shadow-xl"
+                                        className="group block relative bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden hover:bg-zinc-50 dark:hover:bg-zinc-900/60 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-[1.02] transition-all duration-300 shadow-lg dark:shadow-xl"
                                     >
                                         {/* Category Image */}
-                                        <div className="relative aspect-square w-full bg-zinc-800/50 overflow-hidden">
+                                        <div className="relative aspect-square w-full bg-zinc-100 dark:bg-zinc-800/50 overflow-hidden">
                                             {category.image ? (
                                                 <img
                                                     src={category.image}
@@ -111,7 +111,7 @@ export default function CustomerCategories() {
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                             ) : (
-                                                <div className="flex items-center justify-center w-full h-full text-zinc-700">
+                                                <div className="flex items-center justify-center w-full h-full text-zinc-300 dark:text-zinc-700">
                                                     <Package size={32} strokeWidth={1.5} />
                                                 </div>
                                             )}
@@ -138,7 +138,7 @@ export default function CustomerCategories() {
             ) : (
                 <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-600">
                     <Layers size={64} strokeWidth={1} className="mb-4 opacity-50" />
-                    <h3 className="text-2xl font-bold text-white mb-2">No Categories Found</h3>
+                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No Categories Found</h3>
                     <p>Categories will appear here once they are created.</p>
                 </div>
             )}

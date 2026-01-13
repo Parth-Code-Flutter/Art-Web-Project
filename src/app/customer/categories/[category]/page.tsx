@@ -140,12 +140,12 @@ export default function CategoryDetailsPage() {
     };
 
     return (
-        <main className="min-h-screen bg-black pt-20 pb-20 px-4 md:px-8">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-4 md:px-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
                 {/* Back Button */}
                 <button
                     onClick={() => router.back()}
-                    className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] mb-8"
+                    className="group flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] mb-8"
                 >
                     <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                     Back to Gallery
@@ -154,18 +154,18 @@ export default function CategoryDetailsPage() {
                 {/* Compact Top Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
                     <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-blue-500">
+                        <div className="p-3 rounded-2xl bg-white border border-zinc-200 dark:bg-white/5 dark:border-white/5 text-blue-600 dark:text-blue-500 shadow-sm dark:shadow-none">
                             <Layers size={20} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-white uppercase italic tracking-tighter leading-none">{categoryName}</h2>
+                            <h2 className="text-xl font-black text-zinc-900 dark:text-white uppercase italic tracking-tighter leading-none">{categoryName}</h2>
                             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">{products.length} Masterpieces Found</p>
                         </div>
                     </div>
 
                     <div className="relative sort-dropdown-container w-full sm:w-auto">
                         <button
-                            className="w-full sm:w-56 bg-zinc-900 border border-white/5 hover:border-white/10 text-white px-6 py-4 rounded-2xl flex items-center justify-between transition-all text-[10px] font-black uppercase tracking-widest"
+                            className="w-full sm:w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/10 text-zinc-900 dark:text-white px-6 py-4 rounded-2xl flex items-center justify-between transition-all text-[10px] font-black uppercase tracking-widest shadow-sm dark:shadow-none"
                             onClick={() => setIsSortOpen(!isSortOpen)}
                         >
                             <span className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export default function CategoryDetailsPage() {
                                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute right-0 top-full mt-3 w-full sm:w-56 bg-zinc-900/90 backdrop-blur-xl border border-white/5 rounded-[2rem] shadow-2xl overflow-hidden z-[60] p-2"
+                                    className="absolute right-0 top-full mt-3 w-full sm:w-56 bg-white dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-[2rem] shadow-2xl overflow-hidden z-[60] p-2"
                                 >
                                     {[
                                         { id: 'discount', label: 'Max Discount' },
@@ -196,7 +196,7 @@ export default function CategoryDetailsPage() {
                                     ].map((opt) => (
                                         <button
                                             key={opt.id}
-                                            className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === opt.id ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
+                                            className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === opt.id ? 'bg-zinc-100 dark:bg-white/10 text-zinc-900 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/5'}`}
                                             onClick={() => { setSortBy(opt.id as SortOption); setIsSortOpen(false); }}
                                         >
                                             {opt.label}
@@ -231,10 +231,10 @@ export default function CategoryDetailsPage() {
                                     }}
                                     viewport={{ once: true }}
                                 >
-                                    <div className="group block bg-zinc-900/30 border border-white/5 rounded-[2rem] overflow-hidden hover:border-white/10 hover:bg-zinc-900/50 transition-all duration-500 hover:-translate-y-1 group">
+                                    <div className="group block bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5 rounded-[2rem] overflow-hidden hover:border-zinc-300 dark:hover:border-white/10 hover:shadow-xl dark:hover:bg-zinc-900/50 transition-all duration-500 hover:-translate-y-1 group">
                                         <Link href={`/customer/products/${product.id}`} className="block">
                                             {/* Image Area */}
-                                            <div className="aspect-square relative overflow-hidden bg-zinc-950">
+                                            <div className="aspect-square relative overflow-hidden bg-zinc-100 dark:bg-zinc-950">
                                                 {product.images && product.images.length > 0 ? (
                                                     <img
                                                         src={product.images[0]}
@@ -242,7 +242,7 @@ export default function CategoryDetailsPage() {
                                                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800 bg-zinc-900">
+                                                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-800 bg-zinc-100 dark:bg-zinc-900">
                                                         <ImageIcon size={32} className="mb-2 opacity-50" />
                                                         <span className="text-[8px] font-black uppercase tracking-widest opacity-50">Empty Visual</span>
                                                     </div>
@@ -254,7 +254,7 @@ export default function CategoryDetailsPage() {
                                                 </div>
 
                                                 {/* Hover Glow */}
-                                                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                                                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         </Link>
 
@@ -262,7 +262,7 @@ export default function CategoryDetailsPage() {
                                         <div className="p-4 space-y-3 flex-1 flex flex-col">
                                             <div className="min-w-0">
                                                 <Link href={`/customer/products/${product.id}`}>
-                                                    <h3 className="font-semibold text-white text-base group-hover:text-blue-400 transition-colors line-clamp-1">
+                                                    <h3 className="font-semibold text-zinc-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                                                         {product.name}
                                                     </h3>
                                                 </Link>
@@ -273,20 +273,20 @@ export default function CategoryDetailsPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-end justify-between mt-auto pt-2 border-t border-white/5">
+                                            <div className="flex items-end justify-between mt-auto pt-2 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Valuation</span>
+                                                    <span className="text-[8px] text-zinc-500 dark:text-zinc-600 uppercase font-black tracking-tighter">Valuation</span>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-blue-400 font-black text-xs">{formatPrice(product.discount_price || product.price)}</span>
+                                                        <span className="text-blue-600 dark:text-blue-400 font-black text-xs">{formatPrice(product.discount_price || product.price)}</span>
                                                         {product.discount_price && product.discount_price < product.price && (
-                                                            <span className="text-[8px] text-zinc-500 line-through font-bold opacity-50">
+                                                            <span className="text-[8px] text-zinc-400 dark:text-zinc-500 line-through font-bold opacity-50">
                                                                 {formatPrice(product.price)}
                                                             </span>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <div className="text-right flex flex-col">
-                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter text-right">Discount</span>
+                                                    <span className="text-[8px] text-zinc-500 dark:text-zinc-600 uppercase font-black tracking-tighter text-right">Discount</span>
                                                     <span className="text-[10px] font-black text-emerald-500">
                                                         {Math.round(((product.price - (product.discount_price || product.price)) / product.price) * 100).toString().padStart(2, '0')}%
                                                     </span>
@@ -299,7 +299,7 @@ export default function CategoryDetailsPage() {
                                                     className={`h-8 rounded-xl flex-1 flex items-center justify-center gap-1 px-2 text-[10px] font-black uppercase tracking-tight transition-all duration-500 whitespace-nowrap
                                                         ${addingToCart === product.id
                                                             ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                                                            : 'bg-white/5 text-white border border-white/5 hover:bg-white/10'
+                                                            : 'bg-zinc-100 dark:bg-white/5 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/5 hover:bg-zinc-200 dark:hover:bg-white/10'
                                                         }
                                                     `}
                                                     onClick={(e) => handleAddToCart(e, product)}
@@ -316,7 +316,7 @@ export default function CategoryDetailsPage() {
                                                 </button>
                                                 <button
                                                     onClick={(e) => handleShare(e, product)}
-                                                    className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/5 text-zinc-400 hover:text-white border border-white/5 hover:bg-white/10 transition-all"
+                                                    className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center bg-zinc-100 dark:bg-white/5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white border border-zinc-200 dark:border-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 transition-all"
                                                 >
                                                     <Share2 size={12} />
                                                 </button>
@@ -330,9 +330,9 @@ export default function CategoryDetailsPage() {
                 ) : (
                     <div className="flex flex-col items-center justify-center py-32 text-zinc-600">
                         <ImageIcon size={64} className="mb-6 opacity-20" />
-                        <h3 className="text-xl font-semibold text-white mb-2">No Artworks in this Category</h3>
+                        <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-2">No Artworks in this Category</h3>
                         <p>We are constantly acting as curators to bring you the best.</p>
-                        <button onClick={() => router.push('/customer/products')} className="mt-6 px-6 py-3 bg-white/10 rounded-xl hover:bg-white/20 transition-all text-white font-bold">
+                        <button onClick={() => router.push('/customer/products')} className="mt-6 px-6 py-3 bg-zinc-100 dark:bg-white/10 rounded-xl hover:bg-zinc-200 dark:hover:bg-white/20 transition-all text-zinc-900 dark:text-white font-bold">
                             View All Artworks
                         </button>
                     </div>

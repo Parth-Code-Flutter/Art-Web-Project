@@ -102,7 +102,7 @@ export default function CartPage() {
     if (!mounted) return null;
 
     return (
-        <main className="min-h-screen bg-black text-white pt-20 pb-20">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
                 {cartItems.length > 0 ? (
                     <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-8">

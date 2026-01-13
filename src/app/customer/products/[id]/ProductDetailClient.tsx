@@ -139,7 +139,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+            <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-4 md:px-8 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                         {/* Media Skeleton */}
@@ -160,7 +160,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                 <Skeleton className="h-6 w-1/2" />
                             </div>
 
-                            <div className="p-6 rounded-2xl bg-zinc-900/40 border border-white/5 space-y-6">
+                            <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 space-y-6 shadow-sm dark:shadow-none">
                                 <Skeleton className="h-12 w-1/3" />
                                 <div className="flex gap-4">
                                     <Skeleton className="h-14 w-32 rounded-xl" />
@@ -190,7 +190,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
     if (!product) return null;
 
     return (
-        <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-4 md:px-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                     {/* Media Section */}
@@ -201,7 +201,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                         className="space-y-6"
                     >
                         <div
-                            className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-zinc-900 group cursor-zoom-in border border-white/5 hover:border-white/10 transition-colors"
+                            className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 group cursor-zoom-in border border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/10 transition-colors"
                             onClick={() => setIsZoomOpen(true)}
                         >
                             <img
@@ -251,31 +251,32 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                         className="flex flex-col h-full"
                     >
                         {/* Header */}
-                        <div className="mb-8 border-b border-white/10 pb-8">
+                        <div className="mb-8 border-b border-zinc-200 dark:border-white/10 pb-8">
                             <div className="flex items-center justify-between mb-4">
-                                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-sm font-semibold tracking-wider uppercase border border-blue-500/20">
+                                <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-semibold tracking-wider uppercase border border-blue-200 dark:border-blue-500/20">
                                     {product.category}
                                 </span>
                                 <div className="flex gap-3">
                                     <button
                                         onClick={handleShare}
-                                        className="p-2 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                                        className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
                                     >
                                         <Share2 size={18} />
                                     </button>
                                     <WishlistButton
                                         productId={product.id}
                                         size="md"
+                                        className="bg-zinc-100 dark:bg-zinc-900"
                                     />
                                 </div>
                             </div>
 
-                            <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-2 leading-tight">
+                            <h1 className="text-4xl md:text-5xl font-heading font-bold text-zinc-900 dark:text-white mb-2 leading-tight">
                                 {product.name}
                             </h1>
                             <button
                                 onClick={() => (product as any).profiles?.id && router.push(`/artists/${(product as any).profiles.id}`)}
-                                className="text-zinc-400 text-lg hover:text-blue-400 transition-colors flex items-center gap-2 group/artist"
+                                className="text-zinc-500 dark:text-zinc-400 text-lg hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group/artist"
                             >
                                 By {(product as any).profiles?.full_name || 'Curated Artist'}
                                 <ArrowRight size={14} className="opacity-0 group-hover/artist:opacity-100 group-hover/artist:translate-x-1 transition-all" />
@@ -283,17 +284,17 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                         </div>
 
                         {/* Price & Cart */}
-                        <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8">
+                        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-sm dark:shadow-none">
                             <div className="flex items-end gap-4 mb-6">
-                                <span className="text-4xl font-bold text-white tracking-tight">
+                                <span className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
                                     {formatPrice(product.discount_price || product.price)}
                                 </span>
                                 {product.discount_price && (
                                     <div className="flex flex-col mb-1">
-                                        <span className="text-zinc-500 line-through text-lg">
+                                        <span className="text-zinc-400 dark:text-zinc-500 line-through text-lg">
                                             {formatPrice(product.price)}
                                         </span>
-                                        <span className="text-green-400 text-sm font-bold">
+                                        <span className="text-green-600 dark:text-green-400 text-sm font-bold">
                                             {Math.round(((product.price - product.discount_price) / product.price) * 100)}% Savings
                                         </span>
                                     </div>
@@ -302,17 +303,17 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
 
                             <div className="flex flex-col gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="flex items-center bg-zinc-800 rounded-xl border border-white/5 h-14">
+                                    <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-white/5 h-14">
                                         <button
                                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                                         >
                                             -
                                         </button>
-                                        <span className="w-8 text-center font-bold text-white">{quantity}</span>
+                                        <span className="w-8 text-center font-bold text-zinc-900 dark:text-white">{quantity}</span>
                                         <button
                                             onClick={() => setQuantity(quantity + 1)}
-                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-white transition-colors"
+                                            className="w-12 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                                         >
                                             +
                                         </button>
@@ -324,7 +325,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                         className={`flex-1 h-14 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95
                                         ${addingToCart
                                                 ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
-                                                : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5 hover:translate-y-[-2px]'
+                                                : 'bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-lg shadow-zinc-900/10 dark:shadow-white/5 hover:translate-y-[-2px]'
                                             }
                                     `}
                                     >
@@ -343,13 +344,13 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => setIsMockupOpen(true)}
-                                        className="flex-[1.2] py-4 px-2 rounded-xl bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border border-blue-500/30 font-bold hover:border-blue-500/60 hover:bg-blue-500/20 transition-all duration-300 text-white flex items-center justify-center gap-2 group text-sm md:text-base shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_25px_rgba(59,130,246,0.2)]"
+                                        className="flex-[1.2] py-4 px-2 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-600/10 dark:to-indigo-600/10 border border-blue-200 dark:border-blue-500/30 font-bold hover:border-blue-300 dark:hover:border-blue-500/60 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all duration-300 text-blue-600 dark:text-white flex items-center justify-center gap-2 group text-sm md:text-base shadow-sm hover:shadow-md"
                                     >
                                         <div className="relative">
-                                            <Maximize2 size={18} className="group-hover:scale-110 transition-transform text-blue-400" />
-                                            <Sparkles size={8} className="absolute -top-1 -right-1 text-blue-300 animate-pulse" />
+                                            <Maximize2 size={18} className="group-hover:scale-110 transition-transform text-blue-500 dark:text-blue-400" />
+                                            <Sparkles size={8} className="absolute -top-1 -right-1 text-blue-400 dark:text-blue-300 animate-pulse" />
                                         </div>
-                                        <span className="truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-white font-black uppercase tracking-tight">View In Room</span>
+                                        <span className="truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-100 dark:to-white font-black uppercase tracking-tight">View In Room</span>
                                     </button>
                                     <WishlistButton
                                         productId={product.id}
@@ -367,39 +368,39 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
 
                         {/* Description */}
                         <div className="mb-8">
-                            <h3 className="text-xl font-heading font-semibold text-white mb-4">Curator's Note</h3>
-                            <p className="text-zinc-400 leading-relaxed text-lg">
+                            <h3 className="text-xl font-heading font-semibold text-zinc-900 dark:text-white mb-4">Curator's Note</h3>
+                            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg">
                                 {product.description || 'This exquisite piece represents a profound exploration of modern aesthetics.'}
                             </p>
                         </div>
 
                         {/* Trust Badges */}
                         <div className="grid grid-cols-2 gap-4 mt-auto">
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-900/30 border border-white/5">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5">
                                 <ShieldCheck size={24} className="text-emerald-500" />
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-white">Authentic</span>
+                                    <span className="text-sm font-semibold text-zinc-900 dark:text-white">Authentic</span>
                                     <span className="text-xs text-zinc-500">Verified Original</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-900/30 border border-white/5">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5">
                                 <Truck size={24} className="text-blue-500" />
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-white">Global Shipping</span>
+                                    <span className="text-sm font-semibold text-zinc-900 dark:text-white">Global Shipping</span>
                                     <span className="text-xs text-zinc-500">Insured Delivery</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-900/30 border border-white/5">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5">
                                 <CreditCard size={24} className="text-purple-500" />
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-white">Secure Pay</span>
+                                    <span className="text-sm font-semibold text-zinc-900 dark:text-white">Secure Pay</span>
                                     <span className="text-xs text-zinc-500">Encrypted</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-900/30 border border-white/5">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5">
                                 <Clock size={24} className="text-amber-500" />
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-white">Returns</span>
+                                    <span className="text-sm font-semibold text-zinc-900 dark:text-white">Returns</span>
                                     <span className="text-xs text-zinc-500">30-Day Policy</span>
                                 </div>
                             </div>

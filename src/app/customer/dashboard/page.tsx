@@ -161,13 +161,13 @@ export default function CustomerDashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-black text-white">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white transition-colors duration-300">
             <div className="pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-16 pb-20">
 
                 {/* Hero Section - Showcase USPs */}
-                <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-zinc-900 via-zinc-900 to-blue-950/30">
+                <section className="relative overflow-hidden rounded-[3rem] border border-zinc-200 dark:border-white/10 bg-white dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-blue-950/30 shadow-2xl dark:shadow-none">
                     {/* Animated Background */}
-                    <div className="absolute inset-0 opacity-30">
+                    <div className="absolute inset-0 opacity-30 pointer-events-none">
                         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px] animate-pulse" />
                         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
                     </div>
@@ -176,20 +176,20 @@ export default function CustomerDashboard() {
                         <div className="grid lg:grid-cols-2 gap-12 items-center">
                             {/* Left: Content */}
                             <div className="space-y-8">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
                                     <Sparkles size={16} className="animate-pulse" />
                                     <span className="text-xs font-bold uppercase tracking-wider">Premium Art Gallery</span>
                                 </div>
 
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-zinc-900 dark:text-white">
                                     Discover Art
                                     <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
                                         That Speaks
                                     </span>
                                 </h1>
 
-                                <p className="text-xl text-zinc-400 leading-relaxed max-w-xl">
+                                <p className="text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xl">
                                     Curated collection of {stats.totalProducts}+ authentic artworks across {stats.totalCategories}+ categories.
                                     Experience art like never before with our innovative platform.
                                 </p>
@@ -197,15 +197,15 @@ export default function CustomerDashboard() {
                                 {/* Stats Row */}
                                 <div className="grid grid-cols-3 gap-6 pt-4">
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-white">{stats.totalProducts}+</div>
+                                        <div className="text-3xl font-black text-zinc-900 dark:text-white">{stats.totalProducts}+</div>
                                         <div className="text-sm text-zinc-500 font-medium">Artworks</div>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-white">{stats.totalCategories}+</div>
+                                        <div className="text-3xl font-black text-zinc-900 dark:text-white">{stats.totalCategories}+</div>
                                         <div className="text-sm text-zinc-500 font-medium">Categories</div>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-blue-400">{stats.avgDiscount}%</div>
+                                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{stats.avgDiscount}%</div>
                                         <div className="text-sm text-zinc-500 font-medium">Avg Savings</div>
                                     </div>
                                 </div>
@@ -213,14 +213,14 @@ export default function CustomerDashboard() {
                                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                     <Link
                                         href="/customer/products"
-                                        className="group px-8 py-4 bg-white text-black rounded-2xl font-bold text-center hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95 shadow-xl flex items-center justify-center gap-2"
+                                        className="group px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95 shadow-xl flex items-center justify-center gap-2"
                                     >
                                         Explore Gallery
                                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                     <Link
                                         href="/customer/categories"
-                                        className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-bold text-center hover:bg-white/10 transition-all"
+                                        className="px-8 py-4 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white rounded-2xl font-bold text-center hover:bg-zinc-200 dark:hover:bg-white/10 transition-all"
                                     >
                                         Browse Categories
                                     </Link>
@@ -260,12 +260,12 @@ export default function CustomerDashboard() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className={`p-6 rounded-2xl bg-${usp.color}-500/5 border border-${usp.color}-500/20 hover:bg-${usp.color}-500/10 transition-all group cursor-pointer`}
+                                        className={`p-6 rounded-2xl bg-white dark:bg-${usp.color}-500/5 border border-zinc-100 dark:border-${usp.color}-500/20 shadow-lg dark:shadow-none hover:shadow-xl dark:hover:bg-${usp.color}-500/10 transition-all group cursor-pointer`}
                                     >
-                                        <div className={`w-12 h-12 rounded-xl bg-${usp.color}-500/10 text-${usp.color}-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                        <div className={`w-12 h-12 rounded-xl bg-${usp.color}-50 dark:bg-${usp.color}-500/10 text-${usp.color}-500 dark:text-${usp.color}-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                                             {usp.icon}
                                         </div>
-                                        <h3 className="font-bold text-white mb-1">{usp.title}</h3>
+                                        <h3 className="font-bold text-zinc-900 dark:text-white mb-1">{usp.title}</h3>
                                         <p className="text-sm text-zinc-500">{usp.desc}</p>
                                     </motion.div>
                                 ))}
@@ -278,17 +278,17 @@ export default function CustomerDashboard() {
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400">
+                            <div className="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">
                                 <Palette size={22} />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black">Explore by Category</h2>
+                                <h2 className="text-3xl font-black text-zinc-900 dark:text-white">Explore by Category</h2>
                                 <p className="text-sm text-zinc-500 mt-1">Discover curated collections</p>
                             </div>
                         </div>
                         <Link
                             href="/customer/categories"
-                            className="text-sm font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-2"
+                            className="text-sm font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors flex items-center gap-2"
                         >
                             View All
                             <ArrowRight size={16} />
@@ -302,7 +302,7 @@ export default function CustomerDashboard() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="group relative h-72 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 hover:border-white/20 transition-all"
+                                    className="group relative h-72 rounded-3xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-white/20 transition-all shadow-md dark:shadow-none"
                                 >
                                     {/* Image */}
                                     <div className="absolute inset-0">
@@ -310,24 +310,24 @@ export default function CustomerDashboard() {
                                             <img
                                                 src={category.image}
                                                 alt={category.name}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-50"
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100 dark:group-hover:opacity-50"
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
+                                            <div className="w-full h-full bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900" />
                                         )}
                                     </div>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                                     {/* Content */}
                                     <div className="absolute inset-x-0 bottom-0 p-6">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-white mb-3">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold text-white mb-3">
                                             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                                             {category.count} Artworks
                                         </div>
                                         <h3 className="text-2xl font-black text-white group-hover:text-blue-400 transition-colors mb-2">
                                             {category.name}
                                         </h3>
-                                        <div className="flex items-center gap-2 text-sm text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-2 text-sm text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <span>Explore Collection</span>
                                             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                         </div>
@@ -342,17 +342,17 @@ export default function CustomerDashboard() {
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400">
+                            <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
                                 <Star size={22} />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black">Latest Arrivals</h2>
+                                <h2 className="text-3xl font-black text-zinc-900 dark:text-white">Latest Arrivals</h2>
                                 <p className="text-sm text-zinc-500 mt-1">Freshly added to our collection</p>
                             </div>
                         </div>
                         <Link
                             href="/customer/products"
-                            className="text-sm font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-2"
+                            className="text-sm font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors flex items-center gap-2"
                         >
                             View All
                             <ArrowRight size={16} />
@@ -373,10 +373,10 @@ export default function CustomerDashboard() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className="group relative bg-zinc-900/30 border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 hover:bg-zinc-900/50 transition-all"
+                                        className="group relative bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden hover:border-zinc-300 dark:hover:border-white/20 hover:shadow-xl dark:hover:bg-zinc-900/50 transition-all"
                                     >
                                         {/* Image */}
-                                        <div className="aspect-square relative overflow-hidden bg-zinc-800">
+                                        <div className="aspect-square relative overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                                             {product.images?.[0] ? (
                                                 <img
                                                     src={product.images[0]}
@@ -384,7 +384,7 @@ export default function CustomerDashboard() {
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
+                                                <div className="w-full h-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-900" />
                                             )}
 
                                             {/* Discount Badge */}
@@ -412,27 +412,27 @@ export default function CustomerDashboard() {
                                         {/* Content */}
                                         <div className="p-5 space-y-3">
                                             <div>
-                                                <h3 className="font-bold text-lg text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+                                                <h3 className="font-bold text-lg text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                                                     {product.name}
                                                 </h3>
                                                 <p className="text-sm text-zinc-500 mt-1">{product.category}</p>
                                             </div>
 
-                                            <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                                            <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs text-zinc-600 font-bold uppercase tracking-wider">Price</span>
+                                                    <span className="text-xs text-zinc-500 dark:text-zinc-600 font-bold uppercase tracking-wider">Price</span>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className="text-xl font-black text-blue-400">
+                                                        <span className="text-xl font-black text-blue-600 dark:text-blue-400">
                                                             {formatPrice(product.discount_price || product.price)}
                                                         </span>
                                                         {product.discount_price && product.discount_price < product.price && (
-                                                            <span className="text-sm text-zinc-600 line-through">
+                                                            <span className="text-sm text-zinc-400 line-through">
                                                                 {formatPrice(product.price)}
                                                             </span>
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                <div className="w-10 h-10 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                                                     <ArrowRight size={18} />
                                                 </div>
                                             </div>
@@ -445,14 +445,14 @@ export default function CustomerDashboard() {
                 </section>
 
                 {/* Why Choose Us - Real USPs */}
-                <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-zinc-900 via-zinc-900 to-purple-950/30 border border-white/10 p-8 md:p-12">
+                <section className="relative rounded-3xl overflow-hidden bg-zinc-900 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-purple-950/30 border border-zinc-800 dark:border-white/10 p-8 md:p-12">
                     <div className="relative z-10">
                         <div className="text-center mb-12">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-4">
                                 <Award size={16} />
                                 <span className="text-xs font-bold uppercase tracking-wider">Why Choose Us</span>
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black mb-4">Your Premium Art Experience</h2>
+                            <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">Your Premium Art Experience</h2>
                             <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
                                 We've built the most advanced art discovery platform with features that matter
                             </p>

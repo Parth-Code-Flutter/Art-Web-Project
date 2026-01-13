@@ -55,7 +55,7 @@ export default function WishlistPage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+            <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-4 md:px-8 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                         <div className="space-y-4">
@@ -80,7 +80,7 @@ export default function WishlistPage() {
     }
 
     return (
-        <main className="min-h-screen bg-black text-white pt-20 pb-20 px-4 md:px-8">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 px-4 md:px-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
 
                 {/* Header Section */}
@@ -88,7 +88,7 @@ export default function WishlistPage() {
                     <div className="space-y-4">
                         <Link
                             href="/customer/products"
-                            className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em]"
+                            className="group flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em]"
                         >
                             <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                             Back to Gallery
@@ -98,7 +98,7 @@ export default function WishlistPage() {
                                 <Heart size={24} fill="currentColor" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none">Your Wishlist</h1>
+                                <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none text-zinc-900 dark:text-white">Your Wishlist</h1>
                                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2">
                                     {wishlistCount} {wishlistCount === 1 ? 'Masterpiece' : 'Masterpieces'} curated for later
                                 </p>
@@ -118,10 +118,10 @@ export default function WishlistPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="group bg-zinc-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-white/10 hover:bg-zinc-900/60 transition-all duration-500 flex flex-col"
+                                    className="group bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden hover:border-zinc-300 dark:hover:border-white/10 hover:shadow-xl dark:hover:bg-zinc-900/60 transition-all duration-500 flex flex-col"
                                 >
                                     {/* Image Area */}
-                                    <Link href={`/customer/products/${product.id}`} className="relative aspect-square overflow-hidden bg-zinc-950 block">
+                                    <Link href={`/customer/products/${product.id}`} className="relative aspect-square overflow-hidden bg-zinc-100 dark:bg-zinc-950 block">
                                         <img
                                             src={product.images?.[0]}
                                             alt={product.name}
@@ -151,7 +151,7 @@ export default function WishlistPage() {
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div className="mb-4">
                                             <Link href={`/customer/products/${product.id}`}>
-                                                <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors line-clamp-1 mb-1">
+                                                <h3 className="text-lg font-bold text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1 mb-1">
                                                     {product.name}
                                                 </h3>
                                             </Link>
@@ -161,15 +161,15 @@ export default function WishlistPage() {
                                         </div>
 
                                         <div className="mt-auto space-y-4">
-                                            <div className="flex items-end justify-between pt-4 border-t border-white/5">
+                                            <div className="flex items-end justify-between pt-4 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-widest mb-1">Valuation</span>
+                                                    <span className="text-[8px] text-zinc-500 dark:text-zinc-600 uppercase font-black tracking-widest mb-1">Valuation</span>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-xl font-black text-white">
+                                                        <span className="text-xl font-black text-zinc-900 dark:text-white">
                                                             {formatPrice(product.discount_price || product.price)}
                                                         </span>
                                                         {product.discount_price && (
-                                                            <span className="text-xs text-zinc-600 line-through font-bold">
+                                                            <span className="text-xs text-zinc-400 dark:text-zinc-600 line-through font-bold">
                                                                 {formatPrice(product.price)}
                                                             </span>
                                                         )}
@@ -183,7 +183,7 @@ export default function WishlistPage() {
                                                 className={`w-full h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all duration-300
                                                     ${addingToCart === product.id
                                                         ? 'bg-emerald-500 text-white'
-                                                        : 'bg-white text-black hover:bg-zinc-200'
+                                                        : 'bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200'
                                                     }
                                                 `}
                                             >
@@ -211,7 +211,7 @@ export default function WishlistPage() {
                         className="flex flex-col items-center justify-center py-32 text-center"
                     >
                         <div className="relative mb-8">
-                            <div className="w-24 h-24 rounded-[2rem] bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-700">
+                            <div className="w-24 h-24 rounded-[2rem] bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 flex items-center justify-center text-zinc-400 dark:text-zinc-700">
                                 <Heart size={40} strokeWidth={1.5} />
                             </div>
                             <motion.div
@@ -222,13 +222,13 @@ export default function WishlistPage() {
                                 <Sparkles size={16} />
                             </motion.div>
                         </div>
-                        <h2 className="text-2xl font-black italic uppercase tracking-tighter mb-4">Your collection is empty</h2>
+                        <h2 className="text-2xl font-black italic uppercase tracking-tighter mb-4 text-zinc-900 dark:text-white">Your collection is empty</h2>
                         <p className="text-zinc-500 max-w-sm mb-10 text-sm leading-relaxed">
                             Explore our curated gallery and save the masterpieces that speak to you. Building a collection takes time.
                         </p>
                         <Link
                             href="/customer/products"
-                            className="group px-8 py-4 bg-white text-black rounded-2xl font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-zinc-200 transition-all hover:scale-105"
+                            className="group px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all hover:scale-105"
                         >
                             Start Exploring
                             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

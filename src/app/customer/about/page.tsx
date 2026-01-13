@@ -68,7 +68,7 @@ export default function AboutPage() {
     ];
 
     return (
-        <main className="min-h-screen bg-black text-white pt-20 pb-20">
+        <main className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white pt-20 pb-20 transition-colors duration-300">
             {/* Hero Section */}
             <section className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-purple-500/5 to-transparent pointer-events-none" />
