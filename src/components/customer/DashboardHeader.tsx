@@ -205,7 +205,7 @@ export default function DashboardHeader() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
                                         transition={{ duration: 0.2, ease: "easeOut" }}
-                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[420px] rounded-3xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/40 overflow-hidden z-50"
+                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[580px] rounded-3xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/40 overflow-hidden z-50"
                                     >
                                         {/* Header with gradient */}
                                         <div className="relative px-6 py-4 border-b border-zinc-100 dark:border-white/5">
@@ -239,23 +239,33 @@ export default function DashboardHeader() {
                                                     <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading collections...</p>
                                                 </div>
                                             ) : categories.length > 0 ? (
-                                                <div className="space-y-1 max-h-[320px] overflow-y-auto custom-scrollbar pr-1">
+                                                <div className="grid grid-cols-3 gap-2">
                                                     {categories.map((cat, index) => (
                                                         <motion.div
                                                             key={cat.id}
-                                                            initial={{ opacity: 0, x: -10 }}
-                                                            animate={{ opacity: 1, x: 0 }}
-                                                            transition={{ delay: index * 0.05, duration: 0.2 }}
+                                                            initial={{ opacity: 0, scale: 0.9 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            transition={{ delay: index * 0.03, duration: 0.2 }}
                                                         >
                                                             <Link
                                                                 href={`/customer/categories/${encodeURIComponent(cat.name)}`}
-                                                                className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-all duration-200"
+                                                                className="group relative flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-all duration-200 overflow-hidden"
                                                             >
-                                                                <div className="w-2 h-2 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                                                                <span className="flex-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                                                                {/* Hover gradient effect */}
+                                                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-300" />
+
+                                                                {/* Icon */}
+                                                                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                                                    <LayoutGrid size={18} className="text-zinc-600 dark:text-zinc-400" />
+                                                                </div>
+
+                                                                {/* Category name */}
+                                                                <span className="relative text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors text-center leading-tight">
                                                                     {cat.name}
                                                                 </span>
-                                                                <ArrowRight size={14} className="text-zinc-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+
+                                                                {/* Hover indicator */}
+                                                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-8 transition-all duration-300" />
                                                             </Link>
                                                         </motion.div>
                                                     ))}
