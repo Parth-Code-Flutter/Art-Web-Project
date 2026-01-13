@@ -315,18 +315,24 @@ export default function DashboardHeader() {
                         {/* Mobile Search Button */}
                         <button
                             onClick={() => setIsMobileSearchOpen(true)}
-                            className="md:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            className="md:hidden group"
                         >
-                            <Search size={20} />
+                            <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-all duration-200">
+                                <Search size={18} className="text-zinc-600 dark:text-zinc-400" strokeWidth={2} />
+                            </div>
                         </button>
 
                         {/* Wishlist Icon */}
-                        <Link href="/customer/wishlist" className="relative p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                            <Heart size={20} strokeWidth={1.5} className="lg:hidden" />
-                            <Heart size={22} strokeWidth={1.5} className="hidden lg:block" />
+                        <Link href="/customer/wishlist" className="relative group">
+                            <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-900/40 transition-all duration-200">
+                                <Heart size={18} className="text-red-600 dark:text-red-400" strokeWidth={2} />
+                            </div>
                             {mounted && wishlistCount > 0 && (
-                                <span className="absolute top-0 right-0 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
-                                    {wishlistCount}
+                                <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 items-center justify-center text-[10px] font-bold text-white shadow-lg">
+                                        {wishlistCount}
+                                    </span>
                                 </span>
                             )}
                         </Link>
@@ -335,12 +341,16 @@ export default function DashboardHeader() {
                         <ThemeToggle />
 
                         {/* Cart Icon */}
-                        <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                            <ShoppingCart size={20} strokeWidth={1.5} className="lg:hidden" />
-                            <ShoppingCart size={22} strokeWidth={1.5} className="hidden lg:block" />
+                        <Link href="/customer/cart" className="relative group">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-200">
+                                <ShoppingCart size={18} className="text-blue-600 dark:text-blue-400" strokeWidth={2} />
+                            </div>
                             {mounted && cartCount > 0 && (
-                                <span className="absolute top-0 right-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-background">
-                                    {cartCount}
+                                <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-5 w-5 bg-blue-500 items-center justify-center text-[10px] font-bold text-white shadow-lg">
+                                        {cartCount}
+                                    </span>
                                 </span>
                             )}
                         </Link>
@@ -353,12 +363,18 @@ export default function DashboardHeader() {
                                 className={`flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border transition-all duration-300 ${isProfileOpen ? 'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700' : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm'}`}
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                             >
-                                <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 overflow-hidden">
-                                    {mounted && userProfileUrl ? (
-                                        <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User size={14} />
-                                    )}
+                                <div className="relative">
+                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-0.5">
+                                        <div className="w-full h-full rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 overflow-hidden">
+                                            {mounted && userProfileUrl ? (
+                                                <img src={userProfileUrl} alt="Profile" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User size={14} />
+                                            )}
+                                        </div>
+                                    </div>
+                                    {/* Online indicator */}
+                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-zinc-900 rounded-full"></span>
                                 </div>
                                 <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                                     {mounted ? userName : '...'}
@@ -413,7 +429,7 @@ export default function DashboardHeader() {
 
                         {/* CTA Button */}
                         <button
-                            className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-background text-sm font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/10"
+                            className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-background text-sm font-semibold hover:scale-105 hover:shadow-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all duration-200"
                             onClick={() => router.push('/customer/products')}
                         >
                             Get Started
@@ -421,10 +437,12 @@ export default function DashboardHeader() {
 
                         {/* Mobile Menu Toggle */}
                         <button
-                            className="md:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                            className="md:hidden group"
                             onClick={() => setIsMobileMenuOpen(true)}
                         >
-                            <Menu size={22} />
+                            <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-all duration-200">
+                                <Menu size={18} className="text-zinc-600 dark:text-zinc-400" strokeWidth={2} />
+                            </div>
                         </button>
                     </div>
                 </div>
