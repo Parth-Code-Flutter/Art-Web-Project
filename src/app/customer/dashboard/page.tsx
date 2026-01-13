@@ -234,25 +234,61 @@ export default function CustomerDashboard() {
                                         icon: <Eye size={24} />,
                                         title: "AR Preview",
                                         desc: "Visualize in your space",
-                                        color: "blue"
+                                        color: "blue",
+                                        bgLight: "bg-white",
+                                        bgDark: "dark:bg-blue-500/5",
+                                        borderLight: "border-zinc-100",
+                                        borderDark: "dark:border-blue-500/20",
+                                        hoverDark: "dark:hover:bg-blue-500/10",
+                                        iconBgLight: "bg-blue-50",
+                                        iconBgDark: "dark:bg-blue-500/10",
+                                        iconTextLight: "text-blue-500",
+                                        iconTextDark: "dark:text-blue-400"
                                     },
                                     {
                                         icon: <Shield size={24} />,
                                         title: "Authentic",
                                         desc: "100% verified artworks",
-                                        color: "green"
+                                        color: "green",
+                                        bgLight: "bg-white",
+                                        bgDark: "dark:bg-green-500/5",
+                                        borderLight: "border-zinc-100",
+                                        borderDark: "dark:border-green-500/20",
+                                        hoverDark: "dark:hover:bg-green-500/10",
+                                        iconBgLight: "bg-green-50",
+                                        iconBgDark: "dark:bg-green-500/10",
+                                        iconTextLight: "text-green-500",
+                                        iconTextDark: "dark:text-green-400"
                                     },
                                     {
                                         icon: <Zap size={24} />,
                                         title: "Instant Search",
                                         desc: "Find art in seconds",
-                                        color: "purple"
+                                        color: "purple",
+                                        bgLight: "bg-white",
+                                        bgDark: "dark:bg-purple-500/5",
+                                        borderLight: "border-zinc-100",
+                                        borderDark: "dark:border-purple-500/20",
+                                        hoverDark: "dark:hover:bg-purple-500/10",
+                                        iconBgLight: "bg-purple-50",
+                                        iconBgDark: "dark:bg-purple-500/10",
+                                        iconTextLight: "text-purple-500",
+                                        iconTextDark: "dark:text-purple-400"
                                     },
                                     {
                                         icon: <Heart size={24} />,
                                         title: "Curated",
                                         desc: "Hand-picked collections",
-                                        color: "pink"
+                                        color: "pink",
+                                        bgLight: "bg-white",
+                                        bgDark: "dark:bg-pink-500/5",
+                                        borderLight: "border-zinc-100",
+                                        borderDark: "dark:border-pink-500/20",
+                                        hoverDark: "dark:hover:bg-pink-500/10",
+                                        iconBgLight: "bg-pink-50",
+                                        iconBgDark: "dark:bg-pink-500/10",
+                                        iconTextLight: "text-pink-500",
+                                        iconTextDark: "dark:text-pink-400"
                                     }
                                 ].map((usp, idx) => (
                                     <motion.div
@@ -260,9 +296,9 @@ export default function CustomerDashboard() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className={`p-6 rounded-2xl bg-white dark:bg-${usp.color}-500/5 border border-zinc-100 dark:border-${usp.color}-500/20 shadow-lg dark:shadow-none hover:shadow-xl dark:hover:bg-${usp.color}-500/10 transition-all group cursor-pointer`}
+                                        className={`p-6 rounded-2xl ${usp.bgLight} ${usp.bgDark} border ${usp.borderLight} ${usp.borderDark} shadow-lg dark:shadow-none hover:shadow-xl ${usp.hoverDark} transition-all group cursor-pointer`}
                                     >
-                                        <div className={`w-12 h-12 rounded-xl bg-${usp.color}-50 dark:bg-${usp.color}-500/10 text-${usp.color}-500 dark:text-${usp.color}-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                        <div className={`w-12 h-12 rounded-xl ${usp.iconBgLight} ${usp.iconBgDark} ${usp.iconTextLight} ${usp.iconTextDark} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                                             {usp.icon}
                                         </div>
                                         <h3 className="font-bold text-zinc-900 dark:text-white mb-1">{usp.title}</h3>
