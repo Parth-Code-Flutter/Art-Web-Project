@@ -182,13 +182,13 @@ export default function DashboardHeader() {
                         {/* Mobile Search Button */}
                         <button
                             onClick={() => setIsMobileSearchOpen(true)}
-                            className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+                            className="md:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                         >
                             <Search size={20} />
                         </button>
 
                         {/* Wishlist Icon */}
-                        <Link href="/customer/wishlist" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
+                        <Link href="/customer/wishlist" className="relative p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
                             <Heart size={20} strokeWidth={1.5} className="lg:hidden" />
                             <Heart size={22} strokeWidth={1.5} className="hidden lg:block" />
                             {mounted && wishlistCount > 0 && (
@@ -202,7 +202,7 @@ export default function DashboardHeader() {
                         <ThemeToggle />
 
                         {/* Cart Icon */}
-                        <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-white transition-colors">
+                        <Link href="/customer/cart" className="relative p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
                             <ShoppingCart size={20} strokeWidth={1.5} className="lg:hidden" />
                             <ShoppingCart size={22} strokeWidth={1.5} className="hidden lg:block" />
                             {mounted && cartCount > 0 && (
@@ -288,7 +288,7 @@ export default function DashboardHeader() {
 
                         {/* Mobile Menu Toggle */}
                         <button
-                            className="md:hidden p-2 text-zinc-400 hover:text-white"
+                            className="md:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
                             onClick={() => setIsMobileMenuOpen(true)}
                         >
                             <Menu size={22} />
