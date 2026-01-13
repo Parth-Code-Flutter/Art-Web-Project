@@ -189,7 +189,7 @@ export default function CustomerDashboard() {
                                     </span>
                                 </h1>
 
-                                <p className="text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xl">
+                                <p className="text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-xl">
                                     Curated collection of {stats.totalProducts}+ authentic artworks across {stats.totalCategories}+ categories.
                                     Experience art like never before with our innovative platform.
                                 </p>
@@ -266,7 +266,7 @@ export default function CustomerDashboard() {
                                             {usp.icon}
                                         </div>
                                         <h3 className="font-bold text-zinc-900 dark:text-white mb-1">{usp.title}</h3>
-                                        <p className="text-sm text-zinc-500">{usp.desc}</p>
+                                        <p className="text-sm text-zinc-600 dark:text-zinc-400">{usp.desc}</p>
                                     </motion.div>
                                 ))}
                             </div>
