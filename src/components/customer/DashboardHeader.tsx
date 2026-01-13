@@ -201,114 +201,87 @@ export default function DashboardHeader() {
                             <AnimatePresence>
                                 {isProductsHovered && (
                                     <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
+                                        initial={{ opacity: 0, y: 8 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.2, ease: "easeOut" }}
-                                        className="absolute left-0 right-0 top-full w-screen bg-white dark:bg-zinc-900 border-t border-b border-zinc-200 dark:border-zinc-800 shadow-xl z-50"
-                                        style={{ marginLeft: 'calc(-50vw + 50%)' }}
+                                        exit={{ opacity: 0, y: 8 }}
+                                        transition={{ duration: 0.15, ease: "easeOut" }}
+                                        className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[480px] rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden z-50"
                                     >
-                                        <div className="max-w-7xl mx-auto px-6 py-12">
-                                            <div className="grid grid-cols-12 gap-8">
-                                                {/* Featured Section - Browse All */}
-                                                <div className="col-span-12 lg:col-span-4">
-                                                    <Link
-                                                        href="/customer/products"
-                                                        className="group relative block h-full min-h-[280px] rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 p-8"
-                                                    >
-                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                                                        <div className="relative h-full flex flex-col justify-between">
-                                                            <div>
-                                                                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-                                                                    <LayoutGrid size={28} className="text-white" />
-                                                                </div>
-                                                                <h3 className="text-2xl font-bold text-white mb-3">
-                                                                    Browse All Artworks
-                                                                </h3>
-                                                                <p className="text-white/80 text-sm leading-relaxed">
-                                                                    Explore our complete collection of premium artworks from talented artists worldwide
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex items-center gap-2 text-white font-semibold group-hover:gap-3 transition-all">
-                                                                <span>Explore Now</span>
-                                                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                                                            </div>
-                                                        </div>
-                                                    </Link>
-                                                </div>
+                                        {/* Header */}
+                                        <div className="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+                                            <h3 className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                                                Collections
+                                            </h3>
+                                        </div>
 
-                                                {/* Categories Section */}
-                                                <div className="col-span-12 lg:col-span-8">
-                                                    <div className="mb-6">
-                                                        <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-1">
-                                                            Collections
-                                                        </h3>
-                                                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                                            Discover art by category
-                                                        </p>
+                                        <div className="p-4">
+                                            {/* Browse All - Compact */}
+                                            <Link
+                                                href="/customer/products"
+                                                className="group flex items-center justify-between px-4 py-3 mb-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-100 dark:border-blue-900/50 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-200"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                                        <LayoutGrid size={16} className="text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-bold text-zinc-900 dark:text-white">Browse All Artworks</span>
+                                                        <span className="block text-xs text-zinc-500 dark:text-zinc-400">View complete collection</span>
+                                                    </div>
+                                                </div>
+                                                <ArrowRight size={16} className="text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+                                            </Link>
+
+                                            {/* Categories */}
+                                            {isLoadingCategories ? (
+                                                <div className="py-12 text-center">
+                                                    <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2" />
+                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading...</p>
+                                                </div>
+                                            ) : categories.length > 0 ? (
+                                                <>
+                                                    <div className="grid grid-cols-2 gap-2 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
+                                                        {categories.map((cat, index) => (
+                                                            <motion.div
+                                                                key={cat.id}
+                                                                initial={{ opacity: 0, y: 4 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                                transition={{ delay: index * 0.02, duration: 0.15 }}
+                                                            >
+                                                                <Link
+                                                                    href={`/customer/categories/${encodeURIComponent(cat.name)}`}
+                                                                    className="group flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-150"
+                                                                >
+                                                                    <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-colors">
+                                                                        <Palette size={14} className="text-zinc-600 dark:text-zinc-400" />
+                                                                    </div>
+                                                                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors truncate">
+                                                                        {cat.name}
+                                                                    </span>
+                                                                </Link>
+                                                            </motion.div>
+                                                        ))}
                                                     </div>
 
-                                                    {isLoadingCategories ? (
-                                                        <div className="flex items-center justify-center py-16">
-                                                            <div className="text-center">
-                                                                <div className="inline-block w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
-                                                                <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading collections...</p>
-                                                            </div>
-                                                        </div>
-                                                    ) : categories.length > 0 ? (
-                                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                                            {categories.map((cat, index) => (
-                                                                <motion.div
-                                                                    key={cat.id}
-                                                                    initial={{ opacity: 0, y: 10 }}
-                                                                    animate={{ opacity: 1, y: 0 }}
-                                                                    transition={{ delay: index * 0.03, duration: 0.2 }}
-                                                                >
-                                                                    <Link
-                                                                        href={`/customer/categories/${encodeURIComponent(cat.name)}`}
-                                                                        className="group block p-4 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200"
-                                                                    >
-                                                                        <div className="flex items-center gap-3">
-                                                                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
-                                                                                <LayoutGrid size={18} className="text-zinc-600 dark:text-zinc-400" />
-                                                                            </div>
-                                                                            <div className="flex-1 min-w-0">
-                                                                                <span className="block text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
-                                                                                    {cat.name}
-                                                                                </span>
-                                                                            </div>
-                                                                            <ArrowRight size={16} className="text-zinc-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
-                                                                        </div>
-                                                                    </Link>
-                                                                </motion.div>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex items-center justify-center py-16">
-                                                            <div className="text-center">
-                                                                <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-4">
-                                                                    <Layers size={24} className="text-zinc-400" />
-                                                                </div>
-                                                                <p className="text-sm font-medium text-zinc-900 dark:text-white mb-1">No categories yet</p>
-                                                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Categories will appear here once created</p>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Footer Link */}
-                                                    {categories.length > 0 && (
-                                                        <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-                                                            <Link
-                                                                href="/customer/categories"
-                                                                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                                                            >
-                                                                <span>View all categories</span>
-                                                                <ArrowRight size={16} />
-                                                            </Link>
-                                                        </div>
-                                                    )}
+                                                    {/* Footer */}
+                                                    <div className="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                                                        <Link
+                                                            href="/customer/categories"
+                                                            className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                                        >
+                                                            <span>View all categories</span>
+                                                            <ArrowRight size={12} />
+                                                        </Link>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="py-12 text-center">
+                                                    <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-3">
+                                                        <Layers size={20} className="text-zinc-400" />
+                                                    </div>
+                                                    <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">No categories yet</p>
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
