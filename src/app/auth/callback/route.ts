@@ -3,18 +3,18 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-    // Robust Origin Detection for Vercel/Proxies
-    const { searchParams } = new URL(request.url)
-    const protocol = request.headers.get('x-forwarded-proto') || 'https';
-    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
-    let origin = `${protocol}://${host}`;
+    // Robust Origin Detection
+    const requestUrl = new URL(request.url)
+    let origin = requestUrl.origin;
 
-    // CRITICAL FIX: Prevent localhost redirects in production environment
-    // Use the specific project URL to ensure users land on the live site
-    if (process.env.NODE_ENV === 'production' && origin.includes('localhost')) {
+    // FORCE Live URL if we are visibly on the live domain or running in production with localhost origin
+    if (request.url.includes('art-web-project.vercel.app')) {
+        origin = 'https://art-web-project.vercel.app';
+    } else if (process.env.NODE_ENV === 'production' && origin.includes('localhost')) {
         origin = 'https://art-web-project.vercel.app';
     }
 
+    const { searchParams } = requestUrl
     const code = searchParams.get('code')
     const type = searchParams.get('type') || 'customer'
     // next is a redirect path after the callback, e.g. /customer/dashboard
