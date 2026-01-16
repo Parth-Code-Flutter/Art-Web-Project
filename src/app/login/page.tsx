@@ -41,6 +41,7 @@ export default function AuthPage() {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showRegisterPassword, setShowRegisterPassword] = useState(false);
 
     // Form Data
     const [email, setEmail] = useState('');
@@ -235,8 +236,8 @@ export default function AuthPage() {
                                 <button
                                     onClick={() => setRole(role === 'customer' ? 'seller' : 'customer')}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-[11px] font-bold uppercase tracking-widest ${role === 'seller'
-                                            ? 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200'
-                                            : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200 hover:text-zinc-900'
+                                        ? 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200'
+                                        : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200 hover:text-zinc-900'
                                         }`}
                                 >
                                     {role === 'customer' ? (
@@ -383,11 +384,27 @@ export default function AuthPage() {
                                                 <div className="space-y-4">
                                                     <div className="relative">
                                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-4 py-4 font-medium outline-none focus:border-blue-500 transition-all placeholder:text-zinc-300" placeholder="Create Password" />
+                                                        <input
+                                                            type={showRegisterPassword ? "text" : "password"}
+                                                            value={password}
+                                                            onChange={e => setPassword(e.target.value)}
+                                                            className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-12 py-4 font-medium outline-none focus:border-blue-500 transition-all placeholder:text-zinc-300"
+                                                            placeholder="Create Password"
+                                                        />
+                                                        <button type="button" onClick={() => setShowRegisterPassword(!showRegisterPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600">
+                                                            {showRegisterPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                        </button>
                                                     </div>
                                                     <div className="relative">
                                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                                                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-4 py-4 font-medium outline-none focus:border-blue-500 transition-all placeholder:text-zinc-300" placeholder="Confirm Password" />
+                                                        <input
+                                                            type={showRegisterPassword ? "text" : "password"}
+                                                            value={confirmPassword}
+                                                            onChange={e => setConfirmPassword(e.target.value)}
+                                                            className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-12 py-4 font-medium outline-none focus:border-blue-500 transition-all placeholder:text-zinc-300"
+                                                            placeholder="Confirm Password"
+                                                        />
+                                                        {/* Optional: Second eye or shared control. Shared is cleaner UI for setup. */}
                                                     </div>
                                                 </div>
                                             )}
