@@ -50,22 +50,37 @@ export default function SettingsPage() {
                 return;
             }
 
-            const { data: profile } = await supabase
-                .from('profiles')
+            const { data: customerData, error } = await supabase
+                .from('customers')
                 .select('*')
                 .eq('id', session.user.id)
-                .single();
+                .maybeSingle();
 
-            if (profile) {
+            if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+                console.error('Error fetching customer:', error);
+            }
+
+            if (customerData) {
                 setFormData(prev => ({
                     ...prev,
-                    fullName: profile.full_name || '',
-                    email: profile.email || '',
-                    mobile: profile.mobile || '',
-                    country: profile.country || 'IN',
-                    avatarUrl: profile.avatar_url || profile.profile_image_url || AVATARS[0],
-                    role: profile.role || 'customer'
+                    fullName: customerData.full_name || '',
+                    email: customerData.email || session.user.email || '', // Use customer email if available, fallback to auth email
+                    mobile: customerData.mobile || '',
+                    country: customerData.country || 'IN',
+                    avatarUrl: customerData.avatar_url || session.user.user_metadata.avatar_url || AVATARS[0],
+                    role: customerData.role || 'customer'
                 }));
+            } else {
+                // If no customer record, create one from Auth user data
+                await supabase.from('customers').insert({
+                    id: session.user.id,
+                    email: session.user.email,
+                    full_name: session.user.user_metadata.full_name || '',
+                    avatar_url: session.user.user_metadata.avatar_url || AVATARS[0],
+                    role: 'customer' // Default role
+                });
+                // After creating, refetch to populate formData
+                fetchUserProfile();
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
@@ -79,26 +94,21 @@ export default function SettingsPage() {
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error('Session lost');
+            const user = session.user;
 
-            // Update Profiles
-            await supabase.from('profiles').update({
+            // Update Customers Table
+            const { error: customerError } = await supabase.from('customers').update({
                 full_name: formData.fullName,
                 mobile: formData.mobile,
                 avatar_url: formData.avatarUrl,
+                country: formData.country,
                 updated_at: new Date().toISOString()
-            }).eq('id', session.user.id);
+            }).eq('id', user.id);
 
-            // Update Role Table
-            const tableName = formData.role === 'seller' ? 'sellers' : 'customers';
-            await supabase.from(tableName).update({
-                full_name: formData.fullName,
-                mobile: formData.mobile,
-                avatar_url: formData.avatarUrl,
-                ...(formData.role === 'customer' && { country: formData.country })
-            }).eq('id', session.user.id);
+            if (customerError) throw customerError;
 
-            // Update Auth
-            await supabase.auth.updateUser({
+            // Update Auth user metadata (optional, but good for consistency)
+            const { error: authError } = await supabase.auth.updateUser({
                 data: { full_name: formData.fullName, avatar_url: formData.avatarUrl }
             });
 

@@ -115,17 +115,7 @@ export default function BecomeArtistPage() {
 
             if (sellerError) throw sellerError;
 
-            // 2. Update Profiles Table to set role as seller
-            await supabase
-                .from('profiles')
-                .update({
-                    role: 'seller',
-                    full_name: formData.fullName,
-                    avatar_url: formData.avatarUrl,
-                    mobile: formData.mobile
-                })
-                .eq('id', user.id);
-
+            // 2. Updated: Removed profiles table update logic
             // 3. Update Auth Metadata
             await supabase.auth.updateUser({
                 data: {

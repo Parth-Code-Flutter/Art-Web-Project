@@ -62,14 +62,18 @@ export default function CheckoutPage() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             setUser(user);
-            // Try to fetch profile for pre-fill
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-            setFormData(prev => ({
-                ...prev,
-                fullName: profile?.full_name || user.user_metadata?.full_name || '',
-                mobile: profile?.mobile || '',
-                email: user.email || ''
-            }));
+            // Fetch from customers table now
+            const { data: customerData } = await supabase.from('customers').select('*').eq('id', user.id).single();
+            if (customerData) {
+                setFormData(prev => ({
+                    ...prev,
+                    firstName: customerData.full_name?.split(' ')[0] || '',
+                    lastName: customerData.full_name?.split(' ').slice(1).join(' ') || '',
+                    email: customerData.email || user.email || '',
+                    phone: customerData.mobile || '',
+                    // Address fields might need to be added to customers table or fetched from orders
+                }));
+            }
         }
     };
 

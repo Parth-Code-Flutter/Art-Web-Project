@@ -50,7 +50,7 @@ export default function ArtistProfilePage() {
         try {
             // Fetch artist profile
             const { data: profile, error: profileError } = await supabase
-                .from('profiles')
+                .from('sellers')
                 .select('*')
                 .eq('id', id)
                 .single();
