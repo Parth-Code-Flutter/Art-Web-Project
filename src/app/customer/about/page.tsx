@@ -84,7 +84,7 @@ export default function AboutPage() {
                             About Our Gallery
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-hero font-black mb-6 leading-tight">
                             Where Art Meets
                             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
                                 Innovation
@@ -99,14 +99,14 @@ export default function AboutPage() {
                         <div className="flex flex-wrap items-center justify-center gap-4">
                             <Link
                                 href="/customer/products"
-                                className="group px-6 lg:px-8 py-3 lg:py-4 rounded-xl bg-white text-black font-bold hover:bg-zinc-200 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2"
+                                className="group px-6 lg:px-8 py-3 lg:py-4 rounded-xl bg-white text-black font-button font-bold hover:bg-zinc-200 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2"
                             >
                                 Explore Gallery
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
                             <Link
                                 href="/seller/become-artist"
-                                className="px-6 lg:px-8 py-3 lg:py-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-all"
+                                className="px-6 lg:px-8 py-3 lg:py-4 rounded-xl border border-white/10 text-white font-button font-bold hover:bg-white/5 transition-all"
                             >
                                 Become an Artist
                             </Link>
@@ -128,8 +128,8 @@ export default function AboutPage() {
                             className="bg-zinc-900/40 border border-white/5 rounded-2xl p-6 text-center hover:border-white/10 hover:bg-zinc-900/60 transition-all group"
                         >
                             <stat.icon className="w-8 h-8 mx-auto mb-3 text-blue-400 group-hover:scale-110 transition-transform" />
-                            <div className="text-3xl lg:text-4xl font-bold mb-2">{stat.value}</div>
-                            <div className="text-sm text-zinc-500 uppercase tracking-wider font-medium">{stat.label}</div>
+                            <div className="text-3xl lg:text-4xl font-hero font-black mb-2">{stat.value}</div>
+                            <div className="text-sm text-zinc-500 font-caption font-bold uppercase tracking-wider">{stat.label}</div>
                         </motion.div>
                     ))}
                 </div>
@@ -148,7 +148,7 @@ export default function AboutPage() {
                             <Target size={14} />
                             Our Mission
                         </div>
-                        <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+                        <h2 className="text-3xl lg:text-4xl font-section-title font-bold mb-6">
                             Democratizing Art Ownership
                         </h2>
                         <p className="text-zinc-400 text-lg leading-relaxed mb-6">
@@ -194,7 +194,7 @@ export default function AboutPage() {
                         <Zap size={14} />
                         Our Values
                     </div>
-                    <h2 className="text-3xl lg:text-4xl font-bold mb-4">What Drives Us</h2>
+                    <h2 className="text-3xl lg:text-4xl font-section-title font-bold mb-4">What Drives Us</h2>
                     <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
                         Our core values shape every decision we make and every experience we create.
                     </p>
@@ -212,7 +212,7 @@ export default function AboutPage() {
                         >
                             <div className={`absolute top-0 left-0 w-full h-1 rounded-t-2xl bg-gradient-to-r ${value.color}`} />
                             <value.icon className="w-12 h-12 mb-4 text-white/80 group-hover:scale-110 transition-transform" />
-                            <h3 className="text-xl font-bold mb-3">{value.title}</h3>
+                            <h3 className="text-xl font-product-title font-bold mb-3">{value.title}</h3>
                             <p className="text-zinc-400 leading-relaxed">{value.description}</p>
                         </motion.div>
                     ))}
@@ -231,7 +231,7 @@ export default function AboutPage() {
                         <Users size={14} />
                         Leadership Team
                     </div>
-                    <h2 className="text-3xl lg:text-4xl font-bold mb-4">Meet the Visionaries</h2>
+                    <h2 className="text-3xl lg:text-4xl font-section-title font-bold mb-4">Meet the Visionaries</h2>
                     <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
                         Passionate experts dedicated to transforming the art world.
                     </p>
@@ -269,7 +269,7 @@ export default function AboutPage() {
 
                     <div className="relative z-10">
                         <TrendingUp className="w-16 h-16 mx-auto mb-6 text-white/80" />
-                        <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                        <h2 className="text-3xl lg:text-4xl font-hero font-black mb-4">
                             Ready to Start Your Collection?
                         </h2>
                         <p className="text-lg text-zinc-300 mb-8 max-w-2xl mx-auto">
@@ -278,7 +278,7 @@ export default function AboutPage() {
                         <div className="flex flex-wrap items-center justify-center gap-4">
                             <Link
                                 href="/customer/products"
-                                className="group px-8 py-4 rounded-xl bg-white text-black font-bold hover:bg-zinc-200 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2"
+                                className="group px-8 py-4 rounded-xl bg-white text-black font-button font-bold hover:bg-zinc-200 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2"
                             >
                                 Browse Artworks
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

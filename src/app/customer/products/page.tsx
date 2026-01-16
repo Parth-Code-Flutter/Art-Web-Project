@@ -289,12 +289,12 @@ export default function CustomerProducts() {
                                         <div className="p-4 space-y-3 flex-1 flex flex-col">
                                             <div className="min-w-0">
                                                 <Link href={`/customer/products/${product.id}`}>
-                                                    <h3 className="font-semibold text-zinc-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
+                                                    <h3 className="font-product-title font-semibold text-zinc-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                                                         {product.name}
                                                     </h3>
                                                 </Link>
                                                 <div className="flex items-center justify-between mt-0.5">
-                                                    <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
+                                                    <p className="text-[9px] font-caption font-black text-zinc-500 uppercase tracking-widest mt-0.5">
                                                         {product.category || 'Uncategorized'}
                                                     </p>
                                                 </div>
@@ -302,11 +302,11 @@ export default function CustomerProducts() {
 
                                             <div className="flex items-end justify-between mt-auto pt-2 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Valuation</span>
+                                                    <span className="text-[8px] font-caption text-zinc-600 uppercase font-black tracking-tighter">Valuation</span>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-blue-400 font-black text-xs">{formatPrice(product.discount_price || product.price)}</span>
+                                                        <span className="text-blue-400 font-price font-black text-xs">{formatPrice(product.discount_price || product.price)}</span>
                                                         {product.discount_price && product.discount_price < product.price && (
-                                                            <span className="text-[8px] text-zinc-500 line-through font-bold opacity-50">
+                                                            <span className="text-[8px] text-zinc-500 line-through font-price font-bold opacity-50">
                                                                 {formatPrice(product.price)}
                                                             </span>
                                                         )}
@@ -323,7 +323,7 @@ export default function CustomerProducts() {
                                             {/* Action Bar */}
                                             <div className="pt-2 flex gap-1">
                                                 <button
-                                                    className={`h-8 rounded-xl flex-1 flex items-center justify-center gap-1 px-2 text-[10px] font-black uppercase tracking-tight transition-all duration-500 whitespace-nowrap
+                                                    className={`h-8 rounded-xl flex-1 flex items-center justify-center gap-1 px-2 text-[10px] font-button font-black uppercase tracking-tight transition-all duration-500 whitespace-nowrap
                                                         ${addingToCart === product.id
                                                             ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
                                                             : 'bg-zinc-100 dark:bg-white/5 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/5 hover:bg-zinc-200 dark:hover:bg-white/10'

@@ -122,8 +122,8 @@ export default function CustomerCategories() {
                                             {/* Content Overlay */}
                                             <div className="absolute inset-0 p-4 flex flex-col justify-end">
                                                 <div className="flex items-end justify-between gap-2">
-                                                    <span className="text-white text-sm md:text-base font-heading font-bold leading-tight line-clamp-2">{category.name}</span>
-                                                    <span className="shrink-0 px-2 py-0.5 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white">
+                                                    <span className="text-white text-sm md:text-base font-section-title font-bold leading-tight line-clamp-2">{category.name}</span>
+                                                    <span className="shrink-0 px-2 py-0.5 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-caption font-bold text-white">
                                                         {category.product_count}
                                                     </span>
                                                 </div>
@@ -138,8 +138,8 @@ export default function CustomerCategories() {
             ) : (
                 <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-600">
                     <Layers size={64} strokeWidth={1} className="mb-4 opacity-50" />
-                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No Categories Found</h3>
-                    <p>Categories will appear here once they are created.</p>
+                    <h3 className="text-2xl font-section-title font-bold text-zinc-900 dark:text-white mb-2">No Categories Found</h3>
+                    <p className="font-caption">Categories will appear here once they are created.</p>
                 </div>
             )}
         </main>

@@ -120,7 +120,7 @@ export default function MyOrdersPage() {
             <div className="pt-32 pb-12 px-6">
                 <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div className="space-y-2">
-                        <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">Orders</h1>
+                        <h1 className="text-4xl lg:text-5xl font-hero font-black tracking-tight">Orders</h1>
                         <p className="text-sm text-secondary">View and manage your recent acquisitions.</p>
                     </div>
                 </div>
@@ -133,11 +133,11 @@ export default function MyOrdersPage() {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-zinc-200 dark:border-white/[0.03] bg-zinc-50 dark:bg-white/[0.01]">
-                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Order ID</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Date</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest">Status</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest text-right">Total</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-secondary uppercase tracking-widest text-center">Action</th>
+                                    <th className="px-8 py-5 text-[10px] font-caption font-black text-secondary uppercase tracking-widest">Order ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-caption font-black text-secondary uppercase tracking-widest">Date</th>
+                                    <th className="px-8 py-5 text-[10px] font-caption font-black text-secondary uppercase tracking-widest">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-caption font-black text-secondary uppercase tracking-widest text-right">Total</th>
+                                    <th className="px-8 py-5 text-[10px] font-caption font-black text-secondary uppercase tracking-widest text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-zinc-100 dark:divide-white/[0.02]">
@@ -159,18 +159,18 @@ export default function MyOrdersPage() {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-xs font-bold text-secondary capitalize whitespace-nowrap">
+                                                <span className="text-xs font-caption font-bold text-secondary capitalize whitespace-nowrap">
                                                     {new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <div className={`px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 ${status.bg} ${status.color} ${status.border}`}>
+                                                <div className={`px-3 py-1 rounded-full border text-[10px] font-caption font-bold uppercase tracking-widest inline-flex items-center gap-1.5 ${status.bg} ${status.color} ${status.border}`}>
                                                     <StatusIcon size={10} />
                                                     {status.label}
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <span className="text-sm font-black italic">₹{order.total_amount.toLocaleString()}</span>
+                                                <span className="text-sm font-price font-black italic">₹{order.total_amount.toLocaleString()}</span>
                                             </td>
                                             <td className="px-8 py-6 text-center">
                                                 <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-white/[0.03] border border-zinc-300 dark:border-white/5 group-hover:bg-primary group-hover:text-background transition-all flex items-center justify-center mx-auto shadow-xl">
@@ -221,8 +221,8 @@ export default function MyOrdersPage() {
                                         <ArrowLeft size={20} />
                                     </button>
                                     <div>
-                                        <h2 className="text-xl font-bold tracking-tight">Order Details</h2>
-                                        <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mt-0.5">#{selectedOrder.id.slice(0, 16)}</p>
+                                        <h2 className="text-xl font-section-title font-bold tracking-tight">Order Details</h2>
+                                        <p className="text-[10px] font-caption font-black text-secondary uppercase tracking-[0.2em] mt-0.5">#{selectedOrder.id.slice(0, 16)}</p>
                                     </div>
                                 </div>
                                 <div className={`px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 ${getStatusInfo(selectedOrder.status).bg} ${getStatusInfo(selectedOrder.status).color} ${getStatusInfo(selectedOrder.status).border}`}>
@@ -249,7 +249,7 @@ export default function MyOrdersPage() {
                                 <section className="space-y-6">
                                     <div className="flex items-center gap-3">
                                         <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                                        <h3 className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Logistics Intelligence</h3>
+                                        <h3 className="text-[10px] font-caption font-black text-secondary uppercase tracking-[0.2em]">Logistics Intelligence</h3>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-3xl p-6 shadow-xl transition-colors">
                                         <div className="space-y-4">
@@ -295,7 +295,7 @@ export default function MyOrdersPage() {
                                                     <img src={item.image_url} className="w-full h-full object-cover grayscale opacity-50 dark:opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="text-xs font-bold truncate">{item.product_name}</h4>
+                                                    <h4 className="text-xs font-product-title font-bold truncate">{item.product_name}</h4>
                                                     <div className="flex items-center gap-3 mt-1.5">
                                                         <span className="text-[10px] font-black text-secondary uppercase tracking-widest bg-zinc-200 dark:bg-white/5 px-2 py-0.5 rounded-md">Qty: {item.quantity}</span>
                                                         <span className="text-sm font-black italic text-accent">₹{item.price.toLocaleString()}</span>

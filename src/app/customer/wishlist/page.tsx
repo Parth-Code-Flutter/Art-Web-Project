@@ -98,8 +98,8 @@ export default function WishlistPage() {
                                 <Heart size={24} fill="currentColor" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none text-zinc-900 dark:text-white">Your Wishlist</h1>
-                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2">
+                                <h1 className="text-4xl font-hero font-black italic tracking-tighter uppercase leading-none text-zinc-900 dark:text-white">Your Wishlist</h1>
+                                <p className="text-[10px] text-zinc-500 font-caption font-bold uppercase tracking-widest mt-2">
                                     {wishlistCount} {wishlistCount === 1 ? 'Masterpiece' : 'Masterpieces'} curated for later
                                 </p>
                             </div>
@@ -151,11 +151,11 @@ export default function WishlistPage() {
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div className="mb-4">
                                             <Link href={`/customer/products/${product.id}`}>
-                                                <h3 className="text-lg font-bold text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1 mb-1">
+                                                <h3 className="text-lg font-product-title font-bold text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1 mb-1">
                                                     {product.name}
                                                 </h3>
                                             </Link>
-                                            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                                            <p className="text-[9px] font-caption font-black text-zinc-500 uppercase tracking-widest">
                                                 {product.category}
                                             </p>
                                         </div>
@@ -163,13 +163,13 @@ export default function WishlistPage() {
                                         <div className="mt-auto space-y-4">
                                             <div className="flex items-end justify-between pt-4 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[8px] text-zinc-500 dark:text-zinc-600 uppercase font-black tracking-widest mb-1">Valuation</span>
+                                                    <span className="text-[8px] text-zinc-500 dark:text-zinc-600 font-caption uppercase font-black tracking-widest mb-1">Valuation</span>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-xl font-black text-zinc-900 dark:text-white">
+                                                        <span className="text-xl font-price font-black text-zinc-900 dark:text-white">
                                                             {formatPrice(product.discount_price || product.price)}
                                                         </span>
                                                         {product.discount_price && (
-                                                            <span className="text-xs text-zinc-400 dark:text-zinc-600 line-through font-bold">
+                                                            <span className="text-xs text-zinc-400 dark:text-zinc-600 line-through font-price font-bold">
                                                                 {formatPrice(product.price)}
                                                             </span>
                                                         )}
@@ -180,7 +180,7 @@ export default function WishlistPage() {
                                             <button
                                                 onClick={(e) => handleAddToCart(e, product)}
                                                 disabled={addingToCart === product.id}
-                                                className={`w-full h-12 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all duration-300
+                                                className={`w-full h-12 rounded-2xl font-button font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all duration-300
                                                     ${addingToCart === product.id
                                                         ? 'bg-emerald-500 text-white'
                                                         : 'bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200'

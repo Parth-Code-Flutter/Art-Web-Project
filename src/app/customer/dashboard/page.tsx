@@ -181,7 +181,7 @@ export default function CustomerDashboard() {
                                     <span className="text-xs font-bold uppercase tracking-wider">Premium Art Gallery</span>
                                 </div>
 
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-zinc-900 dark:text-white">
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-hero font-black leading-tight text-zinc-900 dark:text-white">
                                     Discover Art
                                     <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
@@ -197,30 +197,30 @@ export default function CustomerDashboard() {
                                 {/* Stats Row */}
                                 <div className="grid grid-cols-3 gap-6 pt-4">
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-zinc-900 dark:text-white">{stats.totalProducts}+</div>
-                                        <div className="text-sm text-zinc-500 font-medium">Artworks</div>
+                                        <div className="text-3xl font-hero font-black text-zinc-900 dark:text-white">{stats.totalProducts}+</div>
+                                        <div className="text-sm font-caption text-zinc-500 font-medium">Artworks</div>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-zinc-900 dark:text-white">{stats.totalCategories}+</div>
-                                        <div className="text-sm text-zinc-500 font-medium">Categories</div>
+                                        <div className="text-3xl font-hero font-black text-zinc-900 dark:text-white">{stats.totalCategories}+</div>
+                                        <div className="text-sm font-caption text-zinc-500 font-medium">Categories</div>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{stats.avgDiscount}%</div>
-                                        <div className="text-sm text-zinc-500 font-medium">Avg Savings</div>
+                                        <div className="text-3xl font-hero font-black text-blue-600 dark:text-blue-400">{stats.avgDiscount}%</div>
+                                        <div className="text-sm font-caption text-zinc-500 font-medium">Avg Savings</div>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                     <Link
                                         href="/customer/products"
-                                        className="group px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95 shadow-xl flex items-center justify-center gap-2"
+                                        className="group px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-button font-bold text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95 shadow-xl flex items-center justify-center gap-2"
                                     >
                                         Explore Gallery
                                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                     <Link
                                         href="/customer/categories"
-                                        className="px-8 py-4 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white rounded-2xl font-bold text-center hover:bg-zinc-200 dark:hover:bg-white/10 transition-all"
+                                        className="px-8 py-4 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white rounded-2xl font-button font-bold text-center hover:bg-zinc-200 dark:hover:bg-white/10 transition-all"
                                     >
                                         Browse Categories
                                     </Link>
@@ -318,8 +318,8 @@ export default function CustomerDashboard() {
                                 <Palette size={22} />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black text-zinc-900 dark:text-white">Explore by Category</h2>
-                                <p className="text-sm text-zinc-500 mt-1">Discover curated collections</p>
+                                <h2 className="text-3xl font-section-title font-black text-zinc-900 dark:text-white">Explore by Category</h2>
+                                <p className="text-sm font-caption text-zinc-500 mt-1">Discover curated collections</p>
                             </div>
                         </div>
                         <Link
@@ -382,8 +382,8 @@ export default function CustomerDashboard() {
                                 <Star size={22} />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black text-zinc-900 dark:text-white">Latest Arrivals</h2>
-                                <p className="text-sm text-zinc-500 mt-1">Freshly added to our collection</p>
+                                <h2 className="text-3xl font-section-title font-black text-zinc-900 dark:text-white">Latest Arrivals</h2>
+                                <p className="text-sm font-caption text-zinc-500 mt-1">Freshly added to our collection</p>
                             </div>
                         </div>
                         <Link
@@ -448,17 +448,17 @@ export default function CustomerDashboard() {
                                         {/* Content */}
                                         <div className="p-5 space-y-3">
                                             <div>
-                                                <h3 className="font-bold text-lg text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
+                                                <h3 className="font-product-title font-bold text-lg text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                                                     {product.name}
                                                 </h3>
-                                                <p className="text-sm text-zinc-500 mt-1">{product.category}</p>
+                                                <p className="text-sm font-caption text-zinc-500 mt-1">{product.category}</p>
                                             </div>
 
                                             <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-white/5">
                                                 <div className="flex flex-col">
                                                     <span className="text-xs text-zinc-500 dark:text-zinc-600 font-bold uppercase tracking-wider">Price</span>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className="text-xl font-black text-blue-600 dark:text-blue-400">
+                                                        <span className="text-xl font-price font-black text-blue-600 dark:text-blue-400">
                                                             {formatPrice(product.discount_price || product.price)}
                                                         </span>
                                                         {product.discount_price && product.discount_price < product.price && (
@@ -488,7 +488,7 @@ export default function CustomerDashboard() {
                                 <Award size={16} />
                                 <span className="text-xs font-bold uppercase tracking-wider">Why Choose Us</span>
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">Your Premium Art Experience</h2>
+                            <h2 className="text-4xl md:text-5xl font-hero font-black mb-4 text-white">Your Premium Art Experience</h2>
                             <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
                                 We've built the most advanced art discovery platform with features that matter
                             </p>

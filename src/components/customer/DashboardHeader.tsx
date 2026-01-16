@@ -187,7 +187,7 @@ export default function DashboardHeader() {
                         >
                             <Link
                                 href="/customer/products"
-                                className={`flex items-center gap-1 text-sm font-medium tracking-wide transition-colors duration-200 py-4
+                                className={`flex items-center gap-1 text-sm font-nav font-medium tracking-wide transition-colors duration-200 py-4
                                     ${mounted && (pathname.startsWith('/customer/products') || isCategoryPage)
                                         ? 'text-primary'
                                         : 'text-secondary hover:text-primary'
@@ -293,7 +293,7 @@ export default function DashboardHeader() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className={`text-sm font-medium tracking-wide transition-colors duration-200 hover:text-primary
+                                className={`text-sm font-nav font-medium tracking-wide transition-colors duration-200 hover:text-primary
                                     ${mounted && (pathname === link.href)
                                         ? 'text-primary'
                                         : 'text-secondary'

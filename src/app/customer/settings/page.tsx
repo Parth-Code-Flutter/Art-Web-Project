@@ -137,7 +137,7 @@ export default function SettingsPage() {
                             <ArrowLeft size={16} />
                         </button>
                         <div>
-                            <h1 className="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">Account Hub</h1>
+                            <h1 className="text-2xl font-hero font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">Account Hub</h1>
                             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">System Preferences</p>
                         </div>
                     </div>
@@ -168,7 +168,7 @@ export default function SettingsPage() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <tab.icon size={16} className={activeTab === tab.id ? 'text-white' : 'text-zinc-600'} />
-                                                <span className="text-[11px] font-black uppercase tracking-widest">{tab.label}</span>
+                                                <span className="text-[11px] font-nav font-black uppercase tracking-widest">{tab.label}</span>
                                             </div>
                                             {activeTab === tab.id && (
                                                 <motion.div layoutId="tab-dot" className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
@@ -248,14 +248,14 @@ export default function SettingsPage() {
                                         {/* Form Fields - Sleek Grid */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div className="space-y-1">
-                                                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-600 ml-1">Legal Designation</label>
+                                                <label className="text-[9px] font-caption font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-600 ml-1">Legal Designation</label>
                                                 <div className="relative group">
                                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-700" size={14} />
                                                     <input
                                                         type="text"
                                                         value={formData.fullName}
                                                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-2xl px-12 py-3.5 text-xs text-zinc-900 dark:text-zinc-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:border-blue-500/40 transition-all font-medium"
+                                                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-2xl px-12 py-3.5 text-xs text-zinc-900 dark:text-zinc-300 font-input focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:border-blue-500/40 transition-all font-medium"
                                                     />
                                                 </div>
                                             </div>
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                                             <button
                                                 onClick={handleSave}
                                                 disabled={saving}
-                                                className="px-8 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 shadow-lg shadow-zinc-900/10 dark:shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
+                                                className="px-8 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-black font-button font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 shadow-lg shadow-zinc-900/10 dark:shadow-[0_10px_30px_rgba(255,255,255,0.1)]"
                                             >
                                                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                                                 Save Identity
@@ -328,15 +328,15 @@ export default function SettingsPage() {
                                         </div>
                                         <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
                                             <div className="p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl">
-                                                <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Spent</p>
-                                                <p className="text-lg font-black text-zinc-900 dark:text-white italic">$0.00</p>
+                                                <p className="text-[8px] font-caption font-bold uppercase tracking-widest text-zinc-500 mb-1">Spent</p>
+                                                <p className="text-lg font-price font-black text-zinc-900 dark:text-white italic">$0.00</p>
                                             </div>
                                             <div className="p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl">
-                                                <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Items</p>
-                                                <p className="text-lg font-black text-zinc-900 dark:text-white italic">0</p>
+                                                <p className="text-[8px] font-caption font-bold uppercase tracking-widest text-zinc-500 mb-1">Items</p>
+                                                <p className="text-lg font-price font-black text-zinc-900 dark:text-white italic">0</p>
                                             </div>
                                         </div>
-                                        <button className="px-8 py-3.5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all">
+                                        <button className="px-8 py-3.5 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white font-button font-black uppercase tracking-widest text-[9px] rounded-2xl hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all">
                                             Setup Billing
                                         </button>
                                     </div>

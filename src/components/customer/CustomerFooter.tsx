@@ -45,7 +45,7 @@ export default function CustomerFooter() {
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white">
                                 <span className="font-bold text-sm">AG</span>
                             </div>
-                            <span className="text-2xl font-heading font-bold text-white tracking-tight">ArtGallery</span>
+                            <span className="text-2xl font-hero font-bold text-white tracking-tight">ArtGallery</span>
                         </div>
                         <p className="text-zinc-400 leading-relaxed max-w-sm">
                             Experience the future of art with ArtGallery. We provide a premium platform for visionary artists and collectors worldwide.
@@ -62,7 +62,7 @@ export default function CustomerFooter() {
                     {/* Links Sections */}
                     <div className="lg:w-2/3 grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div>
-                            <h3 className="text-white font-semibold mb-6">Collections</h3>
+                            <h3 className="text-white font-section-title font-semibold mb-6">Collections</h3>
                             <ul className="space-y-4">
                                 {categories.length > 0 ? (
                                     categories.map((cat) => (
@@ -81,7 +81,7 @@ export default function CustomerFooter() {
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold mb-6">Services</h3>
+                            <h3 className="text-white font-section-title font-semibold mb-6">Services</h3>
                             <ul className="space-y-4">
                                 <li><Link href="#" className="text-zinc-400 hover:text-blue-400 transition-colors">Curated Collections</Link></li>
                                 <li><Link href="#" className="text-zinc-400 hover:text-blue-400 transition-colors">Artist Spotlight</Link></li>
@@ -91,7 +91,7 @@ export default function CustomerFooter() {
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold mb-6">Company</h3>
+                            <h3 className="text-white font-section-title font-semibold mb-6">Company</h3>
                             <ul className="space-y-4">
                                 <li><Link href="#" className="text-zinc-400 hover:text-blue-400 transition-colors">About Us</Link></li>
                                 <li><Link href="#" className="text-zinc-400 hover:text-blue-400 transition-colors">Our Team</Link></li>

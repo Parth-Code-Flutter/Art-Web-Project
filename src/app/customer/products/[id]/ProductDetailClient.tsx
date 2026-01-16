@@ -271,7 +271,7 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                                 </div>
                             </div>
 
-                            <h1 className="text-4xl md:text-5xl font-heading font-bold text-zinc-900 dark:text-white mb-2 leading-tight">
+                            <h1 className="text-4xl md:text-5xl font-product-title font-bold text-zinc-900 dark:text-white mb-2 leading-tight">
                                 {product.name}
                             </h1>
                             <button
@@ -286,12 +286,12 @@ export default function ProductDetailClient({ params }: { params: Promise<{ id: 
                         {/* Price & Cart */}
                         <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-sm dark:shadow-none">
                             <div className="flex items-end gap-4 mb-6">
-                                <span className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">
+                                <span className="text-4xl font-bold font-price text-zinc-900 dark:text-white tracking-tight">
                                     {formatPrice(product.discount_price || product.price)}
                                 </span>
                                 {product.discount_price && (
                                     <div className="flex flex-col mb-1">
-                                        <span className="text-zinc-400 dark:text-zinc-500 line-through text-lg">
+                                        <span className="text-zinc-400 dark:text-zinc-500 line-through text-lg font-price">
                                             {formatPrice(product.price)}
                                         </span>
                                         <span className="text-green-600 dark:text-green-400 text-sm font-bold">

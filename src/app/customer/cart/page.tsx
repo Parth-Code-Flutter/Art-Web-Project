@@ -124,7 +124,7 @@ export default function CartPage() {
 
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
-                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-hero font-bold tracking-tight text-zinc-900 dark:text-white">
                                             Your Collection
                                         </h1>
                                         <p className="text-zinc-500 mt-1 text-xs lg:text-sm">
@@ -189,7 +189,7 @@ export default function CartPage() {
                                                                     {item.category}
                                                                 </p>
                                                                 <Link href={`/customer/products/${item.id}`}>
-                                                                    <h3 className="font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 text-sm sm:text-base leading-tight">
+                                                                    <h3 className="font-product-title font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 text-sm sm:text-base leading-tight">
                                                                         {item.name}
                                                                     </h3>
                                                                 </Link>
@@ -207,7 +207,7 @@ export default function CartPage() {
 
                                                         {/* Price */}
                                                         <div className="flex items-baseline gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
-                                                            <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
+                                                            <span className="text-base sm:text-lg font-price font-bold text-zinc-900 dark:text-white">
                                                                 {formatPrice(item.discount_price || item.price)}
                                                             </span>
                                                             {item.discount_price && (
@@ -245,7 +245,7 @@ export default function CartPage() {
                                                         <div className="flex items-center gap-2">
                                                             <div className="text-right">
                                                                 <p className="text-[9px] text-zinc-500 dark:text-zinc-600 uppercase font-bold tracking-wider hidden sm:block">Subtotal</p>
-                                                                <p className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                                                                <p className="text-sm sm:text-base font-price font-bold text-zinc-900 dark:text-white">
                                                                     {formatPrice((item.discount_price || item.price) * item.quantity)}
                                                                 </p>
                                                             </div>
@@ -288,7 +288,7 @@ export default function CartPage() {
                                 <div className="bg-white dark:bg-gradient-to-br dark:from-zinc-900/80 dark:to-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-center gap-2 mb-4 lg:mb-6">
                                         <Package className="text-blue-400" size={18} />
-                                        <h2 className="text-lg lg:text-xl font-bold text-zinc-900 dark:text-white">Order Summary</h2>
+                                        <h2 className="text-lg lg:text-xl font-section-title font-bold text-zinc-900 dark:text-white">Order Summary</h2>
                                     </div>
 
                                     <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
@@ -335,7 +335,7 @@ export default function CartPage() {
 
                                     <Link
                                         href="/customer/checkout"
-                                        className="w-full py-3.5 lg:py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg group mb-3 lg:mb-4 text-sm lg:text-base"
+                                        className="w-full py-3.5 lg:py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black font-button font-bold flex items-center justify-center gap-2 hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-lg group mb-3 lg:mb-4 text-sm lg:text-base"
                                     >
                                         Proceed to Checkout
                                         <ArrowRight size={18} className="lg:hidden group-hover:translate-x-1 transition-transform" />
@@ -383,7 +383,7 @@ export default function CartPage() {
                             </div>
                         </div>
 
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 lg:mb-4">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-section-title font-bold text-white mb-3 lg:mb-4">
                             Your Collection Awaits
                         </h2>
                         <p className="text-zinc-400 max-w-md mb-6 lg:mb-8 text-base lg:text-lg leading-relaxed">

@@ -10,8 +10,8 @@
   --accent: #2563eb;
   --glass: rgba(0, 0, 0, 0.03);
   --glass-border: rgba(0, 0, 0, 0.1);
-  --font-main: var(--font-jakarta), sans-serif;
-  --font-heading: var(--font-jakarta), sans-serif;
+  --font-main: var(--font-body), sans-serif;
+  --font-heading: var(--font-header), sans-serif;
 }
 
 .dark {
