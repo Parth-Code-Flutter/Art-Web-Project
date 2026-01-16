@@ -3,7 +3,12 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-    const { searchParams, origin } = new URL(request.url)
+    // Robust Origin Detection for Vercel/Proxies
+    const { searchParams } = new URL(request.url)
+    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+    const origin = `${protocol}://${host}`;
+
     const code = searchParams.get('code')
     const type = searchParams.get('type') || 'customer'
     // next is a redirect path after the callback, e.g. /customer/dashboard
