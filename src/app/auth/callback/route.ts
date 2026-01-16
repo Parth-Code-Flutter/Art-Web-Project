@@ -42,56 +42,55 @@ export async function GET(request: Request) {
         const { data: { user }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!sessionError && user) {
-            // 1. Ensure profile exists
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('role')
+            // DIRECT CHECK: Remove confusion by checking specific tables instead of 'profiles'
+
+            // 1. Check if this is an Arist/Seller
+            const { data: seller } = await supabase
+                .from('sellers')
+                .select('status')
                 .eq('id', user.id)
-                .single();
+                .maybeSingle();
 
-            const userRole = profile?.role || type;
+            // 2. Logic: If found in sellers, they are a seller.
+            // If they INTENDED to be a seller (type=seller) but aren't in table, create them.
 
-            // 2. Double check role-specific tables
-            if (userRole === 'seller') {
-                const { data: seller } = await supabase
-                    .from('sellers')
-                    .select('status')
-                    .eq('id', user.id)
-                    .single();
-
-                if (!seller) {
-                    // Create entry in sellers table if missing
-                    await supabase.from('sellers').insert({
-                        id: user.id,
-                        full_name: user.user_metadata.full_name || user.user_metadata.name || 'New Artist',
-                        email: user.email,
-                        avatar_url: user.user_metadata.avatar_url,
-                        status: 'pending'
-                    });
-                    return NextResponse.redirect(`${origin}/seller/become-artist`)
-                }
-
+            if (seller) {
+                // Existing Seller
                 if (seller.status !== 'approved') {
                     return NextResponse.redirect(`${origin}/seller/become-artist`)
                 }
-            } else {
-                const { data: customer } = await supabase
-                    .from('customers')
-                    .select('id')
-                    .eq('id', user.id)
-                    .single();
-
-                if (!customer) {
-                    // Create entry in customers table if missing
-                    await supabase.from('customers').insert({
-                        id: user.id,
-                        full_name: user.user_metadata.full_name || user.user_metadata.name || 'New Collector',
-                        email: user.email,
-                        avatar_url: user.user_metadata.avatar_url,
-                    });
-                }
+                return NextResponse.redirect(`${origin}/seller/dashboard`)
+            } else if (type === 'seller') {
+                // New Seller Registration (Google Auth)
+                // If not in table but type=seller, create entry
+                await supabase.from('sellers').insert({
+                    id: user.id,
+                    full_name: user.user_metadata.full_name || user.user_metadata.name || 'New Artist',
+                    email: user.email,
+                    avatar_url: user.user_metadata.avatar_url,
+                    status: 'pending'
+                });
+                return NextResponse.redirect(`${origin}/seller/become-artist`)
             }
-            return NextResponse.redirect(`${origin}${next}`)
+
+            // 3. Defaults to Customer
+            const { data: customer } = await supabase
+                .from('customers')
+                .select('id')
+                .eq('id', user.id)
+                .maybeSingle();
+
+            if (!customer) {
+                // Create Customer Row
+                await supabase.from('customers').insert({
+                    id: user.id,
+                    full_name: user.user_metadata.full_name || user.user_metadata.name || 'New Collector',
+                    email: user.email,
+                    avatar_url: user.user_metadata.avatar_url,
+                });
+            }
+
+            return NextResponse.redirect(`${origin}/customer/dashboard`)
         }
     }
 
