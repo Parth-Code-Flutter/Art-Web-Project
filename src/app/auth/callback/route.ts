@@ -7,7 +7,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const protocol = request.headers.get('x-forwarded-proto') || 'https';
     const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
-    const origin = `${protocol}://${host}`;
+    let origin = `${protocol}://${host}`;
+
+    // CRITICAL FIX: Prevent localhost redirects in production environment
+    // Use the specific project URL to ensure users land on the live site
+    if (process.env.NODE_ENV === 'production' && origin.includes('localhost')) {
+        origin = 'https://art-web-project.vercel.app';
+    }
 
     const code = searchParams.get('code')
     const type = searchParams.get('type') || 'customer'
