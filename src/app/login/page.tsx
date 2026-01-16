@@ -123,13 +123,30 @@ export default function AuthPage() {
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email,
                     password,
-                    options: { data: { name: fullName, phone: mobile, role, avatar_url: avatarUrl } }
+                    options: {
+                        data: {
+                            name: fullName,
+                            phone: mobile,
+                            role,
+                            country, // Added for Trigger/Meta access
+                            avatar_url: avatarUrl
+                        }
+                    }
                 });
 
                 if (authError) throw authError;
+
+                // HANDLE EMAIL VERIFICATION FLOW
+                if (authData.user && !authData.session) {
+                    alert('Registration successful! Please check your email inbox to verify your account.');
+                    setMode('login');
+                    setStep(1);
+                    return; // Stop here. The SQL Trigger (if setup) or post-verification logic will handle profile creation.
+                }
+
                 if (!authData.user) throw new Error("Registration failed.");
 
-                // DB Insert
+                // Client-side DB Insert (Only works if Session is active / Email Verification OFF)
                 const table = role === 'seller' ? 'sellers' : 'customers';
                 const payload = {
                     id: authData.user.id,
