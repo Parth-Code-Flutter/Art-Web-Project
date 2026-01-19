@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useToast } from '@/components/ToastProvider';
+import { useToast } from '@/components/providers/ToastProvider';
 
 interface WishlistItem {
     id: string;
