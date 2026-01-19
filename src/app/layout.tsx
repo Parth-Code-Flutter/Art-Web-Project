@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headerFont, bodyFont } from "@/config/fonts";
-import { ToastProvider } from "@/components/ToastProvider";
+import { ToastProvider } from "@/components/providers/ToastProvider";
 import GoogleAnalytics from "@/lib/analytics";
 import "./globals.css";
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 export default function RootLayout({
   children,

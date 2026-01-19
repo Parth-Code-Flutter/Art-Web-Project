@@ -2,7 +2,7 @@
 
 import DashboardHeader from '@/components/customer/DashboardHeader';
 import CustomerFooter from '@/components/customer/CustomerFooter';
-import AnalyticsPageTracker from '@/components/AnalyticsPageTracker';
+import AnalyticsPageTracker from '@/components/providers/AnalyticsPageTracker';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 
 export default function CustomerLayout({
