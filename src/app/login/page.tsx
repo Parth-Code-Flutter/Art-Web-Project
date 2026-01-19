@@ -82,22 +82,43 @@ export default function AuthPage() {
                 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
 
-                // Role Check
-                const table = role === 'seller' ? 'sellers' : 'customers';
-                const { data: profile } = await supabase.from(table).select('id, status').eq('id', data.user.id).maybeSingle();
+                if (!data.user) throw new Error('Login failed');
 
-                if (!profile) {
-                    await supabase.auth.signOut();
-                    throw new Error(`No ${role} profile found.`);
-                }
+                // IMPROVED: Check both tables to auto-detect user role
+                // This prevents "No profile found" errors when user selects wrong role
 
-                if (role === 'seller' && profile.status !== 'approved') {
-                    // Redirect to waitlist or status page
-                    router.push('/seller/become-artist');
+                // First, try to find in sellers table
+                const { data: sellerProfile, error: sellerError } = await supabase
+                    .from('sellers')
+                    .select('id, status')
+                    .eq('id', data.user.id)
+                    .maybeSingle();
+
+                // If found in sellers, redirect to seller dashboard
+                if (sellerProfile) {
+                    if (sellerProfile.status !== 'approved') {
+                        router.push('/seller/become-artist');
+                        return;
+                    }
+                    router.push('/seller/dashboard');
                     return;
                 }
 
-                router.push(role === 'seller' ? '/seller/dashboard' : '/customer/dashboard');
+                // If not a seller, check customers table
+                const { data: customerProfile, error: customerError } = await supabase
+                    .from('customers')
+                    .select('id')
+                    .eq('id', data.user.id)
+                    .maybeSingle();
+
+                if (customerProfile) {
+                    router.push('/customer/dashboard');
+                    return;
+                }
+
+                // If not found in either table, sign out and show error
+                await supabase.auth.signOut();
+                throw new Error('No profile found. Please contact support or register again.');
 
             } else {
                 // Register Logic
