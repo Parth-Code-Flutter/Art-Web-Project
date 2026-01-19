@@ -61,7 +61,7 @@ export async function GET(request: Request) {
                 }
                 return NextResponse.redirect(`${origin}/seller/dashboard`)
             } else if (type === 'seller') {
-                // New Seller Registration (Google Auth)
+                // New Seller Registration (Email Verification)
                 // If not in table but type=seller, create entry
                 await supabase.from('sellers').insert({
                     id: user.id,
